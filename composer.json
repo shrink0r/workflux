@@ -2,7 +2,7 @@
     "name": "shrink0r/workflux",
     "type": "library",
     "description": "Finite state machine for php.",
-    "keywords": ["workflux", "fsm", "workflow", "statemachine"],
+    "keywords": ["workflux", "fsm", "workflow", "state machine"],
     "homepage": "https://github.com/shrink0r/workflux",
     "license": "CC-BY-SA-3.0",
     "authors": [

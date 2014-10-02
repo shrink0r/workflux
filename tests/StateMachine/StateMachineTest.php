@@ -23,7 +23,7 @@ class StateMachineTest extends BaseTestCase
         ];
         $transitions = [
             'state1' => [
-                'promote' => new Transition('promote', [ 'state1' ], 'state2')
+                'promote' => new Transition('promote', 'state1' , 'state2')
             ]
         ];
 
@@ -43,7 +43,7 @@ class StateMachineTest extends BaseTestCase
         ];
         $transitions = [
             'state1' => [
-                'promote' => new Transition('promote', [ 'state1' ], 'state2')
+                'promote' => new Transition('promote', 'state1', 'state2')
             ]
         ];
 
@@ -67,7 +67,7 @@ class StateMachineTest extends BaseTestCase
         ];
         $transitions = [
             'state1' => [
-                'promote' => new Transition('promote', [ 'state1' ], 'state2')
+                'promote' => new Transition('promote', 'state1', 'state2')
             ]
         ];
 
@@ -90,7 +90,7 @@ class StateMachineTest extends BaseTestCase
         ];
         $transitions = [
             'state1' => [
-                'promote' => new Transition('promote', [ 'state1' ], 'state2')
+                'promote' => new Transition('promote', 'state1', 'state2')
             ]
         ];
 

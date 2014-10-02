@@ -17,5 +17,5 @@ interface IStateMachineBuilder
 
     public function addTransitions(array $transitions);
 
-    public function createStateMachine();
+    public function build();
 }

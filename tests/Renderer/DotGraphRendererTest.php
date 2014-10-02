@@ -37,7 +37,7 @@ class DotGraphRendererTest extends BaseTestCase
             ->setStateMachineName($subject->getStateMachineName())
             ->addStates($states)
             ->addTransitions($transitons)
-            ->createStateMachine();
+            ->build();
 
         $renderer = new DotGraphRenderer();
         $dot_code = $renderer->renderGraph($state_machine);

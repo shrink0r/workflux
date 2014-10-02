@@ -10,7 +10,7 @@ releases](https://github.com/shrink0r/workflux/releases).
 
 ## Purpose
 
-Finite statemachine for php.
+Finite state machine for php.
 
 ## Requirements and installation
 

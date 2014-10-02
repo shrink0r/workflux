@@ -103,7 +103,7 @@ class StateMachineBuilder implements IStateMachineBuilder
         return $this;
     }
 
-    public function createStateMachine()
+    public function build()
     {
         $this->verifyStateGraph();
 
@@ -128,6 +128,8 @@ class StateMachineBuilder implements IStateMachineBuilder
                 )
             );
         }
+
+        $this->clearInternalState();
 
         return $state_machine;
     }
@@ -188,5 +190,12 @@ class StateMachineBuilder implements IStateMachineBuilder
         if (empty($final_states)) {
             throw new Error('No state of type "final" found, but at least one final state is required.');
         }
+    }
+
+    protected function clearInternalState()
+    {
+        $this->state_machine_name = null;
+        $this->states = [];
+        $this->transitions = [];
     }
 }

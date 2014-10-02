@@ -26,7 +26,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     const STATE_DELETED = 'deleted';
 
-    public function testCreateStateMachine()
+    public function testBuild()
     {
         $states = [
             new State(self::STATE_EDITING, IState::TYPE_INITIAL),
@@ -51,12 +51,36 @@ class StateMachineBuilderTest extends BaseTestCase
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
             ->addTransitions($transitons)
-            ->createStateMachine();
+            ->build();
 
         $this->assertEquals(self::MACHINE_NAME, $state_machine->getName());
         $this->assertEquals($transitons[0], $state_machine->getTransition(self::STATE_EDITING, 'promote'));
         $this->assertEquals($states[0], $state_machine->getState(self::STATE_EDITING));
         $this->assertEquals($states[1], $state_machine->getState(self::STATE_APPROVAL));
+    }
+
+    public function testIncompleteSecondBuild()
+    {
+        $this->setExpectedException(
+            Error::CLASS,
+            'Required state machine name is missing. Make sure to call setStateMachineName.'
+        );
+
+        $states = [
+            new State(self::STATE_EDITING, IState::TYPE_INITIAL),
+            new State(self::STATE_PUBLISHED, IState::TYPE_FINAL)
+        ];
+
+        $transiton = new Transition('promote', [ self::STATE_EDITING ], self::STATE_PUBLISHED);
+
+        $builder = new StateMachineBuilder();
+        $state_machine = $builder
+            ->setStateMachineName(self::MACHINE_NAME)
+            ->addStates($states)
+            ->addTransition($transiton)
+            ->build();
+
+        $builder->build();
     }
 
     public function testDuplicateState()
@@ -113,7 +137,7 @@ class StateMachineBuilderTest extends BaseTestCase
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
             ->addTransition($transiton)
-            ->createStateMachine();
+            ->build();
     }
 
     public function testInvalidIncomingState()
@@ -135,7 +159,7 @@ class StateMachineBuilderTest extends BaseTestCase
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
             ->addTransition($transiton)
-            ->createStateMachine();
+            ->build();
     }
 
     public function testMissingInitialState()
@@ -157,7 +181,7 @@ class StateMachineBuilderTest extends BaseTestCase
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
             ->addTransition($transiton)
-            ->createStateMachine();
+            ->build();
     }
 
     public function testMissingFinalState()
@@ -179,7 +203,7 @@ class StateMachineBuilderTest extends BaseTestCase
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
             ->addTransition($transiton)
-            ->createStateMachine();
+            ->build();
     }
 
     public function testTooManyInitialStates()
@@ -202,7 +226,7 @@ class StateMachineBuilderTest extends BaseTestCase
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
             ->addTransition($transiton)
-            ->createStateMachine();
+            ->build();
     }
 
     public function testMissingStateMachineName()
@@ -223,7 +247,7 @@ class StateMachineBuilderTest extends BaseTestCase
         $state_machine = $builder
             ->addStates($states)
             ->addTransition($transiton)
-            ->createStateMachine();
+            ->build();
     }
 
     public function testInvalidStateMachineName()
@@ -256,7 +280,7 @@ class StateMachineBuilderTest extends BaseTestCase
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
             ->addTransition($transiton)
-            ->createStateMachine();
+            ->build();
     }
 
     public function testInvalidStateMachineClass()
@@ -279,6 +303,6 @@ class StateMachineBuilderTest extends BaseTestCase
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
             ->addTransition($transiton)
-            ->createStateMachine();
+            ->build();
     }
 }

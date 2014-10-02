@@ -158,26 +158,14 @@ class StateMachineBuilder implements IStateMachineBuilder
             }
         }
 
-        foreach ($this->transitions as $state_name => $transitions) {
+        foreach ($this->transitions as $state_name => $state_transitions) {
             if (!isset($this->states[$state_name])) {
                 throw new Error(
-                    sprintf('Unable to find state "%s" for given set of transitions. Maybe a typo?', $state_name)
+                    sprintf('Unable to find incoming state "%s" for given transitions. Maybe a typo?', $state_name)
                 );
             }
 
-            $state_transitions = $this->states[$state_name];
             foreach ($state_transitions as $transition_name => $transition) {
-                $incoming_state_names = $transition->getIncomingStateNames();
-                if (!in_array($state_name, $incoming_state_names)) {
-                    throw new Error(
-                        sprintf(
-                            'Transition "%s" given for state "%s" does not list the latter as an incoming state.',
-                            $transition_name,
-                            $state_name
-                        )
-                    );
-                }
-
                 $outgoing_state_name = $transition->getOutgoingStateName();
                 if (!isset($this->states[$outgoing_state_name])) {
                     throw new Error(

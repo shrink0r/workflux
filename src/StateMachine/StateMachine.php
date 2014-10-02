@@ -29,20 +29,8 @@ class StateMachine implements IStateMachine
 
     public function execute(IStatefulSubject $subject, $transition_name)
     {
-        $initial_state = $this->getCurrentStateFor($subject);
-
-        $available_transitions = $this->getTransitions($initial_state->getName());
-        if (!in_array($transition_name, array_keys($available_transitions))) {
-            throw new Error(
-                sprintf(
-                    'Unable to find transition %s for state %s.',
-                    $transition_name,
-                    $initial_state->getName()
-                )
-            );
-        }
-
-        $transition = $this->getTransitionOrFail($initial_state->getName(), $transition_name);
+        $current_state = $this->getCurrentStateFor($subject);
+        $transition = $this->getTransitionOrFail($current_state->getName(), $transition_name);
 
         if ($transition->hasGuard()) {
             $transition_guard = $transition->getGuard();
@@ -51,7 +39,7 @@ class StateMachine implements IStateMachine
                     sprintf(
                         'Applying transition "%s" to state "%s" was rejected by %s.',
                         $transition_name,
-                        $initial_state->getName(),
+                        $current_state->getName(),
                         get_class($transition_guard)
                     )
                 );

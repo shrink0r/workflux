@@ -52,7 +52,7 @@ class State implements IState
                 sprintf(
                     'Invalid state type "%s" given.' .
                     ' Only the types %s are permitted.',
-                    $state_name,
+                    $state_type,
                     implode(', ', $allowed_types)
                 )
             );

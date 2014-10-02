@@ -45,11 +45,11 @@ docs:
 code-sniffer:
 
 	@if [ ! -d ./build/logs ]; then mkdir -p ./build/logs; fi
-	-@$(PHP) ./vendor/bin/phpcs --extensions=php --report=checkstyle --report-file=./build/logs/checkstyle.xml --standard=psr2 ./src/
+	-@$(PHP) ./vendor/bin/phpcs --extensions=php --report=checkstyle --report-file=./build/logs/checkstyle.xml --standard=psr2 ./src/ ./tests/
 
 code-sniffer-cli:
 
-	@./vendor/bin/phpcs -p --report=full --standard=psr2 ./src
+	@./vendor/bin/phpcs -p --report=full --standard=psr2 ./src ./tests
 
 composer-dump-autoloads: install-composer
 

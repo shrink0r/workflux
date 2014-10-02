@@ -2,6 +2,8 @@
 
 namespace Workflux\Transition;
 
+use Workflux\Guard\IGuard;
+
 class Transition implements ITransition
 {
     protected $name;

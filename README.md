@@ -1,13 +1,13 @@
 # Workflux
 
-* Latest Version: [![Latest Stable
-  Version](https://poser.pugx.org/shrink0r/workflux/version.png)](https://packagist.org/packages/shrink0r/workflux)
-* Build: [![Build
-  Status](https://secure.travis-ci.org/shrink0r/workflux.png)](http://travis-ci.org/shrink0r/workflux)
-* Coverage: [![Coverage
-  Status](https://coveralls.io/repos/shrink0r/workflux/badge.png)](https://coveralls.io/r/shrink0r/workflux)
-* Dependencies: [![Dependency
-  Status](https://www.versioneye.com/user/projects/542da521fc3f5ca427000299/badge.svg?style=flat)](https://www.versioneye.com/user/projects/542da521fc3f5ca427000299)
+* [![Latest Stable Version]
+  (https://poser.pugx.org/shrink0r/workflux/version.png)](https://packagist.org/packages/shrink0r/workflux)
+* [![Build Status]
+  (https://secure.travis-ci.org/shrink0r/workflux.png)](http://travis-ci.org/shrink0r/workflux)
+* [![Coverage Status]
+  (https://coveralls.io/repos/shrink0r/workflux/badge.png)](https://coveralls.io/r/shrink0r/workflux)
+* [![Dependency Status]
+  (https://www.versioneye.com/user/projects/542da521fc3f5ca427000299/badge.svg?style=flat)](https://www.versioneye.com/user/projects/542da521fc3f5ca427000299)
 
 Please have a look at the [available
 releases](https://github.com/shrink0r/workflux/releases).

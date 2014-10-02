@@ -10,6 +10,8 @@ class StateMachineBuilder implements IStateMachineBuilder
 {
     protected $options;
 
+    protected $state_machine_name;
+
     protected $states;
 
     protected $transitions;
@@ -23,7 +25,7 @@ class StateMachineBuilder implements IStateMachineBuilder
 
     public function setStateMachineName($state_machine_name)
     {
-        $name_regex = '/[a-zA-Z0-9_]+/';
+        $name_regex = '/^[a-zA-Z0-9_]+$/';
 
         if (!preg_match($name_regex, $state_machine_name)) {
             throw new Error(
@@ -133,7 +135,7 @@ class StateMachineBuilder implements IStateMachineBuilder
     protected function verifyStateGraph()
     {
         if (!$this->state_machine_name) {
-            throw new Error('Required state machine name is missing. Make sure to call setStateMachineName');
+            throw new Error('Required state machine name is missing. Make sure to call setStateMachineName.');
         }
 
         $initial_state = null;

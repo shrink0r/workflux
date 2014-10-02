@@ -1,0 +1,38 @@
+{
+    "name": "shrink0r/workflux",
+    "type": "library",
+    "description": "Finite state machine for php.",
+    "keywords": ["workflux", "fsm", "workflow", "statemachine"],
+    "homepage": "https://github.com/shrink0r/workflux",
+    "license": "CC-BY-SA-3.0",
+    "authors": [
+        {
+            "name": "shrink0r",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/shrink0r/workflux/issues",
+        "wiki": "https://github.com/shrink0r/workflux/wiki",
+        "irc": "irc://irc.freenode.org/honeybee",
+        "source": "https://github.com/shrink0r/workflux"
+    },
+    "prefer-stable": true,
+    "config": {
+        "vendor-dir": "vendor"
+    },
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.2.6",
+        "squizlabs/php_codesniffer": "~1.5.5",
+        "sami/sami": "~2.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Workflux\\": "src/",
+            "Workflux\\Tests\\": "tests/"
+        }
+    }
+}

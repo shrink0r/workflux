@@ -1,0 +1,35 @@
+# project related stuff
+/bin/phpunit
+/build/
+
+# composer related stuff
+/vendor/
+/composer.lock
+/bin/composer.phar
+
+# general os and editors related stuff
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+.bundle/
+*~
+*.tmp
+*.bak
+*.swp
+*~.nib
+.class
+.classpath
+.settings/
+.loadpath
+.project
+.metadata
+*.launch
+.buildpath
+.cproject
+.externalToolBuilders/
+.plugins/
+*.pydevproject
+nbproject/
+*.tmproj
+

@@ -8,12 +8,12 @@ help:
 
 	@echo ""
 	@echo "Available targets:"
-	@echo "  codesniffer - create codesniffer report in 'build/reports' folder"
+	@echo "  codesniffer - create codesniffer report in 'build/logs' folder"
 	@echo "  codesniffer-cli - run codesniffer and display report in console"
 	@echo "  docs - generate API documentation into 'docs/api' folder"
 	@echo "  install-composer - download and install composer to 'bin/composer.phar'"
 	@echo "  install-dependencies-dev - install composer if necessary and install or update all vendor libraries (including --dev)"
-	@echo "  tests - run all tests and create test coverage in 'build/reports"
+	@echo "  tests - run all tests and create test coverage in 'build/logs"
 	@echo ""
 	@echo "Please make sure a 'php' executable is available via PATH environment variable or set a PHP_PATH variable directly with a path like '/usr/bin/php'."
 	@echo ""
@@ -44,8 +44,8 @@ docs:
 
 code-sniffer:
 
-	@if [ ! -d ./build/reports ]; then mkdir -p ./build/reports; fi
-	-@$(PHP) ./vendor/bin/phpcs --extensions=php --report=checkstyle --report-file=./build/reports/checkstyle.xml --standard=psr2 ./src/
+	@if [ ! -d ./build/logs ]; then mkdir -p ./build/logs; fi
+	-@$(PHP) ./vendor/bin/phpcs --extensions=php --report=checkstyle --report-file=./build/logs/checkstyle.xml --standard=psr2 ./src/
 
 code-sniffer-cli:
 

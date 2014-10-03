@@ -9,6 +9,8 @@ class ExpressionGuard implements IGuard
 {
     protected $expression;
 
+    protected $expression_language;
+
     public function __construct($expression)
     {
         $this->expression = $expression;

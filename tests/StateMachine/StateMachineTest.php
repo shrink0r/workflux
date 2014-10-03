@@ -54,6 +54,42 @@ class StateMachineTest extends BaseTestCase
         $this->assertEquals('state2', $target_state->getName());
     }
 
+    public function testExecuteSimpleDecision()
+    {
+        $subject = new GenericSubject('test_machine', 'new');
+
+        $states = [
+            'new' => new State('new', IState::TYPE_INITIAL),
+            'transcoding' => new State('transcoding'),
+            'ready' => new State('ready', IState::TYPE_FINAL)
+        ];
+
+        $transitions = [
+            'new' => [
+                'promote' => [
+                    new Transition('new', 'ready'),
+                    new Transition(
+                        'new',
+                        'transcoding',
+                        new CallbackGuard(
+                            function (IStatefulSubject $subject) {
+                                $execution_state = $subject->getExecutionState();
+                                return $execution_state->getParameter('need_transcoding', true);
+                            }
+                        )
+                    )
+                ]
+            ]
+        ];
+
+        $state_machine = new StateMachine('test_machine', $states, $transitions);
+
+        $subject->getExecutionState()->setParameter('need_transcoding', false);
+        $target_state = $state_machine->execute($subject, 'promote');
+
+        $this->assertEquals('ready', $target_state->getName());
+    }
+
     public function testInvalidSubject()
     {
         $this->setExpectedException(
@@ -100,6 +136,28 @@ class StateMachineTest extends BaseTestCase
         $state_machine->execute($subject, 'erpen_derp');
     }
 
+    public function testGetNonExistingTransitions()
+    {
+        $this->setExpectedException(
+            Error::CLASS,
+            'No transitions available at state "non_existant".'
+        );
+
+        $states = [
+            'state1' => new State('state1', IState::TYPE_INITIAL),
+            'state2' => new State('state2', IState::TYPE_FINAL)
+        ];
+        $transitions = [
+            'state1' => [
+                'promote' => [ new Transition('state1', 'state2') ]
+            ]
+        ];
+
+        $subject = new GenericSubject('test_machine', 'state1');
+        $state_machine = new StateMachine('test_machine', $states, $transitions);
+        $state_machine->getTransitions('non_existant');
+    }
+
     public function testRejectedTransition()
     {
         $this->setExpectedException(
@@ -120,6 +178,39 @@ class StateMachineTest extends BaseTestCase
         $transitions = [
             'state1' => [
                 'promote' => [ new Transition('state1', 'state2', $rejecting_guard) ]
+            ]
+        ];
+
+        $subject = new GenericSubject('test_machine', 'state1');
+        $state_machine = new StateMachine('test_machine', $states, $transitions);
+
+        $state_machine->execute($subject, 'promote');
+    }
+
+    public function testTooManyAcceptedGuards()
+    {
+        $this->setExpectedException(
+            Error::CLASS,
+            'Only one transition is allowed to be active at a time.'
+        );
+
+        $accepting_guard = new CallbackGuard(
+            function (IStatefulSubject $subject) {
+                return true;
+            }
+        );
+
+        $states = [
+            'state1' => new State('state1', IState::TYPE_INITIAL),
+            'state2' => new State('state2'),
+            'state2' => new State('state3', IState::TYPE_FINAL)
+        ];
+        $transitions = [
+            'state1' => [
+                'promote' => [
+                    new Transition('state1', 'state2', $accepting_guard),
+                    new Transition('state1', 'state3', $accepting_guard)
+                ]
             ]
         ];
 

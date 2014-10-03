@@ -68,9 +68,9 @@ class StateMachine implements IStateMachine
 
     public function getCurrentStateFor(IStatefulSubject $subject)
     {
-        $execution_state = $subject->getExecutionState();
-
-        return $this->getStateOrFail($execution_state->getCurrentStateName());
+        return $this->getStateOrFail(
+            $subject->getExecutionState()->getCurrentStateName()
+        );
     }
 
     public function getStates()

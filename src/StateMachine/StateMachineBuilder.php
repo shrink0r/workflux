@@ -145,28 +145,69 @@ class StateMachineBuilder implements IStateMachineBuilder
             throw new Error('Required state machine name is missing. Make sure to call setStateMachineName.');
         }
 
+        $this->verifyStates();
+        $this->verifyTransitions();
+    }
+
+    protected function verifyStates()
+    {
         $initial_state = null;
         $final_states = [];
 
         foreach ($this->states as $state_name => $state) {
-            if ($state->isInitial()) {
-                if (!$initial_state) {
-                    $initial_state = $state;
-                } else {
-                    throw new Error(
-                        sprintf(
-                            'Only one initial state is supported per state machine definition.' .
-                            'State "%s" has been previously registered as initial state, so state "%" cant be added.',
-                            $initial_state->getName(),
-                            $state_name
-                        )
-                    );
-                }
-            } elseif ($state->isFinal()) {
-                $final_states[] = $state;
-            }
+            $this->verifyState($state, $initial_state, $final_states);
         }
 
+        if (!$initial_state) {
+            throw new Error('No state of type "initial" found, but exactly one initial state is required.');
+        }
+
+        if (empty($final_states)) {
+            throw new Error('No state of type "final" found, but at least one final state is required.');
+        }
+    }
+
+    protected function verifyState(IState $state, &$initial_state, array &$final_states)
+    {
+        $state_name = $state->getName();
+        $transition_count = isset($this->transitions[$state_name]) ? count($this->transitions[$state_name]) : 0;
+
+        if ($state->isInitial()) {
+            if ($initial_state) {
+                throw new Error(
+                    sprintf(
+                        'Only one initial state is supported per state machine definition.' .
+                        'State "%s" has been previously registered as initial state, so state "%" cant be added.',
+                        $initial_state->getName(),
+                        $state_name
+                    )
+                );
+            } else {
+                $initial_state = $state;
+            }
+        } elseif ($state->isFinal()) {
+            if ($transition_count > 0) {
+                throw new Error(
+                    sprintf('State "%s" is final and may not have any transitions.', $state_name)
+                );
+            }
+            $final_states[] = $state;
+        } else {
+            if ($transition_count === 0) {
+                throw new Error(
+                    sprintf(
+                        'State "%s" is expected to have at least one transition.' .
+                        ' Only "%s" states are permitted to have no transitions.',
+                        $state_name,
+                        IState::TYPE_FINAL
+                    )
+                );
+            }
+        }
+    }
+
+    protected function verifyTransitions()
+    {
         foreach ($this->transitions as $state_name => $state_transitions) {
             if (!isset($this->states[$state_name])) {
                 throw new Error(
@@ -188,14 +229,6 @@ class StateMachineBuilder implements IStateMachineBuilder
                     }
                 }
             }
-        }
-
-        if (!$initial_state) {
-            throw new Error('No state of type "initial" found, but exactly one initial state is required.');
-        }
-
-        if (empty($final_states)) {
-            throw new Error('No state of type "final" found, but at least one final state is required.');
         }
     }
 

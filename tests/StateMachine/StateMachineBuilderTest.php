@@ -178,7 +178,7 @@ class StateMachineBuilderTest extends BaseTestCase
             new State('published')
         ];
 
-        $transiton = new Transition([ 'editing' ], 'published');
+        $transiton = new Transition([ 'editing', 'published' ], 'published');
 
         $builder = new StateMachineBuilder();
         $state_machine = $builder
@@ -252,6 +252,30 @@ class StateMachineBuilderTest extends BaseTestCase
 
         $states = [
             new State('editing', IState::TYPE_INITIAL),
+            new State('published', IState::TYPE_FINAL)
+        ];
+
+        $transiton = new Transition('editing', 'published');
+
+        $builder = new StateMachineBuilder([ 'state_machine_class' => 'HeisenStateMachine' ]);
+        $state_machine = $builder
+            ->setStateMachineName(self::MACHINE_NAME)
+            ->addStates($states)
+            ->addTransition('promote', $transiton)
+            ->build();
+    }
+
+    public function testMissingStateTransitions()
+    {
+        $this->setExpectedException(
+            Error::CLASS,
+            'State "transcoding" is expected to have at least one transition.' .
+            ' Only "final" states are permitted to have no transitions.'
+        );
+
+        $states = [
+            new State('editing', IState::TYPE_INITIAL),
+            new State('transcoding'),
             new State('published', IState::TYPE_FINAL)
         ];
 

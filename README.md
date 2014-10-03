@@ -1,5 +1,9 @@
 # Workflux
 
+Finite state machine for php.
+
+## Status
+
 * [![Latest Stable Version](https://poser.pugx.org/shrink0r/workflux/version.png)](https://packagist.org/packages/shrink0r/workflux)
 * [![Latest Unstable Version](https://poser.pugx.org/shrink0r/workflux/v/unstable.png)](https://packagist.org/packages/shrink0r/workflux)
 * [![Build Status](https://secure.travis-ci.org/shrink0r/workflux.png)](http://travis-ci.org/shrink0r/workflux)
@@ -7,12 +11,7 @@
 * [![Dependency Status](https://www.versioneye.com/user/projects/542da521fc3f5ca427000299/badge.svg?style=flat)](https://www.versioneye.com/user/projects/542da521fc3f5ca427000299)
 * [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shrink0r/workflux/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shrink0r/workflux/?branch=master)
 
-Please have a look at the [available
-releases](https://github.com/shrink0r/workflux/releases).
-
-## Purpose
-
-Finite state machine for php.
+Please have a look at the [available releases](https://github.com/shrink0r/workflux/releases).
 
 ## Requirements and installation
 

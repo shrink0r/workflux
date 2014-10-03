@@ -4,7 +4,5 @@ namespace Workflux;
 
 interface IStatefulSubject
 {
-    public function getStateMachineName();
-
-    public function getCurrentStateName();
+    public function getExecutionState();
 }

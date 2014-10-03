@@ -19,4 +19,8 @@ interface IState
     public function isActive();
 
     public function isFinal();
+
+    public function onEntry();
+
+    public function onExit();
 }

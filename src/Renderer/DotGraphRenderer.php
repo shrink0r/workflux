@@ -42,11 +42,13 @@ class DotGraphRenderer implements IGraphRenderer
     protected function getEdges(IStateMachine $state_machine, array $node_id_map)
     {
         $edges = [];
-        foreach ($state_machine->getTransitions() as $state_name => $transitions) {
-            foreach ($transitions as $transition) {
-                $from_node = $node_id_map[$state_name];
-                $to_node = $node_id_map[$transition->getOutgoingStateName()];
-                $edges[] = sprintf('%s -> %s [label="%s"]', $from_node, $to_node, $transition->getName());
+        foreach ($state_machine->getTransitions() as $state_name => $state_transitions) {
+            foreach ($state_transitions as $event_name => $transitions) {
+                foreach ($transitions as $transition) {
+                    $from_node = $node_id_map[$state_name];
+                    $to_node = $node_id_map[$transition->getOutgoingStateName()];
+                    $edges[] = sprintf('%s -> %s [label="%s"]', $from_node, $to_node, $event_name);
+                }
             }
         }
 

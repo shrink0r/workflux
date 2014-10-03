@@ -43,6 +43,16 @@ class State implements IState
         return $this->type === self::TYPE_FINAL;
     }
 
+    public function onEntry()
+    {
+        // echo PHP_EOL . $this->getName() . ' -> entering' . PHP_EOL;
+    }
+
+    public function onExit()
+    {
+        // echo PHP_EOL . $this->getName() . ' -> exiting' . PHP_EOL;
+    }
+
     protected function assertType($state_type)
     {
         $allowed_types = [ self::TYPE_INITIAL, self::TYPE_ACTIVE, self::TYPE_FINAL ];

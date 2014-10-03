@@ -6,25 +6,17 @@ use Workflux\Guard\IGuard;
 
 class Transition implements ITransition
 {
-    protected $name;
-
     protected $incoming_state_names;
 
     protected $outgoing_state_name;
 
     protected $guard;
 
-    public function __construct($name, $incoming_state_name_or_names, $outgoing_state_name, IGuard $guard = null)
+    public function __construct($incoming_state_name_or_names, $outgoing_state_name, IGuard $guard = null)
     {
-        $this->name = $name;
         $this->incoming_state_names = (array)$incoming_state_name_or_names;
         $this->outgoing_state_name = $outgoing_state_name;
         $this->guard = $guard;
-    }
-
-    public function getName()
-    {
-        return $this->name;
     }
 
     public function getIncomingStateNames()

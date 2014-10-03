@@ -23,14 +23,14 @@ class StateMachineTest extends BaseTestCase
         ];
         $transitions = [
             'state1' => [
-                'promote' => new Transition('promote', 'state1' , 'state2')
+                'promote' => [ new Transition('state1' , 'state2') ]
             ]
         ];
 
         $state_machine = new StateMachine('test_machine', $states, $transitions);
 
         $this->assertEquals('test_machine', $state_machine->getName());
-        $this->assertEquals($transitions['state1']['promote'], $state_machine->getTransition('state1', 'promote'));
+        $this->assertContains($transitions['state1']['promote'][0], $state_machine->getTransitions('state1', 'promote'));
         $this->assertEquals($states['state1'], $state_machine->getState('state1'));
         $this->assertEquals($states['state2'], $state_machine->getState('state2'));
     }
@@ -43,7 +43,7 @@ class StateMachineTest extends BaseTestCase
         ];
         $transitions = [
             'state1' => [
-                'promote' => new Transition('promote', 'state1', 'state2')
+                'promote' => [ new Transition('state1', 'state2') ]
             ]
         ];
 
@@ -67,7 +67,7 @@ class StateMachineTest extends BaseTestCase
         ];
         $transitions = [
             'state1' => [
-                'promote' => new Transition('promote', 'state1', 'state2')
+                'promote' => [ new Transition('state1', 'state2') ]
             ]
         ];
 
@@ -81,7 +81,7 @@ class StateMachineTest extends BaseTestCase
     {
         $this->setExpectedException(
             Error::CLASS,
-            'Transition "erpen_derp" is not available at state "state1".'
+            'No transitions available for event "erpen_derp" at state "state1".'
         );
 
         $states = [
@@ -90,7 +90,7 @@ class StateMachineTest extends BaseTestCase
         ];
         $transitions = [
             'state1' => [
-                'promote' => new Transition('promote', 'state1', 'state2')
+                'promote' => [ new Transition('state1', 'state2') ]
             ]
         ];
 
@@ -104,7 +104,7 @@ class StateMachineTest extends BaseTestCase
     {
         $this->setExpectedException(
             Error::CLASS,
-            'Applying transition "promote" to state "state1" was rejected by Workflux\Guard\CallbackGuard.'
+            'Transition for event "promote" at state "state1" was rejected.'
         );
 
         $rejecting_guard = new CallbackGuard(
@@ -119,7 +119,7 @@ class StateMachineTest extends BaseTestCase
         ];
         $transitions = [
             'state1' => [
-                'promote' => new Transition('promote', [ 'state1' ], 'state2', $rejecting_guard)
+                'promote' => [ new Transition('state1', 'state2', $rejecting_guard) ]
             ]
         ];
 

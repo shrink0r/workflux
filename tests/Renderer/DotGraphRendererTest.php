@@ -16,8 +16,6 @@ class DotGraphRendererTest extends BaseTestCase
 {
     public function testRenderGraph()
     {
-        $subject = new GenericSubject('test_machine', 'state1');
-
         $states = [
             new State('editing', IState::TYPE_INITIAL),
             new State('approval'),
@@ -25,18 +23,16 @@ class DotGraphRendererTest extends BaseTestCase
             new State('deleted', IState::TYPE_FINAL)
         ];
 
-        $transitons = [
-            new Transition('promote', [ 'editing' ], 'approval'),
-            new Transition('promote', [ 'approval' ], 'published'),
-            new Transition('delete', [ 'editing', 'approval', 'published' ], 'deleted'),
-            new Transition('demote', [ 'published', 'approval' ], 'editing')
-        ];
+        $approve = new Transition('editing', 'approval');
+        $publish = new Transition('approval', 'published');
+        $demote = new Transition([ 'approval', 'published' ], 'editing');
+        $delete = new Transition([ 'editing', 'approval', 'published' ], 'deleted');
 
         $builder = new StateMachineBuilder();
         $state_machine = $builder
-            ->setStateMachineName($subject->getStateMachineName())
+            ->setStateMachineName('test_machine')
             ->addStates($states)
-            ->addTransitions($transitons)
+            ->addTransitions([ 'promote' => [ $approve, $publish ], 'demote' => $demote, 'delete' => $delete ])
             ->build();
 
         $renderer = new DotGraphRenderer();
@@ -52,10 +48,10 @@ node4 [label="deleted"]
 node1 -> node2 [label="promote"]
 node1 -> node4 [label="delete"]
 node2 -> node3 [label="promote"]
-node2 -> node4 [label="delete"]
 node2 -> node1 [label="demote"]
-node3 -> node4 [label="delete"]
+node2 -> node4 [label="delete"]
 node3 -> node1 [label="demote"]
+node3 -> node4 [label="delete"]
 }
 DOT;
 

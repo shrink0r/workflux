@@ -3,6 +3,7 @@
 namespace Workflux\Tests\Fixture;
 
 use Workflux\IStatefulSubject;
+use Workflux\ExecutionState;
 
 class GenericSubject implements IStatefulSubject
 {
@@ -16,13 +17,8 @@ class GenericSubject implements IStatefulSubject
         $this->current_state_name = $current_state_name;
     }
 
-    public function getStateMachineName()
+    public function getExecutionState()
     {
-        return $this->state_machine_name;
-    }
-
-    public function getCurrentStateName()
-    {
-        return $this->current_state_name;
+        return new ExecutionState($this->state_machine_name, $this->current_state_name);
     }
 }

@@ -9,10 +9,9 @@ class TransitionTest extends BaseTestCase
 {
     public function testConstructorAndGetters()
     {
-        $transition = new Transition('promote', [ 'state1' ], 'state2');
+        $transition = new Transition('state1', 'state2');
 
         $incoming_state_names = $transition->getIncomingStateNames();
-        $this->assertEquals('promote', $transition->getName());
         $this->assertContains('state1', $incoming_state_names);
         $this->assertEquals('state2', $transition->getOutgoingStateName());
     }

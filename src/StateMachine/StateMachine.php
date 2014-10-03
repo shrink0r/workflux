@@ -27,31 +27,50 @@ class StateMachine implements IStateMachine
         return $this->name;
     }
 
-    public function execute(IStatefulSubject $subject, $transition_name)
+    public function execute(IStatefulSubject $subject, $event_name)
     {
         $current_state = $this->getCurrentStateFor($subject);
-        $transition = $this->getTransitionOrFail($current_state->getName(), $transition_name);
+        $state_transitions = $this->getTransitions($current_state->getName(), $event_name);
 
-        if ($transition->hasGuard()) {
-            $transition_guard = $transition->getGuard();
-            if (!$transition_guard->accept($subject)) {
-                throw new Error(
-                    sprintf(
-                        'Applying transition "%s" to state "%s" was rejected by %s.',
-                        $transition_name,
-                        $current_state->getName(),
-                        get_class($transition_guard)
-                    )
-                );
+        $accepted_transition = null;
+        foreach ($state_transitions as $state_transition) {
+            if (!$state_transition->hasGuard() || $state_transition->getGuard()->accept($subject)) {
+                if (!$accepted_transition) {
+                    $accepted_transition = $state_transition;
+                } else {
+                    throw new Error(
+                        sprintf(
+                            'Only one transition is allowed to be active at a time.',
+                            $event_name,
+                            $current_state->getName()
+                        )
+                    );
+                }
             }
         }
 
-        return $this->getStateOrFail($transition->getOutgoingStateName());
+        if (!$accepted_transition) {
+            throw new Error(
+                sprintf(
+                    'Transition for event "%s" at state "%s" was rejected.',
+                    $event_name,
+                    $current_state->getName()
+                )
+            );
+        }
+
+        $current_state->onExit();
+        $next_state = $this->getStateOrFail($accepted_transition->getOutgoingStateName());
+        $next_state->onEntry();
+
+        return $next_state;
     }
 
     public function getCurrentStateFor(IStatefulSubject $subject)
     {
-        return $this->getStateOrFail($subject->getCurrentStateName());
+        $execution_state = $subject->getExecutionState();
+
+        return $this->getStateOrFail($execution_state->getCurrentStateName());
     }
 
     public function getStates()
@@ -70,30 +89,29 @@ class StateMachine implements IStateMachine
         return $state;
     }
 
-    public function getTransitions($state_name = null)
+    public function getTransitions($state_name = null, $event_name = null)
     {
+        $transitions = $this->transitions;
+
         if ($state_name) {
-            $transitions = isset($this->transitions[$state_name]) ? $this->transitions[$state_name] : [];
-        } else {
-            $transitions = $this->transitions;
+            if (!isset($this->transitions[$state_name])) {
+                throw new Error(
+                    sprintf('No transitions available at state "%s".', $state_name)
+                );
+            }
+            $transitions = $this->transitions[$state_name];
+        }
+
+        if ($event_name) {
+            if (!isset($transitions[$event_name])) {
+                throw new Error(
+                    sprintf('No transitions available for event "%s" at state "%s".', $event_name, $state_name)
+                );
+            }
+            $transitions = $transitions[$event_name];
         }
 
         return $transitions;
-    }
-
-    public function getTransition($state_name, $transition_name)
-    {
-        $transition = null;
-
-        $state = $this->getState($state_name);
-        if ($state && isset($this->transitions[$state_name])) {
-            $state_transitions = $this->transitions[$state_name];
-            if (isset($state_transitions[$transition_name])) {
-                $transition = $state_transitions[$transition_name];
-            }
-        }
-
-        return $transition;
     }
 
     protected function getStateOrFail($state_name)
@@ -110,22 +128,5 @@ class StateMachine implements IStateMachine
         }
 
         return $state;
-    }
-
-    protected function getTransitionOrFail($state_name, $transition_name)
-    {
-        $transition = $this->getTransition($state_name, $transition_name);
-
-        if (!$transition) {
-            throw new Error(
-                sprintf(
-                    'Transition "%s" is not available at state "%s".',
-                    $transition_name,
-                    $state_name
-                )
-            );
-        }
-
-        return $transition;
     }
 }

@@ -70,34 +70,39 @@ class StateMachineBuilder implements IStateMachineBuilder
         return $this;
     }
 
-    public function addTransition(ITransition $transition)
+    public function addTransition($event_name, ITransition $transition)
     {
-        $transition_name = $transition->getName();
-
-        foreach ($transition->getIncomingStateNames() as $incoming_state_name) {
-            if (!isset($this->transitions[$incoming_state_name])) {
-                $this->transitions[$incoming_state_name] = [ $transition->getName() => $transition ];
-            } elseif (isset($this->transitions[$incoming_state_name][$transition->getName()])) {
-                throw new Error(
-                    sprintf(
-                        'A transition with the name "%s" already has been added for state "%s".' .
-                        ' Transition names must be unique within the context of a given state.',
-                        $transition->getName(),
-                        $incoming_state_name
-                    )
-                );
-            } else {
-                $this->transitions[$incoming_state_name][$transition->getName()] = $transition;
+        foreach ($transition->getIncomingStateNames() as $state_name) {
+            if (!isset($this->transitions[$state_name])) {
+                $this->transitions[$state_name] = [];
             }
+
+            if (!isset($this->transitions[$state_name][$event_name])) {
+                $this->transitions[$state_name][$event_name] = [];
+            }
+
+            if (in_array($transition, $this->transitions[$state_name][$event_name], true)) {
+                throw new Error('Adding the same transition instance twice is not supported.');
+            }
+
+            $this->transitions[$state_name][$event_name][] = $transition;
         }
 
         return $this;
     }
 
-    public function addTransitions(array $transitions)
+    public function addTransitions(array $events)
     {
-        foreach ($transitions as $transition) {
-            $this->addTransition($transition);
+        foreach ($events as $event_name => $transition_or_transitions) {
+            if (!is_array($transition_or_transitions)) {
+                $transitions = [ $transition_or_transitions ];
+            } else {
+                $transitions = $transition_or_transitions;
+            }
+
+            foreach ($transitions as $transition) {
+                $this->addTransition($event_name, $transition);
+            }
         }
 
         return $this;
@@ -169,16 +174,18 @@ class StateMachineBuilder implements IStateMachineBuilder
                 );
             }
 
-            foreach ($state_transitions as $transition_name => $transition) {
-                $outgoing_state_name = $transition->getOutgoingStateName();
-                if (!isset($this->states[$outgoing_state_name])) {
-                    throw new Error(
-                        sprintf(
-                            'Unable to find outgoing state "%s" for transition "%s". Maybe a typo?',
-                            $outgoing_state_name,
-                            $transition_name
-                        )
-                    );
+            foreach ($state_transitions as $event_name => $transitions) {
+                foreach ($transitions as $transition) {
+                    $outgoing_state_name = $transition->getOutgoingStateName();
+                    if (!isset($this->states[$outgoing_state_name])) {
+                        throw new Error(
+                            sprintf(
+                                'Unable to find outgoing state "%s" for transition on event "%s". Maybe a typo?',
+                                $outgoing_state_name,
+                                $event_name
+                            )
+                        );
+                    }
                 }
             }
         }

@@ -58,7 +58,7 @@ class StatesVerification implements IVerification
                 } else {
                     $this->initial_state = $state;
                 }
-            break;
+                break;
 
             case IState::TYPE_FINAL:
                 if ($transition_count > 0) {
@@ -67,7 +67,7 @@ class StatesVerification implements IVerification
                     );
                 }
                 $this->final_states[] = $state;
-            break;
+                break;
 
             default:
                 if ($transition_count === 0) {

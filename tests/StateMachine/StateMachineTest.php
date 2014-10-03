@@ -23,16 +23,19 @@ class StateMachineTest extends BaseTestCase
         ];
         $transitions = [
             'state1' => [
-                'promote' => [ new Transition('state1' , 'state2') ]
+                'promote' => [ new Transition('state1', 'state2') ]
             ]
         ];
 
         $state_machine = new StateMachine('test_machine', $states, $transitions);
 
         $this->assertEquals('test_machine', $state_machine->getName());
-        $this->assertContains($transitions['state1']['promote'][0], $state_machine->getTransitions('state1', 'promote'));
         $this->assertEquals($states['state1'], $state_machine->getState('state1'));
         $this->assertEquals($states['state2'], $state_machine->getState('state2'));
+        $this->assertContains(
+            $transitions['state1']['promote'][0],
+            $state_machine->getTransitions('state1', 'promote')
+        );
     }
 
     public function testExecute()

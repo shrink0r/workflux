@@ -23,7 +23,8 @@
     },
     "require": {
         "php": ">=5.5.0",
-        "graste/params": "~2.0"
+        "graste/params": "~2.0",
+        "symfony/expression-language": "2.5.5"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.2.6",

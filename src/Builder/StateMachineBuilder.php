@@ -7,10 +7,12 @@ use Workflux\StateMachine\IStateMachine;
 use Workflux\StateMachine\StateMachine;
 use Workflux\Transition\ITransition;
 use Workflux\Error\VerificationError;
+use Params\Immutable\ImmutableOptionsTrait;
+use Params\Immutable\ImmutableOptions;
 
 class StateMachineBuilder implements IStateMachineBuilder
 {
-    protected $options;
+    use ImmutableOptionsTrait;
 
     protected $state_machine_name;
 
@@ -20,7 +22,8 @@ class StateMachineBuilder implements IStateMachineBuilder
 
     public function __construct(array $options = [])
     {
-        $this->options = $options;
+        $this->options = new ImmutableOptions($options);
+
         $this->states = [];
         $this->transitions = [];
     }
@@ -114,9 +117,7 @@ class StateMachineBuilder implements IStateMachineBuilder
     {
         $this->verifyStateGraph();
 
-        $state_machine_class = isset($this->options['state_machine_class'])
-            ? $this->options['state_machine_class']
-            : StateMachine::CLASS;
+        $state_machine_class = $this->getOption('state_machine_class', StateMachine::CLASS);
 
         if (!class_exists($state_machine_class)) {
             throw new VerificationError(
@@ -136,7 +137,7 @@ class StateMachineBuilder implements IStateMachineBuilder
             );
         }
 
-        $this->clearInternalState();
+        $this->clearIntrinsicState();
 
         return $state_machine;
     }
@@ -149,20 +150,23 @@ class StateMachineBuilder implements IStateMachineBuilder
             );
         }
 
-        $verifications = [
-            new StatesVerification($this->states, $this->transitions),
-            new TransitionsVerification($this->states, $this->transitions)
-        ];
-
-        foreach ($verifications as $verification) {
+        foreach ($this->getVerifications() as $verification) {
             $verification->verify();
         }
     }
 
-    protected function clearInternalState()
+    protected function clearIntrinsicState()
     {
         $this->state_machine_name = null;
         $this->states = [];
         $this->transitions = [];
+    }
+
+    protected function getVerifications()
+    {
+        return [
+            new StatesVerification($this->states, $this->transitions),
+            new TransitionsVerification($this->states, $this->transitions)
+        ];
     }
 }

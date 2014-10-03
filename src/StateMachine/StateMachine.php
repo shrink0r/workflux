@@ -2,7 +2,7 @@
 
 namespace Workflux\StateMachine;
 
-use Workflux\Error;
+use Workflux\Error\Error;
 use Workflux\IStatefulSubject;
 use Workflux\State\IState;
 use Workflux\Transition\ITransition;

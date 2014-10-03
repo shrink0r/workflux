@@ -1,17 +1,17 @@
 <?php
 
-namespace Workflux\Tests\StateMachine;
+namespace Workflux\Tests\Builder;
 
-use Workflux\Error;
-use Workflux\Tests\BaseTestCase;
+use Workflux\Error\VerificationError;
 use Workflux\StateMachine\IStateMachine;
 use Workflux\StateMachine\StateMachine;
-use Workflux\StateMachine\StateMachineBuilder;
+use Workflux\Builder\StateMachineBuilder;
 use Workflux\State\IState;
 use Workflux\State\State;
 use Workflux\Transition\Transition;
-use Workflux\Tests\Fixture\GenericSubject;
 use Workflux\Renderer\DotGraphRenderer;
+use Workflux\Tests\BaseTestCase;
+use Workflux\Tests\Fixture\GenericSubject;
 use Workflux\Tests\StateMachine\Fixture\InvalidStateMachine;
 
 class StateMachineBuilderTest extends BaseTestCase
@@ -48,7 +48,7 @@ class StateMachineBuilderTest extends BaseTestCase
     public function testIncompleteSecondBuild()
     {
         $this->setExpectedException(
-            Error::CLASS,
+            VerificationError::CLASS,
             'Required state machine name is missing. Make sure to call setStateMachineName.'
         );
 
@@ -72,7 +72,7 @@ class StateMachineBuilderTest extends BaseTestCase
     public function testDuplicateState()
     {
         $this->setExpectedException(
-            Error::CLASS,
+            VerificationError::CLASS,
             'A state with the name "editing" already has been added.' .
             ' State names must be unique within each StateMachine.'
         );
@@ -90,7 +90,7 @@ class StateMachineBuilderTest extends BaseTestCase
     public function testDuplicateTransition()
     {
         $this->setExpectedException(
-            Error::CLASS,
+            VerificationError::CLASS,
             'Adding the same transition instance twice is not supported.'
         );
 
@@ -103,7 +103,7 @@ class StateMachineBuilderTest extends BaseTestCase
     public function testInvalidOutgoingState()
     {
         $this->setExpectedException(
-            Error::CLASS,
+            VerificationError::CLASS,
             'Unable to find outgoing state "non_existant" for transition on event "promote". Maybe a typo?'
         );
 
@@ -125,7 +125,7 @@ class StateMachineBuilderTest extends BaseTestCase
     public function testInvalidIncomingState()
     {
         $this->setExpectedException(
-            Error::CLASS,
+            VerificationError::CLASS,
             'Unable to find incoming state "non_existant" for given transitions. Maybe a typo?'
         );
 
@@ -147,7 +147,7 @@ class StateMachineBuilderTest extends BaseTestCase
     public function testMissingInitialState()
     {
         $this->setExpectedException(
-            Error::CLASS,
+            VerificationError::CLASS,
             'No state of type "initial" found, but exactly one initial state is required.'
         );
 
@@ -169,7 +169,7 @@ class StateMachineBuilderTest extends BaseTestCase
     public function testMissingFinalState()
     {
         $this->setExpectedException(
-            Error::CLASS,
+            VerificationError::CLASS,
             'No state of type "final" found, but at least one final state is required.'
         );
 
@@ -191,7 +191,7 @@ class StateMachineBuilderTest extends BaseTestCase
     public function testTooManyInitialStates()
     {
         $this->setExpectedException(
-            Error::CLASS,
+            VerificationError::CLASS,
             'Only one initial state is supported per state machine definition.' .
             'State "editing" has been previously registered as initial state, so state " cant be added.'
         );
@@ -214,7 +214,7 @@ class StateMachineBuilderTest extends BaseTestCase
     public function testMissingStateMachineName()
     {
         $this->setExpectedException(
-            Error::CLASS,
+            VerificationError::CLASS,
             'Required state machine name is missing. Make sure to call setStateMachineName.'
         );
 
@@ -232,43 +232,10 @@ class StateMachineBuilderTest extends BaseTestCase
             ->build();
     }
 
-    public function testInvalidStateMachineName()
-    {
-        $this->setExpectedException(
-            Error::CLASS,
-            'Invalid statemachine name "Erpen Derp!" given. Only letters, digits and unserscore are permitted.'
-        );
-
-        $builder = new StateMachineBuilder();
-        $builder->setStateMachineName('Erpen Derp!');
-    }
-
-    public function testMissingStateMachineClass()
-    {
-        $this->setExpectedException(
-            Error::CLASS,
-            'Unable to load state machine class "HeisenStateMachine".'
-        );
-
-        $states = [
-            new State('editing', IState::TYPE_INITIAL),
-            new State('published', IState::TYPE_FINAL)
-        ];
-
-        $transiton = new Transition('editing', 'published');
-
-        $builder = new StateMachineBuilder([ 'state_machine_class' => 'HeisenStateMachine' ]);
-        $state_machine = $builder
-            ->setStateMachineName(self::MACHINE_NAME)
-            ->addStates($states)
-            ->addTransition('promote', $transiton)
-            ->build();
-    }
-
     public function testMissingStateTransitions()
     {
         $this->setExpectedException(
-            Error::CLASS,
+            VerificationError::CLASS,
             'State "transcoding" is expected to have at least one transition.' .
             ' Only "final" states are permitted to have no transitions.'
         );
@@ -292,7 +259,7 @@ class StateMachineBuilderTest extends BaseTestCase
     public function testInvalidStateMachineClass()
     {
         $this->setExpectedException(
-            Error::CLASS,
+            VerificationError::CLASS,
             'The given state machine class "Workflux\Tests\StateMachine\Fixture\InvalidStateMachine"' .
             ' does not implement the required interface "Workflux\StateMachine\IStateMachine"'
         );
@@ -305,6 +272,39 @@ class StateMachineBuilderTest extends BaseTestCase
         $transiton = new Transition('editing', 'published');
 
         $builder = new StateMachineBuilder([ 'state_machine_class' => InvalidStateMachine::CLASS ]);
+        $state_machine = $builder
+            ->setStateMachineName(self::MACHINE_NAME)
+            ->addStates($states)
+            ->addTransition('promote', $transiton)
+            ->build();
+    }
+
+    public function testInvalidStateMachineName()
+    {
+        $this->setExpectedException(
+            VerificationError::CLASS,
+            'Invalid statemachine name "Erpen Derp!" given. Only letters, digits and unserscore are permitted.'
+        );
+
+        $builder = new StateMachineBuilder();
+        $builder->setStateMachineName('Erpen Derp!');
+    }
+
+    public function testMissingStateMachineClass()
+    {
+        $this->setExpectedException(
+            VerificationError::CLASS,
+            'Unable to load state machine class "HeisenStateMachine".'
+        );
+
+        $states = [
+            new State('editing', IState::TYPE_INITIAL),
+            new State('published', IState::TYPE_FINAL)
+        ];
+
+        $transiton = new Transition('editing', 'published');
+
+        $builder = new StateMachineBuilder([ 'state_machine_class' => 'HeisenStateMachine' ]);
         $state_machine = $builder
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)

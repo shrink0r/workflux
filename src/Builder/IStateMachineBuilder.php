@@ -1,6 +1,6 @@
 <?php
 
-namespace Workflux\StateMachine;
+namespace Workflux\Builder;
 
 use Workflux\State\IState;
 use Workflux\Transition\ITransition;

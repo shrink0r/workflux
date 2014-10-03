@@ -5,7 +5,7 @@ namespace Workflux\Tests\Renderer;
 use Workflux\Tests\BaseTestCase;
 use Workflux\StateMachine\IStateMachine;
 use Workflux\StateMachine\StateMachine;
-use Workflux\StateMachine\StateMachineBuilder;
+use Workflux\Builder\StateMachineBuilder;
 use Workflux\State\IState;
 use Workflux\State\State;
 use Workflux\Transition\Transition;

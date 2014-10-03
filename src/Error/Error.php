@@ -1,6 +1,6 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\Error;
 
 use Exception;
 

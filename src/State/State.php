@@ -2,7 +2,7 @@
 
 namespace Workflux\State;
 
-use Workflux\Error;
+use Workflux\Error\Error;
 
 class State implements IState
 {

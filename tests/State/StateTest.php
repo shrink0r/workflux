@@ -2,7 +2,7 @@
 
 namespace Workflux\Tests\State;
 
-use Workflux\Error;
+use Workflux\Error\Error;
 use Workflux\Tests\BaseTestCase;
 use Workflux\State\IState;
 use Workflux\State\State;

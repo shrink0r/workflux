@@ -5,6 +5,7 @@ namespace Workflux\Tests\Builder;
 use Workflux\Tests\BaseTestCase;
 use Workflux\Builder\XmlStateMachineBuilder;
 use Workflux\Tests\Fixture\GenericSubject;
+use Workflux\Renderer\DotGraphRenderer;
 
 class XmlStateMachineBuilderTest extends BaseTestCase
 {

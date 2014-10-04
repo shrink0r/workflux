@@ -25,4 +25,9 @@ class ExpressionGuard extends ConfigurableGuard
             [ 'subject' => $subject, 'params' => $execution_context->getParameters() ]
         );
     }
+
+    public function __toString()
+    {
+        return "\nif " . $this->getOption('expression');
+    }
 }

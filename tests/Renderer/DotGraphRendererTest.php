@@ -40,18 +40,20 @@ class DotGraphRendererTest extends BaseTestCase
 
         $expected_code = <<<DOT
 digraph test_machine {
-node1 [label="editing"]
-node2 [label="approval"]
-node3 [label="published"]
-node4 [label="deleted"]
+node1 [label="editing" fontcolor="#000000" color="#607d8b"]
+node2 [label="approval" fontcolor="#000000" color="#607d8b"]
+node3 [label="published" fontcolor="#000000" color="#607d8b"]
+node4 [label="deleted" fontcolor="#000000" color="#607d8b" style="bold"]
+0 [label="X" fontsize="13" margin="0" fontname="arial" width="0.15" color="#607d8b" shape="circle"]
 
-node1 -> node2 [label="promote"]
-node1 -> node4 [label="delete"]
-node2 -> node3 [label="promote"]
-node2 -> node1 [label="demote"]
-node2 -> node4 [label="delete"]
-node3 -> node1 [label="demote"]
-node3 -> node4 [label="delete"]
+node1 -> node2 [label="promote" fontcolor="#7f8c8d" color="#2ecc71"]
+node1 -> node4 [label="delete" fontcolor="#7f8c8d" color="#607d8b"]
+node2 -> node3 [label="promote" fontcolor="#7f8c8d" color="#2ecc71"]
+node2 -> node1 [label="demote" fontcolor="#7f8c8d" color="#3498db"]
+node2 -> node4 [label="delete" fontcolor="#7f8c8d" color="#607d8b"]
+node3 -> node1 [label="demote" fontcolor="#7f8c8d" color="#3498db"]
+node3 -> node4 [label="delete" fontcolor="#7f8c8d" color="#607d8b"]
+0 -> node1 [color="#607d8b"]
 }
 DOT;
 

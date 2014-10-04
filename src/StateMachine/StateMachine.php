@@ -15,16 +15,40 @@ class StateMachine implements IStateMachine
 
     protected $transitions;
 
+    protected $initial_state;
+
+    protected $final_states;
+
     public function __construct($name, array $states, array $transitions)
     {
         $this->name = $name;
         $this->states = $states;
         $this->transitions = $transitions;
+        $this->initial_state = null;
+        $this->final_states = [];
+
+        foreach ($this->states as $state) {
+            if ($state->isInitial()) {
+                $this->initial_state = $state;
+            } elseif ($state->isFinal()) {
+                $this->final_states[] = $state;
+            }
+        }
     }
 
     public function getName()
     {
         return $this->name;
+    }
+
+    public function getInitialState()
+    {
+        return $this->initial_state;
+    }
+
+    public function getFinalStates()
+    {
+        return $this->final_states;
     }
 
     public function execute(IStatefulSubject $subject, $event_name)

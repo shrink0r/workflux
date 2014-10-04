@@ -17,4 +17,9 @@ class CallbackGuard implements IGuard
     {
         return call_user_func($this->callback, $subject);
     }
+
+    public function __toString()
+    {
+        return "\nif callback is true";
+    }
 }

@@ -106,7 +106,7 @@ class StateMachineBuilder implements IStateMachineBuilder
             }
 
             foreach ($transitions as $transition) {
-                $this->addTransition((string)$event_name, $transition);
+                $this->addTransition($event_name, $transition);
             }
         }
 

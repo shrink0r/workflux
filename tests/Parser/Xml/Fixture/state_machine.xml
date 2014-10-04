@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<state_machines>
+    <state_machine name="video_transcoding">
+
+        <initial name="new">
+            <event name="promote">
+                <transition target="transcoding">
+                    <guard class="Workflux\Guard\ExpressionGuard">
+                        <option name="expression">params.transcoding_required</option>
+                    </guard>
+                </transition>
+                <transition target="ready">
+                    <guard class="Workflux\Guard\ExpressionGuard">
+                        <option name="expression">not params.transcoding_required</option>
+                    </guard>
+                </transition>
+            </event>
+        </initial>
+
+        <state name="transcoding">
+            <event name="promote">
+                <transition target="ready" />
+            </event>
+            <event name="demote">
+                <transition target="error">
+                    <guard class="Workflux\Guard\ExpressionGuard">
+                        <option name="expression">not params.retry_limit_reached</option>
+                    </guard>
+                </transition>
+                <transition target="rejected">
+                    <guard class="Workflux\Guard\ExpressionGuard">
+                        <option name="expression">params.retry_limit_reached</option>
+                    </guard>
+                </transition>
+            </event>
+        </state>
+
+        <state name="error">
+            <event name="promote">
+                <transition target="transcoding" />
+            </event>
+            <event name="demote">
+                <transition target="rejected" />
+            </event>
+        </state>
+
+        <final name="rejected" />
+        <final name="ready" />
+
+    </state_machine>
+</state_machines>

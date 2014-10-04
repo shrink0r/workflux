@@ -35,6 +35,7 @@ class StateMachineDefinitionParser implements IParser
     {
         $state_machine_name = $state_machine_node->getAttribute('name');
 
+        $state_nodes_data = [];
         $state_node_expressions = [ 'initial', 'state', 'final' ];
         foreach ($state_node_expressions as $state_node_expression) {
             foreach ($this->xpath->query($state_node_expression, $state_machine_node) as $state_node) {

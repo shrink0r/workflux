@@ -4,6 +4,7 @@ namespace Workflux\Builder;
 
 use Workflux\Transition\Transition;
 use Workflux\State\State;
+use Workflux\Guard\IGuard;
 use Workflux\Parser\Xml\StateMachineDefinitionParser;
 
 class XmlStateMachineBuilder extends StateMachineBuilder
@@ -28,6 +29,10 @@ class XmlStateMachineBuilder extends StateMachineBuilder
                     $guard = null;
                     if ($guard_definition) {
                         $guard = new $guard_definition['class']($guard_definition['options']);
+
+                        if (!$guard instanceof IGuard) {
+                            throw new Error("Configured guard classes must implement " . IGuard::CLASS);
+                        }
                     }
 
                     $transition = new Transition($state_name, $target, $guard);

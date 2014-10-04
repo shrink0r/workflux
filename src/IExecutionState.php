@@ -2,6 +2,8 @@
 
 namespace Workflux;
 
+use Workflux\State\IState;
+
 interface IExecutionState
 {
     public function getStateMachineName();
@@ -15,4 +17,8 @@ interface IExecutionState
     public function clearParameters();
 
     public function setParameters($parameters);
+
+    public function onStateEntry(IState $state);
+
+    public function onStateExit(IState $state);
 }

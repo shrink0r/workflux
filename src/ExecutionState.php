@@ -3,6 +3,7 @@
 namespace Workflux;
 
 use Params\ParametersTrait;
+use Workflux\State\IState;
 
 class ExecutionState implements IExecutionState
 {
@@ -29,5 +30,15 @@ class ExecutionState implements IExecutionState
     public function getCurrentStateName()
     {
         return $this->current_state_name;
+    }
+
+    public function onStateEntry(IState $state)
+    {
+        $this->current_state_name = $state->getName();
+    }
+
+    public function onStateExit(IState $state)
+    {
+        // echo PHP_EOL . $this->getName() . ' -> exiting' . PHP_EOL;
     }
 }

@@ -5,15 +5,14 @@ namespace Workflux\Guard;
 use Workflux\IStatefulSubject;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
-class ExpressionGuard implements IGuard
+class ExpressionGuard extends ConfigurableGuard
 {
-    protected $expression;
-
     protected $expression_language;
 
-    public function __construct($expression)
+    public function __construct(array $options = [])
     {
-        $this->expression = $expression;
+        parent::__construct($options);
+
         $this->expression_language = new ExpressionLanguage();
     }
 
@@ -22,7 +21,7 @@ class ExpressionGuard implements IGuard
         $execution_state = $subject->getExecutionState();
 
         return $this->expression_language->evaluate(
-            $this->expression,
+            $this->getOption('expression'),
             [ 'subject' => $subject, 'params' => $execution_state->getParameters() ]
         );
     }

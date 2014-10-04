@@ -30,6 +30,7 @@ class StateMachine implements IStateMachine
     public function execute(IStatefulSubject $subject, $event_name)
     {
         $current_state = $this->getCurrentStateFor($subject);
+        $execution_state = $subject->getExecutionState();
         $state_transitions = $this->getTransitions($current_state->getName(), $event_name);
 
         $accepted_transition = null;
@@ -59,9 +60,9 @@ class StateMachine implements IStateMachine
             );
         }
 
-        $current_state->onExit();
+        $execution_state->onStateExit($current_state);
         $next_state = $this->getStateOrFail($accepted_transition->getOutgoingStateName());
-        $next_state->onEntry();
+        $execution_state->onStateEntry($next_state);
 
         return $next_state;
     }

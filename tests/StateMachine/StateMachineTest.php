@@ -71,8 +71,16 @@ class StateMachineTest extends BaseTestCase
         $transitions = [
             'new' => [
                 'promote' => [
-                    new Transition('new', 'transcoding', new ExpressionGuard('params.transcoding_required')),
-                    new Transition('new', 'ready', new ExpressionGuard('not params.transcoding_required'))
+                    new Transition(
+                        'new',
+                        'transcoding',
+                        new ExpressionGuard([ 'expression' => 'params.transcoding_required' ])
+                    ),
+                    new Transition(
+                        'new',
+                        'ready',
+                        new ExpressionGuard([ 'expression' => 'not params.transcoding_required' ])
+                    )
                 ]
             ]
         ];
@@ -98,8 +106,16 @@ class StateMachineTest extends BaseTestCase
         $transitions = [
             'new' => [
                 'promote' => [
-                    new Transition('new', 'transcoding', new ExpressionGuard('params.transcoding_required')),
-                    new Transition('new', 'ready', new ExpressionGuard('not params.transcoding_required'))
+                    new Transition(
+                        'new',
+                        'transcoding',
+                        new ExpressionGuard([ 'expression' => 'params.transcoding_required' ])
+                    ),
+                    new Transition(
+                        'new',
+                        'ready',
+                        new ExpressionGuard([ 'expression' => 'not params.transcoding_required' ])
+                    )
                 ]
             ]
         ];

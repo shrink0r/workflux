@@ -18,11 +18,11 @@ class ExpressionGuard extends ConfigurableGuard
 
     public function accept(IStatefulSubject $subject)
     {
-        $execution_state = $subject->getExecutionState();
+        $execution_context = $subject->getExecutionContext();
 
         return $this->expression_language->evaluate(
             $this->getOption('expression'),
-            [ 'subject' => $subject, 'params' => $execution_state->getParameters() ]
+            [ 'subject' => $subject, 'params' => $execution_context->getParameters() ]
         );
     }
 }

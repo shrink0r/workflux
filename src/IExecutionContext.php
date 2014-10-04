@@ -4,7 +4,7 @@ namespace Workflux;
 
 use Workflux\State\IState;
 
-interface IExecutionState
+interface IExecutionContext
 {
     public function getStateMachineName();
 

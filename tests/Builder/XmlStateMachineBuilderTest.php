@@ -28,7 +28,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
         $state_machine = $builder->build();
 
         $subject = new GenericSubject('video_transcoding', 'new');
-        $subject->getExecutionState()->setParameter('transcoding_required', true);
+        $subject->getExecutionContext()->setParameter('transcoding_required', true);
 
         $next_state = $state_machine->execute($subject, 'promote');
         $this->assertEquals('transcoding', $next_state->getName());
@@ -46,7 +46,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
         $state_machine = $builder->build();
 
         $subject = new GenericSubject('video_transcoding', 'new');
-        $subject->getExecutionState()->setParameter('transcoding_required', true);
+        $subject->getExecutionContext()->setParameter('transcoding_required', true);
 
         $next_state = $state_machine->execute($subject, 'promote');
         $this->assertEquals('transcoding', $next_state->getName());
@@ -57,7 +57,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
         $next_state = $state_machine->execute($subject, 'promote');
         $this->assertEquals('transcoding', $next_state->getName());
 
-        $subject->getExecutionState()->setParameter('retry_limit_reached', true);
+        $subject->getExecutionContext()->setParameter('retry_limit_reached', true);
         $next_state = $state_machine->execute($subject, 'demote');
         $this->assertEquals('rejected', $next_state->getName());
     }

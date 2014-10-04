@@ -5,7 +5,7 @@ namespace Workflux;
 use Params\ParametersTrait;
 use Workflux\State\IState;
 
-class ExecutionState implements IExecutionState
+class ExecutionContext implements IExecutionContext
 {
     use ParametersTrait;
 

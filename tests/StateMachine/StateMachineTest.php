@@ -87,7 +87,7 @@ class StateMachineTest extends BaseTestCase
 
         $state_machine = new StateMachine('test_machine', $states, $transitions);
 
-        $subject->getExecutionState()->setParameter('transcoding_required', false);
+        $subject->getExecutionContext()->setParameter('transcoding_required', false);
         $target_state = $state_machine->execute($subject, 'promote');
 
         $this->assertEquals('ready', $target_state->getName());
@@ -122,7 +122,7 @@ class StateMachineTest extends BaseTestCase
 
         $state_machine = new StateMachine('test_machine', $states, $transitions);
 
-        $subject->getExecutionState()->setParameter('transcoding_required', true);
+        $subject->getExecutionContext()->setParameter('transcoding_required', true);
         $target_state = $state_machine->execute($subject, 'promote');
 
         $this->assertEquals('transcoding', $target_state->getName());

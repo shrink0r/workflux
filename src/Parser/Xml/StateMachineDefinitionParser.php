@@ -51,7 +51,7 @@ class StateMachineDefinitionParser implements IParser
     {
         $state_name = $state_node->getAttribute('name');
         $events = [];
-        foreach($this->xpath->query('event', $state_node) as $event_node) {
+        foreach ($this->xpath->query('event', $state_node) as $event_node) {
             $event_data = $this->parseEventNode($event_node);
             $event_name = $event_data['name'];
             $events[$event_name] = $event_data;
@@ -75,7 +75,7 @@ class StateMachineDefinitionParser implements IParser
     {
         $event_name = $event_node->getAttribute('name');
         $transitions = [];
-        foreach($this->xpath->query('transition', $event_node) as $transition_node) {
+        foreach ($this->xpath->query('transition', $event_node) as $transition_node) {
             $transitions[] = $this->parseTransitionNode($transition_node);
         }
 

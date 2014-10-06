@@ -4,7 +4,6 @@
 
 # composer related stuff
 /vendor/
-/composer.lock
 /bin/composer.phar
 
 # general os and editors related stuff

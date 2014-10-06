@@ -3,6 +3,7 @@
 namespace Workflux\State;
 
 use Workflux\Error\Error;
+use Workflux\IStatefulSubject;
 
 class State implements IState
 {
@@ -41,6 +42,16 @@ class State implements IState
     public function isFinal()
     {
         return $this->type === self::TYPE_FINAL;
+    }
+
+    public function onEntry(IStatefulSubject $subject)
+    {
+        $subject->getExecutionContext()->onStateEntry($this);
+    }
+
+    public function onExit(IStatefulSubject $subject)
+    {
+        $subject->getExecutionContext()->onStateExit($this);
     }
 
     protected function assertType($state_type)

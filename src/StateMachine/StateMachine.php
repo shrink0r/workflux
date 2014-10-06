@@ -88,8 +88,6 @@ class StateMachine implements IStateMachine
     public function execute(IStatefulSubject $subject, $event_name)
     {
         $current_state = $this->getCurrentStateFor($subject);
-        $execution_context = $subject->getExecutionContext();
-
         if (!$this->isEventState($current_state)) {
             throw new Error(
                 sprintf(
@@ -112,9 +110,10 @@ class StateMachine implements IStateMachine
                 );
             }
 
-            $execution_context->onStateExit($current_state);
+            $current_state->onExit($subject);
             $current_state = $this->getStateOrFail($accepted_transition->getOutgoingStateName());
-            $execution_context->onStateEntry($current_state);
+            $current_state->onEntry($subject);
+
             // after the initial event has been processed, the only we to keep going are sequentially chained states
             $event_name = self::SEQ_TRANSITIONS_KEY;
             // so we keep executing until we reach the next event state or the end of the graph.

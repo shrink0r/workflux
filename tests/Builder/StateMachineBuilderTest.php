@@ -45,6 +45,38 @@ class StateMachineBuilderTest extends BaseTestCase
         $this->assertEquals($states[1], $state_machine->getState('approval'));
     }
 
+    public function testTooManyTransitions()
+    {
+        $this->setExpectedException(
+            VerificationError::CLASS,
+            'Found transitions for both sequential and event based execution,' .
+            ' but only one is supported at state "approval".'
+        );
+
+        $states = [
+            new State('editing', IState::TYPE_INITIAL),
+            new State('approval'),
+            new State('published', IState::TYPE_FINAL)
+        ];
+
+        $approve = new Transition('editing', 'approval');
+        $publish = new Transition('approval', 'published');
+        $demote = new Transition('approval', 'editing');
+
+        $builder = new StateMachineBuilder();
+        $state_machine = $builder
+            ->setStateMachineName(self::MACHINE_NAME)
+            ->addStates($states)
+            ->addTransitions([ 'promote' => [ $approve ], 'demote' => $demote ])
+            ->addTransition($publish)
+            ->build();
+
+        $this->assertEquals(self::MACHINE_NAME, $state_machine->getName());
+        $this->assertContains($approve, $state_machine->getTransitions('editing', 'promote'));
+        $this->assertEquals($states[0], $state_machine->getState('editing'));
+        $this->assertEquals($states[1], $state_machine->getState('approval'));
+    }
+
     public function testIncompleteSecondBuild()
     {
         $this->setExpectedException(
@@ -63,7 +95,7 @@ class StateMachineBuilderTest extends BaseTestCase
         $state_machine = $builder
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
-            ->addTransition('promote', $transiton)
+            ->addTransition($transiton, 'promote')
             ->build();
 
         $builder->build();
@@ -97,7 +129,7 @@ class StateMachineBuilderTest extends BaseTestCase
         $transiton = new Transition('editing', 'approval');
 
         $builder = new StateMachineBuilder();
-        $builder->addTransition('promote', $transiton)->addTransition('promote', $transiton);
+        $builder->addTransition($transiton, 'promote')->addTransition($transiton, 'promote');
     }
 
     public function testInvalidOutgoingState()
@@ -118,7 +150,7 @@ class StateMachineBuilderTest extends BaseTestCase
         $state_machine = $builder
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
-            ->addTransition('promote', $transiton)
+            ->addTransition($transiton, 'promote')
             ->build();
     }
 
@@ -140,7 +172,7 @@ class StateMachineBuilderTest extends BaseTestCase
         $state_machine = $builder
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
-            ->addTransition('promote', $transiton)
+            ->addTransition($transiton, 'promote')
             ->build();
     }
 
@@ -162,7 +194,7 @@ class StateMachineBuilderTest extends BaseTestCase
         $state_machine = $builder
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
-            ->addTransition('promote', $transiton)
+            ->addTransition($transiton, 'promote')
             ->build();
     }
 
@@ -184,7 +216,7 @@ class StateMachineBuilderTest extends BaseTestCase
         $state_machine = $builder
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
-            ->addTransition('promote', $transiton)
+            ->addTransition($transiton, 'promote')
             ->build();
     }
 
@@ -207,7 +239,7 @@ class StateMachineBuilderTest extends BaseTestCase
         $state_machine = $builder
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
-            ->addTransition('promote', $transiton)
+            ->addTransition($transiton, 'promote')
             ->build();
     }
 
@@ -228,7 +260,7 @@ class StateMachineBuilderTest extends BaseTestCase
         $builder = new StateMachineBuilder();
         $state_machine = $builder
             ->addStates($states)
-            ->addTransition('promote', $transiton)
+            ->addTransition($transiton, 'promote')
             ->build();
     }
 
@@ -252,7 +284,7 @@ class StateMachineBuilderTest extends BaseTestCase
         $state_machine = $builder
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
-            ->addTransition('promote', $transiton)
+            ->addTransition($transiton, 'promote')
             ->build();
     }
 
@@ -275,7 +307,7 @@ class StateMachineBuilderTest extends BaseTestCase
         $state_machine = $builder
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
-            ->addTransition('promote', $transiton)
+            ->addTransition($transiton, 'promote')
             ->build();
     }
 
@@ -308,7 +340,7 @@ class StateMachineBuilderTest extends BaseTestCase
         $state_machine = $builder
             ->setStateMachineName(self::MACHINE_NAME)
             ->addStates($states)
-            ->addTransition('promote', $transiton)
+            ->addTransition($transiton, 'promote')
             ->build();
     }
 }

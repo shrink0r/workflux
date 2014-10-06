@@ -29,41 +29,39 @@ return [
                             ]
                         ]
                     ]
-                ]
+                ],
+                '_sequential' => []
             ]
         ],
         'transcoding' => [
             'name' => 'transcoding',
             'type' => 'active',
             'events' => [
-                'promote' => [
-                    'name' => 'promote',
-                    'transitions' => [
-                        [
-                            'outgoing_state_name' => 'ready',
-                            'guard' => null
-                        ]
-                    ]
-                ],
-                'demote' => [
-                    'name' => 'demote',
-                    'transitions' => [
-                        [
-                            'outgoing_state_name' => 'error',
-                            'guard' => [
-                                'class' => 'Workflux\Guard\ExpressionGuard',
-                                'options' => [
-                                    'expression' => 'not params.retry_limit_reached'
-                                ]
+                '_sequential' => [
+                    [
+                        'outgoing_state_name' => 'ready',
+                        'guard' => [
+                            'class' => 'Workflux\Guard\ExpressionGuard',
+                            'options' => [
+                                'expression' => 'params.transcoding_success'
                             ]
-                        ],
-                        [
-                            'outgoing_state_name' => 'rejected',
-                            'guard' => [
-                                'class' => 'Workflux\Guard\ExpressionGuard',
-                                'options' => [
-                                    'expression' => 'params.retry_limit_reached'
-                                ]
+                        ]
+                    ],
+                    [
+                        'outgoing_state_name' => 'error',
+                        'guard' => [
+                            'class' => 'Workflux\Guard\ExpressionGuard',
+                            'options' => [
+                                'expression' => 'not params.retry_limit_reached and not params.transcoding_success'
+                            ]
+                        ]
+                    ],
+                    [
+                        'outgoing_state_name' => 'rejected',
+                        'guard' => [
+                            'class' => 'Workflux\Guard\ExpressionGuard',
+                            'options' => [
+                                'expression' => 'params.retry_limit_reached and not params.transcoding_success'
                             ]
                         ]
                     ]
@@ -91,18 +89,23 @@ return [
                             'guard' => null
                         ]
                     ]
-                ]
+                ],
+                '_sequential' => []
             ]
         ],
         'rejected' => [
             'name' => 'rejected',
             'type' => 'final',
-            'events' => []
+            'events' => [
+                '_sequential' => []
+            ]
         ],
         'ready' => [
             'name' => 'ready',
             'type' => 'final',
-            'events' => []
+            'events' => [
+                '_sequential' => []
+            ]
         ]
     ]
 ];

@@ -6,9 +6,12 @@ use Workflux\Error\Error;
 use Workflux\IStatefulSubject;
 use Workflux\State\IState;
 use Workflux\Transition\ITransition;
+use Workflux\Builder\IStateMachineBuilder;
 
 class StateMachine implements IStateMachine
 {
+    const SEQ_TRANSITIONS_KEY = '_sequential';
+
     protected $name;
 
     protected $states;
@@ -24,14 +27,25 @@ class StateMachine implements IStateMachine
         $this->name = $name;
         $this->states = $states;
         $this->transitions = $transitions;
+
         $this->initial_state = null;
         $this->final_states = [];
+        $this->event_states = [];
 
-        foreach ($this->states as $state) {
+        foreach ($this->states as $state_name => $state) {
             if ($state->isInitial()) {
                 $this->initial_state = $state;
             } elseif ($state->isFinal()) {
                 $this->final_states[] = $state;
+            }
+
+            if (!$state->isFinal()) {
+                $state_transitions = $this->getTransitions($state_name);
+                if (!isset($state_transitions[StateMachine::SEQ_TRANSITIONS_KEY])
+                    && !$state->isFinal()
+                ) {
+                    $this->event_states[] = $state;
+                }
             }
         }
     }
@@ -51,44 +65,62 @@ class StateMachine implements IStateMachine
         return $this->final_states;
     }
 
+    public function getEventStates()
+    {
+        return $this->event_states;
+    }
+
+    public function isEventState($state_or_state_name)
+    {
+        $state_name = $state_or_state_name;
+        if ($state_or_state_name instanceof IState) {
+            $state_name = $state_or_state_name->getName();
+        }
+
+        foreach ($this->event_states as $event_state) {
+            if ($event_state->getName() === $state_name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function execute(IStatefulSubject $subject, $event_name)
     {
         $current_state = $this->getCurrentStateFor($subject);
         $execution_context = $subject->getExecutionContext();
-        $state_transitions = $this->getTransitions($current_state->getName(), $event_name);
 
-        $accepted_transition = null;
-        foreach ($state_transitions as $state_transition) {
-            if (!$state_transition->hasGuard() || $state_transition->getGuard()->accept($subject)) {
-                if (!$accepted_transition) {
-                    $accepted_transition = $state_transition;
-                } else {
-                    throw new Error(
-                        sprintf(
-                            'Only one transition is allowed to be active at a time.',
-                            $event_name,
-                            $current_state->getName()
-                        )
-                    );
-                }
-            }
-        }
-
-        if (!$accepted_transition) {
+        if (!$this->isEventState($current_state)) {
             throw new Error(
                 sprintf(
-                    'Transition for event "%s" at state "%s" was rejected.',
-                    $event_name,
+                    "Current execution is pointing to an ivalid state %s." .
+                    " The state machine execution must be started and resume by entering an event state.",
                     $current_state->getName()
                 )
             );
         }
 
-        $execution_context->onStateExit($current_state);
-        $next_state = $this->getStateOrFail($accepted_transition->getOutgoingStateName());
-        $execution_context->onStateEntry($next_state);
+        do {
+            $accepted_transition = $this->getAcceptedTransition($subject, $current_state, $event_name);
+            if (!$accepted_transition) {
+                throw new Error(
+                    sprintf(
+                        'Transition for event "%s" at state "%s" was rejected.',
+                        $event_name,
+                        $current_state->getName()
+                    )
+                );
+            }
 
-        return $next_state;
+            $execution_context->onStateExit($current_state);
+            $current_state = $this->getStateOrFail($accepted_transition->getOutgoingStateName());
+            $execution_context->onStateEntry($current_state);
+            // after the initial event has been processed, the only we to keep going are sequentially chained states
+            $event_name = self::SEQ_TRANSITIONS_KEY;
+            // so we keep executing until we reach the next event state or the end of the graph.
+        } while (!$this->isEventState($current_state) && !$current_state->isFinal());
+
+        return $current_state;
     }
 
     public function getCurrentStateFor(IStatefulSubject $subject)
@@ -137,6 +169,30 @@ class StateMachine implements IStateMachine
         }
 
         return $transitions;
+    }
+
+    protected function getAcceptedTransition(IStatefulSubject $subject, IState $state, $event_name)
+    {
+        $accepted_transition = null;
+        $possible_transitions = $this->getTransitions($state->getName(), $event_name);
+
+        foreach ($possible_transitions as $state_transition) {
+            if (!$state_transition->hasGuard() || $state_transition->getGuard()->accept($subject)) {
+                if (!$accepted_transition) {
+                    $accepted_transition = $state_transition;
+                } else {
+                    throw new Error(
+                        sprintf(
+                            'Only one transition is allowed to be active at a time.',
+                            $event_name,
+                            $state->getName()
+                        )
+                    );
+                }
+            }
+        }
+
+        return $accepted_transition;
     }
 
     protected function getStateOrFail($state_name)

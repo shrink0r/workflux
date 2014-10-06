@@ -5,6 +5,7 @@ namespace Workflux\Parser\Xml;
 use Workflux\Parser\IParser;
 use Workflux\Error\Error;
 use Workflux\State\IState;
+use Workflux\StateMachine\StateMachine;
 use DOMDocument;
 use DOMXpath;
 use DOMElement;
@@ -57,6 +58,11 @@ class StateMachineDefinitionParser implements IParser
             $event_name = $event_data['name'];
             $events[$event_name] = $event_data;
         }
+        $seq_transitions = [];
+        foreach ($this->xpath->query('transition', $state_node) as $transition_node) {
+            $seq_transitions[] = $this->parseTransitionNode($transition_node);
+        }
+        $events[StateMachine::SEQ_TRANSITIONS_KEY] = $seq_transitions;
 
         switch ($state_node->nodeName) {
             case 'initial':

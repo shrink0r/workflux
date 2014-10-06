@@ -3,6 +3,7 @@
 namespace Workflux\Renderer;
 
 use Workflux\StateMachine\IStateMachine;
+use Workflux\StateMachine\StateMachine;
 use Workflux\Transition\ITransition;
 use Params\Immutable\ImmutableOptions;
 
@@ -69,6 +70,9 @@ class DotGraphRenderer extends AbstractRenderer
             if ($state->isFinal()) {
                 $attributes[] = 'style="bold"';
             }
+            if (!$state_machine->isEventState($state_name) && !$state->isFinal()) {
+                $attributes[] = 'shape="parallelogram"';
+            }
 
             $state_nodes[] = sprintf('%s [%s]', $this->node_id_map[$state_name], implode(' ', $attributes));
         }
@@ -108,7 +112,7 @@ class DotGraphRenderer extends AbstractRenderer
         $from_node = $this->node_id_map[$state_name];
         $to_node = $this->node_id_map[$transition->getOutgoingStateName()];
 
-        $transition_label = $event_name;
+        $transition_label = $event_name === StateMachine::SEQ_TRANSITIONS_KEY ? '' : $event_name;
         if ($transition->hasGuard()) {
             $transition_label .= $transition->getGuard();
         }

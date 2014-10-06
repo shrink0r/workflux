@@ -3,6 +3,7 @@
 namespace Workflux\Builder;
 
 use Workflux\Error\VerificationError;
+use Workflux\StateMachine\StateMachine;
 
 class TransitionsVerification implements IVerification
 {
@@ -22,6 +23,20 @@ class TransitionsVerification implements IVerification
             if (!isset($this->states[$state_name])) {
                 throw new VerificationError(
                     sprintf('Unable to find incoming state "%s" for given transitions. Maybe a typo?', $state_name)
+                );
+            }
+
+            $event_names = array_keys($state_transitions);
+            if (count($event_names) > 1
+                && in_array(StateMachine::SEQ_TRANSITIONS_KEY, $event_names)
+                && count($state_transitions[StateMachine::SEQ_TRANSITIONS_KEY]) > 0
+            ) {
+                throw new VerificationError(
+                    sprintf(
+                        'Found transitions for both sequential and event based execution' .
+                        ', but only one is supported at state "%s".',
+                        $state_name
+                    )
                 );
             }
 

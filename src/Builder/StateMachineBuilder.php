@@ -75,22 +75,24 @@ class StateMachineBuilder implements IStateMachineBuilder
         return $this;
     }
 
-    public function addTransition($event_name, ITransition $transition)
+    public function addTransition(ITransition $transition, $event_name = null)
     {
+        $transition_key = $event_name ?: StateMachine::SEQ_TRANSITIONS_KEY;
+
         foreach ($transition->getIncomingStateNames() as $state_name) {
             if (!isset($this->transitions[$state_name])) {
                 $this->transitions[$state_name] = [];
             }
 
-            if (!isset($this->transitions[$state_name][$event_name])) {
-                $this->transitions[$state_name][$event_name] = [];
+            if (!isset($this->transitions[$state_name][$transition_key])) {
+                $this->transitions[$state_name][$transition_key] = [];
             }
 
-            if (in_array($transition, $this->transitions[$state_name][$event_name], true)) {
+            if (in_array($transition, $this->transitions[$state_name][$transition_key], true)) {
                 throw new VerificationError('Adding the same transition instance twice is not supported.');
             }
 
-            $this->transitions[$state_name][$event_name][] = $transition;
+            $this->transitions[$state_name][$transition_key][] = $transition;
         }
 
         return $this;
@@ -106,7 +108,7 @@ class StateMachineBuilder implements IStateMachineBuilder
             }
 
             foreach ($transitions as $transition) {
-                $this->addTransition($event_name, $transition);
+                $this->addTransition($transition, $event_name);
             }
         }
 

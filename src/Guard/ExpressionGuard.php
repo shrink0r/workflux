@@ -28,6 +28,6 @@ class ExpressionGuard extends ConfigurableGuard
 
     public function __toString()
     {
-        return "\nif " . $this->getOption('expression');
+        return "\nif " . preg_replace('/(and|or)/', "\n$1", $this->getOption('expression'));
     }
 }

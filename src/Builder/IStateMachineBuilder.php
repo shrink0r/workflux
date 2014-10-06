@@ -13,7 +13,7 @@ interface IStateMachineBuilder
 
     public function addStates(array $states);
 
-    public function addTransition($event_name, ITransition $transition);
+    public function addTransition(ITransition $transition, $event_name);
 
     public function addTransitions(array $transitions);
 

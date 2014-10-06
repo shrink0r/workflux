@@ -93,7 +93,7 @@ class StateMachine implements IStateMachine
         if (!$this->isEventState($current_state)) {
             throw new Error(
                 sprintf(
-                    "Current execution is pointing to an ivalid state %s." .
+                    "Current execution is pointing to an invalid state %s." .
                     " The state machine execution must be started and resume by entering an event state.",
                     $current_state->getName()
                 )

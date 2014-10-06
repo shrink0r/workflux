@@ -26,32 +26,37 @@ class TransitionsVerification implements IVerification
                 );
             }
 
-            $event_names = array_keys($state_transitions);
-            if (count($event_names) > 1
-                && in_array(StateMachine::SEQ_TRANSITIONS_KEY, $event_names)
-                && count($state_transitions[StateMachine::SEQ_TRANSITIONS_KEY]) > 0
-            ) {
-                throw new VerificationError(
-                    sprintf(
-                        'Found transitions for both sequential and event based execution' .
-                        ', but only one is supported at state "%s".',
-                        $state_name
-                    )
-                );
-            }
+            $this->verifyStateTransitions($state_name, $state_transitions);
+        }
+    }
 
-            foreach ($state_transitions as $event_name => $transitions) {
-                foreach ($transitions as $transition) {
-                    $outgoing_state_name = $transition->getOutgoingStateName();
-                    if (!isset($this->states[$outgoing_state_name])) {
-                        throw new VerificationError(
-                            sprintf(
-                                'Unable to find outgoing state "%s" for transition on event "%s". Maybe a typo?',
-                                $outgoing_state_name,
-                                $event_name
-                            )
-                        );
-                    }
+    protected function verifyStateTransitions($state_name, array $state_transitions)
+    {
+        $event_names = array_keys($state_transitions);
+        if (count($event_names) > 1
+            && in_array(StateMachine::SEQ_TRANSITIONS_KEY, $event_names)
+            && count($state_transitions[StateMachine::SEQ_TRANSITIONS_KEY]) > 0
+        ) {
+            throw new VerificationError(
+                sprintf(
+                    'Found transitions for both sequential and event based execution' .
+                    ', but only one is supported at state "%s".',
+                    $state_name
+                )
+            );
+        }
+
+        foreach ($state_transitions as $event_name => $transitions) {
+            foreach ($transitions as $transition) {
+                $outgoing_state_name = $transition->getOutgoingStateName();
+                if (!isset($this->states[$outgoing_state_name])) {
+                    throw new VerificationError(
+                        sprintf(
+                            'Unable to find outgoing state "%s" for transition on event "%s". Maybe a typo?',
+                            $outgoing_state_name,
+                            $event_name
+                        )
+                    );
                 }
             }
         }

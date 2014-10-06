@@ -33,6 +33,8 @@ class StateMachineTest extends BaseTestCase
         $this->assertEquals('test_machine', $state_machine->getName());
         $this->assertEquals($states['state1'], $state_machine->getState('state1'));
         $this->assertEquals($states['state2'], $state_machine->getState('state2'));
+        $this->assertEquals([ $states['state2'] ], $state_machine->getFinalStates());
+        $this->assertEquals([ $states['state1'] ], $state_machine->getEventStates());
         $this->assertContains(
             $transitions['state1']['promote'][0],
             $state_machine->getTransitions('state1', 'promote')
@@ -61,7 +63,7 @@ class StateMachineTest extends BaseTestCase
 
         $this->assertEquals('published', $target_state->getName());
     }
-/*
+
     public function testExecuteSimpleDecisionFalse()
     {
         $subject = new GenericSubject('test_machine', 'new');
@@ -136,6 +138,33 @@ class StateMachineTest extends BaseTestCase
         $target_state = $state_machine->execute($subject, 'promote');
 
         $this->assertEquals('transcoding', $target_state->getName());
+    }
+
+    public function testInvalidResumeState()
+    {
+        $this->setExpectedException(
+            Error::CLASS,
+            'Current execution is pointing to an invalid state approval.' .
+            ' The state machine execution must be started and resume by entering an event state.'
+        );
+
+        $states = [
+            'edit' => new State('edit', IState::TYPE_INITIAL),
+            'approval' => new State('approval'),
+            'published' => new State('published', IState::TYPE_FINAL)
+        ];
+        $transitions = [
+            'edit' => [
+                'promote' => [ new Transition('edit', 'approval') ]
+            ],
+            'approval' => [
+                '_sequential' => [ new Transition('approval', 'published') ]
+            ]
+        ];
+
+        $subject = new GenericSubject('test_machine', 'approval');
+        $state_machine = new StateMachine('test_machine', $states, $transitions);
+        $state_machine->execute($subject, 'promote');
     }
 
     public function testInvalidSubject()
@@ -267,5 +296,4 @@ class StateMachineTest extends BaseTestCase
 
         $state_machine->execute($subject, 'promote');
     }
-*/
 }

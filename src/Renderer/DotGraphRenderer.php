@@ -123,19 +123,28 @@ class DotGraphRenderer extends AbstractRenderer
             sprintf('fontcolor="%s"', $fontcolor ?: self::EDGE_FONTCOLOR),
         ];
 
-        if ($event_name === 'promote') {
-            $color = $this->styles->getValues('edge.colors.promote');
-            $color = $color ?: self::EDGE_PROMOTE_COLOR;
-        } elseif ($event_name === 'demote') {
-            $color = $this->styles->getValues('edge.colors.demote');
-            $color = $color ?: self::EDGE_DEMOTE_COLOR;
-        } else {
-            $color = $this->styles->getValues('edge.colors.default');
-            $color = $color ?: self::EDGE_DEFAULT_COLOR;
-        }
-        $attributes[] = sprintf('color="%s"', $color);
+        $attributes[] = sprintf('color="%s"', $this->getEdgeColor($event_name));
 
         return sprintf('%s -> %s [%s]', $from_node, $to_node, implode(' ', $attributes));
+    }
+
+    protected function getEdgeColor($event_name)
+    {
+        switch ($event_name) {
+            case 'promote':
+                $color = $this->styles->getValues('edge.colors.promote');
+                $color = $color ?: self::EDGE_PROMOTE_COLOR;
+                break;
+            case 'demote':
+                $color = $this->styles->getValues('edge.colors.demote');
+                $color = $color ?: self::EDGE_DEMOTE_COLOR;
+                break;
+            default:
+                $color = $this->styles->getValues('edge.colors.default');
+                $color = $color ?: self::EDGE_DEFAULT_COLOR;
+        }
+
+        return $color;
     }
 
     protected function getDotCodeTemplate()

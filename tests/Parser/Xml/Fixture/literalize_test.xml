@@ -9,6 +9,7 @@
                     <guard class="Workflux\Guard\ExpressionGuard">
                         <option name="expression">not params.transcoding_required</option>
                         <option name="max_retries">3</option>
+                        <option name="notify">on</option>
                         <option name="send_email">false</option>
                         <option name="email_template"></option>
                     </guard>

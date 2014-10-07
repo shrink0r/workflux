@@ -18,6 +18,7 @@ return [
                                     'expression' => 'not params.transcoding_required',
                                     'max_retries' => 3,
                                     'send_email' => false,
+                                    'notify' => true,
                                     'email_template' => null
                                 ]
                             ]

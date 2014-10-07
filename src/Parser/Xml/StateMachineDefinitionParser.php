@@ -125,6 +125,11 @@ class StateMachineDefinitionParser implements IParser
             return $value;
         }
 
+        return $this->literalizeString($value);
+    }
+
+    protected function literalizeString($value)
+    {
         $value = trim($value);
         if ($value == '') {
             return null;

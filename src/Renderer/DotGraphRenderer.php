@@ -3,6 +3,7 @@
 namespace Workflux\Renderer;
 
 use Workflux\StateMachine\IStateMachine;
+use Workflux\State\IState;
 use Workflux\StateMachine\StateMachine;
 use Workflux\Transition\ITransition;
 use Params\Immutable\ImmutableOptions;
@@ -57,24 +58,8 @@ class DotGraphRenderer extends AbstractRenderer
     protected function getNodes(IStateMachine $state_machine)
     {
         $state_nodes = [];
-        foreach ($state_machine->getStates() as $state_name => $state) {
-            $fontcolor = $this->styles->getValues('state_node.fontcolor');
-            $color = $this->styles->getValues('state_node.color');
-
-            $attributes = [
-                sprintf('label="%s"', $state_name),
-                sprintf('fontcolor="%s"', $fontcolor ?: self::STATE_NODE_FONTCOLOR),
-                sprintf('color="%s"', $color ?: self::STATE_NODE_COLOR)
-            ];
-
-            if ($state->isFinal()) {
-                $attributes[] = 'style="bold"';
-            }
-            if (!$state_machine->isEventState($state_name) && !$state->isFinal()) {
-                $attributes[] = 'shape="parallelogram"';
-            }
-
-            $state_nodes[] = sprintf('%s [%s]', $this->node_id_map[$state_name], implode(' ', $attributes));
+        foreach ($state_machine->getStates() as $state) {
+            $state_nodes[] = $this->createStateNode($state_machine, $state);
         }
 
         $state_nodes[] = sprintf(
@@ -83,6 +68,28 @@ class DotGraphRenderer extends AbstractRenderer
         );
 
         return $state_nodes;
+    }
+
+    protected function createStateNode(IStateMachine $state_machine, IState $state)
+    {
+        $state_name = $state->getName();
+        $fontcolor = $this->styles->getValues('state_node.fontcolor');
+        $color = $this->styles->getValues('state_node.color');
+
+        $attributes = [
+            sprintf('label="%s"', $state_name),
+            sprintf('fontcolor="%s"', $fontcolor ?: self::STATE_NODE_FONTCOLOR),
+            sprintf('color="%s"', $color ?: self::STATE_NODE_COLOR)
+        ];
+
+        if ($state->isFinal()) {
+            $attributes[] = 'style="bold"';
+        }
+        if (!$state_machine->isEventState($state_name) && !$state->isFinal()) {
+            $attributes[] = 'shape="parallelogram"';
+        }
+
+        return sprintf('%s [%s]', $this->node_id_map[$state_name], implode(' ', $attributes));
     }
 
     protected function getEdges(IStateMachine $state_machine)

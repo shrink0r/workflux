@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<state_machines>
+    <state_machine name="invalid_machine">
+
+        <initial name="new">
+            <event name="promote">
+                <transition target="ready">
+                    <guard class="Workflux\Tests\Builder\Fixture\InvalidGuard" />
+                </transition>
+            </event>
+        </initial>
+        <final name="ready" />
+
+    </state_machine>
+</state_machines>

@@ -77,6 +77,37 @@ class StateMachineBuilderTest extends BaseTestCase
         $this->assertEquals($states[1], $state_machine->getState('approval'));
     }
 
+    public function testFinalStateWithTransitions()
+    {
+        $this->setExpectedException(
+            VerificationError::CLASS,
+            'State "published" is final and may not have any transitions.'
+        );
+
+        $states = [
+            new State('editing', IState::TYPE_INITIAL),
+            new State('approval'),
+            new State('published', IState::TYPE_FINAL)
+        ];
+
+        $approve = new Transition('editing', 'approval');
+        $publish = new Transition('approval', 'published');
+        $demote = new Transition([ 'approval', 'published' ], 'editing');
+
+        $builder = new StateMachineBuilder();
+        $state_machine = $builder
+            ->setStateMachineName(self::MACHINE_NAME)
+            ->addStates($states)
+            ->addTransitions([ 'promote' => [ $approve ], 'demote' => $demote ])
+            ->addTransition($publish)
+            ->build();
+
+        $this->assertEquals(self::MACHINE_NAME, $state_machine->getName());
+        $this->assertContains($approve, $state_machine->getTransitions('editing', 'promote'));
+        $this->assertEquals($states[0], $state_machine->getState('editing'));
+        $this->assertEquals($states[1], $state_machine->getState('approval'));
+    }
+
     public function testIncompleteSecondBuild()
     {
         $this->setExpectedException(

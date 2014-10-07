@@ -3,6 +3,7 @@
 namespace Workflux\Tests\Builder;
 
 use Workflux\Tests\BaseTestCase;
+use Workflux\Error\Error;
 use Workflux\Builder\XmlStateMachineBuilder;
 use Workflux\Tests\Fixture\GenericSubject;
 use Workflux\Renderer\DotGraphRenderer;
@@ -52,5 +53,19 @@ class XmlStateMachineBuilderTest extends BaseTestCase
         $subject->getExecutionContext()->setParameter('retry_limit_reached', true);
         $next_state = $state_machine->execute($subject, 'promote');
         $this->assertEquals('rejected', $next_state->getName());
+    }
+
+    public function testInvalidGuard()
+    {
+        $this->setExpectedException(
+            Error::CLASS,
+            'Configured guard classes must implement Workflux\Guard\IGuard.'
+        );
+
+        $builder = new XmlStateMachineBuilder(
+            [ 'state_machine_definition' => dirname(__DIR__) . '/Builder/Fixture/invalid_guard.xml' ]
+        );
+
+        $state_machine = $builder->build();
     }
 }

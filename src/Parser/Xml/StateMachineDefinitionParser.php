@@ -117,6 +117,10 @@ class StateMachineDefinitionParser implements IParser
 
     protected function literalize($value)
     {
+        if (is_int($value)) {
+            return (int)$value;
+        }
+
         if (!is_string($value)) {
             return $value;
         }
@@ -126,10 +130,10 @@ class StateMachineDefinitionParser implements IParser
             return null;
         }
 
-        $lc_value = strtolower($value);
-        if ($lc_value === 'on' || $lc_value === 'yes' || $lc_value === 'true') {
+        $lowercase_value = strtolower($value);
+        if ($lowercase_value === 'on' || $lowercase_value === 'yes' || $lowercase_value === 'true') {
             return true;
-        } elseif ($lc_value === 'off' || $lc_value === 'no' || $lc_value === 'false') {
+        } elseif ($lowercase_value === 'off' || $lowercase_value === 'no' || $lowercase_value === 'false') {
             return false;
         }
 

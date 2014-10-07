@@ -117,15 +117,11 @@ class StateMachineDefinitionParser implements IParser
 
     protected function literalize($value)
     {
-        if (is_int($value)) {
+        if (preg_match('/^\d+$/', $value)) {
             return (int)$value;
+        } else {
+            return $this->literalizeString($value);
         }
-
-        if (!is_string($value)) {
-            return $value;
-        }
-
-        return $this->literalizeString($value);
     }
 
     protected function literalizeString($value)

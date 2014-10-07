@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "graste/params",
-            "version": "v2.0.1",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/graste/params.git",
-                "reference": "88358f8d78d2d02d782e091ba33789013a8f2378"
+                "reference": "a9503e6a91fd2fad9ca1de4289bfd86a09b8c02f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/graste/params/zipball/88358f8d78d2d02d782e091ba33789013a8f2378",
-                "reference": "88358f8d78d2d02d782e091ba33789013a8f2378",
+                "url": "https://api.github.com/repos/graste/params/zipball/a9503e6a91fd2fad9ca1de4289bfd86a09b8c02f",
+                "reference": "a9503e6a91fd2fad9ca1de4289bfd86a09b8c02f",
                 "shasum": ""
             },
             "require": {
@@ -34,7 +34,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0-dev"
+                    "dev-master": "2.1-dev"
                 }
             },
             "autoload": {
@@ -54,16 +54,17 @@
                     "role": "Developer"
                 }
             ],
-            "description": "Array wrapper that eases the retrieval of values.",
+            "description": "Array wrapper that eases the retrieval of values. Has parameters, options and settings traits for inclusion in other libs.",
             "homepage": "https://github.com/graste/params",
             "keywords": [
+                "Settings",
                 "array",
                 "library",
                 "options",
                 "parameters",
                 "search"
             ],
-            "time": "2014-10-06 21:31:15"
+            "time": "2014-10-06 22:19:16"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -1113,28 +1114,28 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "1.0.1",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "10c7467da0622f7848cc5cadc0828c3359254df4"
+                "reference": "6288ebbf6fa3ed2b2ff2d69c356fbaaf4f0971a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/10c7467da0622f7848cc5cadc0828c3359254df4",
-                "reference": "10c7467da0622f7848cc5cadc0828c3359254df4",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6288ebbf6fa3ed2b2ff2d69c356fbaaf4f0971a7",
+                "reference": "6288ebbf6fa3ed2b2ff2d69c356fbaaf4f0971a7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0"
+                "phpunit/phpunit": "~4.3"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "1.1.x-dev"
                 }
             },
             "autoload": {
@@ -1159,7 +1160,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2014-05-04 17:56:05"
+            "time": "2014-10-07 09:23:16"
         },
         {
             "name": "sebastian/exporter",

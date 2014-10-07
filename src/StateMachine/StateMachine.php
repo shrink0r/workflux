@@ -22,6 +22,8 @@ class StateMachine implements IStateMachine
 
     protected $final_states;
 
+    protected $event_states;
+
     public function __construct($name, array $states, array $transitions)
     {
         $this->name = $name;

@@ -46,40 +46,53 @@ class StatesVerification implements IVerification
 
         switch ($state->getType()) {
             case IState::TYPE_INITIAL:
-                if ($this->initial_state) {
-                    throw new VerificationError(
-                        sprintf(
-                            'Only one initial state is supported per state machine definition.' .
-                            'State "%s" has been previously registered as initial state, so state "%" cant be added.',
-                            $this->initial_state->getName(),
-                            $state_name
-                        )
-                    );
-                } else {
-                    $this->initial_state = $state;
-                }
+                $this->verifyInitialState($state, $transition_count);
                 break;
-
             case IState::TYPE_FINAL:
-                if ($transition_count > 0) {
-                    throw new VerificationError(
-                        sprintf('State "%s" is final and may not have any transitions.', $state_name)
-                    );
-                }
-                $this->final_states[] = $state;
+                $this->verifyFinalState($state, $transition_count);
                 break;
-
             default:
-                if ($transition_count === 0) {
-                    throw new VerificationError(
-                        sprintf(
-                            'State "%s" is expected to have at least one transition.' .
-                            ' Only "%s" states are permitted to have no transitions.',
-                            $state_name,
-                            IState::TYPE_FINAL
-                        )
-                    );
-                }
+                $this->verifyActiveState($state, $transition_count);
+        }
+    }
+
+    protected function verifyInitialState(IState $state, $transition_count)
+    {
+        if ($this->initial_state) {
+            throw new VerificationError(
+                sprintf(
+                    'Only one initial state is supported per state machine definition.' .
+                    'State "%s" has been previously registered as initial state, so state "%" cant be added.',
+                    $this->initial_state->getName(),
+                    $state->getName()
+                )
+            );
+        } else {
+            $this->initial_state = $state;
+        }
+    }
+
+    protected function verifyFinalState(IState $state, $transition_count)
+    {
+        if ($transition_count > 0) {
+            throw new VerificationError(
+                sprintf('State "%s" is final and may not have any transitions.', $state->getName())
+            );
+        }
+        $this->final_states[] = $state;
+    }
+
+    protected function verifyActiveState(IState $state, $transition_count)
+    {
+        if ($transition_count === 0) {
+            throw new VerificationError(
+                sprintf(
+                    'State "%s" is expected to have at least one transition.' .
+                    ' Only "%s" states are permitted to have no transitions.',
+                    $state->getName(),
+                    IState::TYPE_FINAL
+                )
+            );
         }
     }
 }

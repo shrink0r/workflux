@@ -19,5 +19,6 @@ class CallbackGuardTest extends BaseTestCase
         );
 
         $this->assertTrue($guard->accept($subject));
+        $this->assertEquals("\nif callback is true" , $guard->__toString());
     }
 }

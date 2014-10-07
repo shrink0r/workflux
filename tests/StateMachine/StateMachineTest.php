@@ -61,6 +61,7 @@ class StateMachineTest extends BaseTestCase
         $state_machine = new StateMachine('test_machine', $states, $transitions);
         $target_state = $state_machine->execute($subject, 'promote');
 
+        $this->assertEquals('test_machine', $subject->getExecutionContext()->getStateMachineName());
         $this->assertEquals('published', $target_state->getName());
     }
 

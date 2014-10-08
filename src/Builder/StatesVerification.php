@@ -56,7 +56,7 @@ class StatesVerification implements VerificationInterface
         }
     }
 
-    protected function verifyInitialState(StateInterface $state, $transition_count)
+    protected function verifyInitialState(StateInterface $state)
     {
         if ($this->initial_state) {
             throw new VerificationError(

@@ -235,21 +235,20 @@ class StateMachineDefinitionParser implements ParserInterface
             $transitions[] = $this->parseTransitionNode($transition_node);
         }
 
-        return [ 'name' => $event_name, 'transitions' => $transitions ];
+        return [
+            'name' => $event_name,
+            'transitions' => $transitions
+        ];
     }
 
     protected function parseTransitionNode(DOMElement $transition_node)
     {
-        $outgoing_state_name = $transition_node->getAttribute('target');
         $guard_node = $this->query('guard', $transition_node)->item(0);
 
-        if ($guard_node) {
-            $guard_data = $this->parseGuardNode($guard_node);
-        } else {
-            $guard_data = null;
-        }
-
-        return [ 'outgoing_state_name' => $outgoing_state_name, 'guard' => $guard_data ];
+        return [
+            'outgoing_state_name' => $transition_node->getAttribute('target'),
+            'guard' => is_null($guard_node) ? null : $this->parseGuardNode($guard_node)
+        ];
     }
 
     protected function parseGuardNode(DOMElement $guard_node)
@@ -303,6 +302,7 @@ class StateMachineDefinitionParser implements ParserInterface
         $lowercase_value = strtolower($value);
         $truthy_values = [ 'on', 'yes', 'true' ];
         $falsy_values = [ 'off', 'no', 'false' ];
+
         if (in_array($lowercase_value, $truthy_values, true)) {
             return true;
         } elseif (in_array($lowercase_value, $falsy_values, true)) {

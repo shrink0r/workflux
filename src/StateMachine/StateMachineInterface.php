@@ -24,5 +24,5 @@ interface StateMachineInterface
 
     public function isEventState($state_name);
 
-    public function getTransitions($state_name = null, $event_name = null);
+    public function getTransitions($state_name = '', $event_name = '');
 }

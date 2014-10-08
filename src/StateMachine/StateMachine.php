@@ -145,11 +145,11 @@ class StateMachine implements StateMachineInterface
         return $state;
     }
 
-    public function getTransitions($state_name = null, $event_name = null)
+    public function getTransitions($state_name = '', $event_name = '')
     {
         $transitions = $this->transitions;
 
-        if ($state_name) {
+        if (!empty($state_name)) {
             if (!isset($this->transitions[$state_name])) {
                 throw new Error(
                     sprintf('No transitions available at state "%s".', $state_name)
@@ -158,7 +158,7 @@ class StateMachine implements StateMachineInterface
             $transitions = $this->transitions[$state_name];
         }
 
-        if ($event_name) {
+        if (!empty($event_name)) {
             if (!isset($transitions[$event_name])) {
                 throw new Error(
                     sprintf('No transitions available for event "%s" at state "%s".', $event_name, $state_name)

@@ -75,7 +75,7 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         return $this;
     }
 
-    public function addTransition(TransitionInterface $transition, $event_name = null)
+    public function addTransition(TransitionInterface $transition, $event_name = '')
     {
         $transition_key = $event_name ?: StateMachine::SEQ_TRANSITIONS_KEY;
 

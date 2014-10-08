@@ -15,7 +15,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
         $state_machine_definition_file = dirname(__DIR__) . '/Parser/Xml/Fixture/state_machine.xml';
 
         $builder = new XmlStateMachineBuilder(
-            [ 'state_machine_definition' => $state_machine_definition_file ]
+            [ 'state_machine_definition' => $state_machine_definition_file, 'name' => 'video_transcoding' ]
         );
 
         $builder->build();

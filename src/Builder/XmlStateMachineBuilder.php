@@ -23,7 +23,7 @@ class XmlStateMachineBuilder extends StateMachineBuilder
         if (!$name) {
             $state_machine_definition = reset($state_machine_definitions);
         } elseif (isset($state_machine_definitions[$name])) {
-            $state_definition = $state_machine_definitions[$name];
+            $state_machine_definition = $state_machine_definitions[$name];
         } else {
             throw new Error(
                 sprintf('Unable to find configured state machine with name "%s"', $name)

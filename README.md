@@ -15,7 +15,7 @@ Finite state machine for php.
 
 Please have a look at the [available releases](https://github.com/shrink0r/workflux/releases).
 
-![Screenshot of a rendered example state machine](https://raw.githubusercontent.com/shrink0r/workflux/master/docs/state_machine.svg)
+![Screenshot of a rendered example state machine](https://raw.githubusercontent.com/shrink0r/workflux/master/docs/state_machine.png)
 
 ## Requirements and installation
 

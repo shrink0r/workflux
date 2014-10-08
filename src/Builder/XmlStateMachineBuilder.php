@@ -17,9 +17,21 @@ class XmlStateMachineBuilder extends StateMachineBuilder
         $state_machine_definition_file = $this->getOption('state_machine_definition');
 
         $parser = new StateMachineDefinitionParser();
-        $state_machine_definition = $parser->parse($state_machine_definition_file);
+        $state_machine_definitions = $parser->parse($state_machine_definition_file);
+
+        $name = $this->getOption('name', false);
+        if (!$name) {
+            $state_machine_definition = reset($state_machine_definitions);
+        } elseif (isset($state_machine_definitions[$name])) {
+            $state_definition = $state_machine_definitions[$name];
+        } else {
+            throw new Error(
+                sprintf('Unable to find configured state machine with name "%s"', $name)
+            );
+        }
 
         $this->setStateMachineName($state_machine_definition['name']);
+
         foreach ($state_machine_definition['states'] as $state_name => $state_definition) {
             $this->addState($this->createState($state_definition));
             $this->addEventTransitions($state_definition);

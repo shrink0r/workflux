@@ -49,8 +49,8 @@ class StateMachineBuilderTest extends BaseTestCase
     {
         $this->setExpectedException(
             VerificationError::CLASS,
-            'Found transitions for both sequential and event based execution,' .
-            ' but only one is supported at state "approval".'
+            'Found transitions for both sequential and event based execution.' .
+            ' State "approval" may  behave as an event-node or a sequential node, but not both at once.'
         );
 
         $states = [

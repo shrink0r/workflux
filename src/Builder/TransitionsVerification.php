@@ -26,26 +26,13 @@ class TransitionsVerification implements VerificationInterface
                 );
             }
 
+            $this->verifyBehaviouralType($state_name, $state_transitions);
             $this->verifyStateTransitions($state_name, $state_transitions);
         }
     }
 
     protected function verifyStateTransitions($state_name, array $state_transitions)
     {
-        $event_names = array_keys($state_transitions);
-        if (count($event_names) > 1
-            && in_array(StateMachine::SEQ_TRANSITIONS_KEY, $event_names)
-            && count($state_transitions[StateMachine::SEQ_TRANSITIONS_KEY]) > 0
-        ) {
-            throw new VerificationError(
-                sprintf(
-                    'Found transitions for both sequential and event based execution' .
-                    ', but only one is supported at state "%s".',
-                    $state_name
-                )
-            );
-        }
-
         foreach ($state_transitions as $event_name => $transitions) {
             foreach ($transitions as $transition) {
                 $outgoing_state_name = $transition->getOutgoingStateName();
@@ -59,6 +46,23 @@ class TransitionsVerification implements VerificationInterface
                     );
                 }
             }
+        }
+    }
+
+    protected function verifyBehaviouralType($state_name, array $state_transitions)
+    {
+        $event_names = array_keys($state_transitions);
+        if (count($event_names) > 1
+            && in_array(StateMachine::SEQ_TRANSITIONS_KEY, $event_names)
+            && count($state_transitions[StateMachine::SEQ_TRANSITIONS_KEY]) > 0
+        ) {
+            throw new VerificationError(
+                sprintf(
+                    'Found transitions for both sequential and event based execution.' .
+                    ' State "%s" may  behave as an event-node or a sequential node, but not both at once.',
+                    $state_name
+                )
+            );
         }
     }
 }

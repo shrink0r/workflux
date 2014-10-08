@@ -32,21 +32,8 @@ class StateMachine implements StateMachineInterface
         $this->final_states = [];
         $this->event_states = [];
 
-        foreach ($this->states as $state_name => $state) {
-            if ($state->isInitial()) {
-                $this->initial_state = $state;
-            } elseif ($state->isFinal()) {
-                $this->final_states[] = $state;
-            }
-
-            if (!$state->isFinal()) {
-                $state_transitions = $this->getTransitions($state_name);
-                if (!isset($state_transitions[StateMachine::SEQ_TRANSITIONS_KEY])
-                    && !$state->isFinal()
-                ) {
-                    $this->event_states[] = $state;
-                }
-            }
+        foreach ($this->states as $state) {
+            $this->mapState($state);
         }
     }
 
@@ -168,6 +155,24 @@ class StateMachine implements StateMachineInterface
         }
 
         return $transitions;
+    }
+
+    protected function mapState(StateInterface $state)
+    {
+        if ($state->isInitial()) {
+            $this->initial_state = $state;
+        } elseif ($state->isFinal()) {
+            $this->final_states[] = $state;
+        }
+
+        if (!$state->isFinal()) {
+            $state_transitions = $this->getTransitions($state->getName());
+            if (!isset($state_transitions[StateMachine::SEQ_TRANSITIONS_KEY])
+                && !$state->isFinal()
+            ) {
+                $this->event_states[] = $state;
+            }
+        }
     }
 
     protected function getAcceptedTransition(StatefulSubjectInterface $subject, StateInterface $state, $event_name)

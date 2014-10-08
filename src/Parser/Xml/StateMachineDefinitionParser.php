@@ -9,37 +9,153 @@ use Workflux\StateMachine\StateMachine;
 use DOMDocument;
 use DOMXpath;
 use DOMElement;
+use DOMException;
+use LibXMLError;
 
 class StateMachineDefinitionParser implements ParserInterface
 {
     const XSD_SCHMEMA_FILE = 'workflux.xsd';
 
+    const NAMESPACE_PREFIX = 'wf';
+
     protected $xpath;
 
-    public function parse($state_machine_definition_file)
+    public function parse($state_machine_xml_file)
     {
-        if (!is_readable($state_machine_definition_file)) {
-            throw new Error(
-                sprintf("Unable to read fsm definition file at location: %s", $state_machine_definition_file)
-            );
-        }
-
-        $schema_path = dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . self::XSD_SCHMEMA_FILE;
-        $document = new DOMDocument();
-        $document->load($state_machine_definition_file);
-        $document->schemaValidate($schema_path);
-
-        $this->xpath = new DOMXpath($document);
-        $root_namespace = $document->lookupNamespaceUri($document->namespaceURI);
-        $this->xpath->registerNamespace('wf', $root_namespace);
+        $this->setUp($state_machine_xml_file);
 
         $state_machines = [];
-        foreach ($this->xpath->query('//wf:state_machines/wf:state_machine') as $state_machine_node) {
+        foreach ($this->query('//state_machines/state_machine') as $state_machine_node) {
             $state_machine = $this->parseStateMachineNode($state_machine_node);
             $state_machines[$state_machine['name']] = $state_machine;
         }
 
+        $this->tearDown();
+
         return $state_machines;
+    }
+
+    protected function setUp($state_machine_xml_file)
+    {
+        if (!is_readable($state_machine_xml_file)) {
+            throw new Error(
+                sprintf("Unable to read fsm definition file at location: %s", $state_machine_xml_file)
+            );
+        }
+
+        $document = $this->createDocument($state_machine_xml_file);
+        $this->xpath = new DOMXpath($document);
+        $root_namespace = $document->lookupNamespaceUri($document->namespaceURI);
+        $this->xpath->registerNamespace(self::NAMESPACE_PREFIX, $root_namespace);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->xpath);
+    }
+
+    protected function createDocument($state_machine_xml_file)
+    {
+        $document = new DOMDocument();
+
+        $user_error_handling = $this->enableErrorHandling();
+        $document->load($state_machine_xml_file);
+        $this->handleErrors(
+            'Loading the document failed. Details are:' . PHP_EOL . PHP_EOL,
+            PHP_EOL . 'Please fix the mentioned errors.',
+            $user_error_handling
+        );
+
+        $this->validateXml($document);
+
+        return $document;
+    }
+
+    protected function validateXml(DOMDocument $state_machine_doc)
+    {
+        $schema_path = dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . self::XSD_SCHMEMA_FILE;
+
+        $user_error_handling = $this->enableErrorHandling();
+        if (!$state_machine_doc->schemaValidate($schema_path)) {
+            throw new Error("The given state machine xml file does not validate against the workflux schema.");
+        }
+        $this->handleErrors(
+            'Validating the document failed. Details are:' . PHP_EOL . PHP_EOL,
+            PHP_EOL . 'Please fix the mentioned errors or use another schema file.',
+            $user_error_handling
+        );
+    }
+
+    protected function enableErrorHandling()
+    {
+        $user_error_handling = libxml_use_internal_errors(true);
+        libxml_clear_errors();
+
+        return $user_error_handling;
+    }
+
+    protected function handleErrors($msg_prefix = '', $msg_suffix = '', $user_error_handling = false)
+    {
+        if (libxml_get_last_error() !== false) {
+            $errors = libxml_get_errors();
+            libxml_clear_errors();
+            libxml_use_internal_errors($user_error_handling);
+
+            throw new DOMException(
+                $msg_prefix .
+                $this->getErrorMessage($errors) .
+                $msg_suffix
+            );
+        }
+
+        libxml_use_internal_errors($user_error_handling);
+    }
+
+    protected function getErrorMessage(array $errors)
+    {
+        $error_message = '';
+        foreach ($errors as $error) {
+            $error_message .= $this->parseError($error) . PHP_EOL . PHP_EOL;
+        }
+
+        return $error_message;
+    }
+
+    protected function parseError(LibXMLError $error)
+    {
+        $msg = '';
+        switch ($error->level) {
+            case LIBXML_ERR_WARNING:
+                $msg .= 'Warning ' . $error->code . ': ';
+                break;
+            case LIBXML_ERR_FATAL:
+                $msg .= 'Fatal error: ' . $error->code . ': ';
+                break;
+            case LIBXML_ERR_ERROR:
+            default:
+                $msg .= 'Error ' . $error->code . ': ';
+                break;
+        }
+
+        $msg .= implode(
+            PHP_EOL,
+            [ trim($error->message), '  Line: ' . $error->line, 'Column: ' . $error->column ]
+        );
+
+        if ($error->file) {
+            $msg .= PHP_EOL . '  File: ' . $error->file;
+        }
+
+        return $msg;
+    }
+
+    protected function query($xpath_expression, DOMElement $context = null)
+    {
+        $search = [ '~/(\w+)~', '~^(\w+)$~' ];
+        $replace = [ sprintf('/%s:$1', self::NAMESPACE_PREFIX), sprintf('%s:$1', self::NAMESPACE_PREFIX) ];
+        $namespaced_expression = preg_replace($search, $replace, $xpath_expression);
+
+        return $this->xpath->query($namespaced_expression, $context);
     }
 
     protected function parseStateMachineNode(DOMElement $state_machine_node)
@@ -47,9 +163,9 @@ class StateMachineDefinitionParser implements ParserInterface
         $state_machine_name = $state_machine_node->getAttribute('name');
 
         $state_nodes_data = [];
-        $state_node_expressions = [ 'wf:initial', 'wf:state', 'wf:final' ];
+        $state_node_expressions = [ 'initial', 'state', 'final' ];
         foreach ($state_node_expressions as $state_node_expression) {
-            foreach ($this->xpath->query($state_node_expression, $state_machine_node) as $state_node) {
+            foreach ($this->query($state_node_expression, $state_machine_node) as $state_node) {
                 $state_node_data = $this->parseStateNode($state_node);
                 $state_name = $state_node_data['name'];
                 $state_nodes_data[$state_name] = $state_node_data;
@@ -63,13 +179,13 @@ class StateMachineDefinitionParser implements ParserInterface
     {
         $state_name = $state_node->getAttribute('name');
         $events = [];
-        foreach ($this->xpath->query('wf:event', $state_node) as $event_node) {
+        foreach ($this->query('event', $state_node) as $event_node) {
             $event_data = $this->parseEventNode($event_node);
             $event_name = $event_data['name'];
             $events[$event_name] = $event_data;
         }
         $seq_transitions = [];
-        foreach ($this->xpath->query('wf:transition', $state_node) as $transition_node) {
+        foreach ($this->query('transition', $state_node) as $transition_node) {
             $seq_transitions[] = $this->parseTransitionNode($transition_node);
         }
         $events[StateMachine::SEQ_TRANSITIONS_KEY] = $seq_transitions;
@@ -102,7 +218,7 @@ class StateMachineDefinitionParser implements ParserInterface
     {
         $event_name = $event_node->getAttribute('name');
         $transitions = [];
-        foreach ($this->xpath->query('wf:transition', $event_node) as $transition_node) {
+        foreach ($this->query('transition', $event_node) as $transition_node) {
             $transitions[] = $this->parseTransitionNode($transition_node);
         }
 
@@ -112,7 +228,7 @@ class StateMachineDefinitionParser implements ParserInterface
     protected function parseTransitionNode(DOMElement $transition_node)
     {
         $outgoing_state_name = $transition_node->getAttribute('target');
-        $guard_node = $this->xpath->query('wf:guard', $transition_node)->item(0);
+        $guard_node = $this->query('guard', $transition_node)->item(0);
 
         if (!$guard_node) {
             $guard_data = null;
@@ -127,7 +243,7 @@ class StateMachineDefinitionParser implements ParserInterface
     {
         $guard_class = $guard_node->getAttribute('class');
         $guard_options = [];
-        foreach ($this->xpath->query('wf:option', $guard_node) as $option_node) {
+        foreach ($this->query('option', $guard_node) as $option_node) {
             $option_name = $option_node->getAttribute('name');
             $guard_options[$option_name] = $this->literalize($option_node->nodeValue);
         }

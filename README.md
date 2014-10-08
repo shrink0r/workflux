@@ -11,7 +11,8 @@
 
 ## Purpose
 
-The `workflux` library implements a `Finite State Machine` in a way that also allows to implement `Pushdown Automaton` and `Workflow Graphs`.
+The `workflux` library implements a [Finite State Machine](http://en.wikipedia.org/wiki/Finite-state_machine) in a way
+that also allows to implement [Pushdown Automaton](http://en.wikipedia.org/wiki/Pushdown_automaton) and other FSM flavors.
 
 ![Screenshot of a rendered example state machine](https://raw.githubusercontent.com/shrink0r/workflux/master/docs/state_machine.png)
 

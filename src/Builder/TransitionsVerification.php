@@ -39,7 +39,8 @@ class TransitionsVerification implements VerificationInterface
                 if (!isset($this->states[$outgoing_state_name])) {
                     throw new VerificationError(
                         sprintf(
-                            'Unable to find outgoing state "%s" for transition on event "%s". Maybe a typo?',
+                            'Unable to find outgoing state for transition "%s -> %s" and event "%s". Maybe a typo?',
+                            $state_name,
                             $outgoing_state_name,
                             $event_name
                         )

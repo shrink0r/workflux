@@ -167,7 +167,7 @@ class StateMachineBuilderTest extends BaseTestCase
     {
         $this->setExpectedException(
             VerificationError::CLASS,
-            'Unable to find outgoing state "non_existant" for transition on event "promote". Maybe a typo?'
+            'Unable to find outgoing state for transition "editing -> non_existant" and event "promote". Maybe a typo?'
         );
 
         $states = [

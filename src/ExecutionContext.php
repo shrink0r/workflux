@@ -39,6 +39,5 @@ class ExecutionContext implements ExecutionContextInterface
 
     public function onStateExit(StateInterface $state)
     {
-        // echo PHP_EOL . $this->getName() . ' -> exiting' . PHP_EOL;
     }
 }

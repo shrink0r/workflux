@@ -5,8 +5,6 @@ namespace Workflux\StateMachine;
 use Workflux\Error\Error;
 use Workflux\StatefulSubjectInterface;
 use Workflux\State\StateInterface;
-use Workflux\Transition\TransitionInterface;
-use Workflux\Builder\StateMachineBuilderInterface;
 
 class StateMachine implements StateMachineInterface
 {

@@ -7,6 +7,7 @@ return [
                 'name' => 'new',
                 'type' => 'initial',
                 'class' => null,
+                'options' => [],
                 'events' => [
                     'promote' => [
                         'name' => 'promote',
@@ -33,6 +34,7 @@ return [
                 'name' => 'ready',
                 'type' => 'final',
                 'class' => null,
+                'options' => [],
                 'events' => [
                     '_sequential' => []
                 ]

@@ -8,6 +8,7 @@ return [
                 'name' => 'new',
                 'type' => 'initial',
                 'class' => null,
+                'options' => [],
                 'events' => [
                     'promote' => [
                         'name' => 'promote',
@@ -17,7 +18,8 @@ return [
                                 'guard' => [
                                     'class' => 'Workflux\Guard\ExpressionGuard',
                                     'options' => [
-                                        'expression' => 'params.transcoding_required'
+                                        'expression' => 'params.transcoding_required',
+                                        'options_list' => [ 23, 5 ]
                                     ]
                                 ]
                             ],
@@ -26,7 +28,14 @@ return [
                                 'guard' => [
                                     'class' => 'Workflux\Guard\ExpressionGuard',
                                     'options' => [
-                                        'expression' => 'not params.transcoding_required'
+                                        'expression' => 'not params.transcoding_required',
+                                        'options_map' => [
+                                            'key_one' => 'value_one',
+                                            'key_two' => true,
+                                            'key_three' => [
+                                                'nested_key' => 'nested_value'
+                                            ]
+                                        ]
                                     ]
                                 ]
                             ]
@@ -39,6 +48,7 @@ return [
                 'name' => 'transcoding',
                 'type' => 'active',
                 'class' => 'Workflux\Tests\Parser\Xml\Fixture\CustomState',
+                'options' => [],
                 'events' => [
                     '_sequential' => [
                         [
@@ -75,6 +85,7 @@ return [
                 'name' => 'error',
                 'type' => 'active',
                 'class' => null,
+                'options' => [],
                 'events' => [
                     'promote' => [
                         'name' => 'promote',
@@ -101,6 +112,7 @@ return [
                 'name' => 'rejected',
                 'type' => 'final',
                 'class' => null,
+                'options' => [ 'notify_owner' => true ],
                 'events' => [
                     '_sequential' => []
                 ]
@@ -109,6 +121,7 @@ return [
                 'name' => 'ready',
                 'type' => 'final',
                 'class' => null,
+                'options' => [],
                 'events' => [
                     '_sequential' => []
                 ]

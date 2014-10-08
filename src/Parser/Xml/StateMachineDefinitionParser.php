@@ -210,7 +210,8 @@ class StateMachineDefinitionParser implements ParserInterface
             'name' => $state_name,
             'events' => $events,
             'type' => $state_type,
-            'class' => $state_class
+            'class' => $state_class,
+            'options' => $this->parseOptions($state_node)
         ];
     }
 
@@ -230,10 +231,10 @@ class StateMachineDefinitionParser implements ParserInterface
         $outgoing_state_name = $transition_node->getAttribute('target');
         $guard_node = $this->query('guard', $transition_node)->item(0);
 
-        if (!$guard_node) {
-            $guard_data = null;
-        } else {
+        if ($guard_node) {
             $guard_data = $this->parseGuardNode($guard_node);
+        } else {
+            $guard_data = null;
         }
 
         return [ 'outgoing_state_name' => $outgoing_state_name, 'guard' => $guard_data ];
@@ -241,14 +242,34 @@ class StateMachineDefinitionParser implements ParserInterface
 
     protected function parseGuardNode(DOMElement $guard_node)
     {
-        $guard_class = $guard_node->getAttribute('class');
-        $guard_options = [];
-        foreach ($this->query('option', $guard_node) as $option_node) {
-            $option_name = $option_node->getAttribute('name');
-            $guard_options[$option_name] = $this->literalize($option_node->nodeValue);
+        return [
+            'class' => $guard_node->getAttribute('class'),
+            'options' => $this->parseOptions($guard_node)
+        ];
+    }
+
+    protected function parseOptions(DOMElement $options_context)
+    {
+        $options = [];
+
+        foreach ($this->query('option', $options_context) as $option_node) {
+            if ($option_node->hasAttribute('name')) {
+                $option_index = $option_node->getAttribute('name');
+            } else {
+                $option_index = count($options);
+            }
+
+            $child_options = $this->query('option', $option_node);
+            if ($child_options->length > 0) {
+                $option_value = $this->parseOptions($option_node);
+            } else {
+                $option_value = $this->literalize($option_node->nodeValue);;
+            }
+
+            $options[$option_index] = $option_value;
         }
 
-        return [ 'class' => $guard_class, 'options' => $guard_options ];
+        return $options;
     }
 
     protected function literalize($value)

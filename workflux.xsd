@@ -30,6 +30,7 @@
                 <xs:element name="event" type="EventType" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="transition" type="TransitionType" minOccurs="0" maxOccurs="unbounded" />
             </xs:choice>
+            <xs:element name="option" type="OptionType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required" />
         <xs:attribute name="class" type="xs:string" use="optional" />
@@ -57,17 +58,9 @@
     </xs:complexType>
 
     <xs:complexType name="OptionType" mixed="true">
-        <xs:choice>
-            <xs:element name="option" type="OptionType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="options" type="OptionsListType" minOccurs="0" maxOccurs="1"/>
-        </xs:choice>
-        <xs:attribute name="name" type="xs:string" use="required" />
-    </xs:complexType>
-
-    <xs:complexType name="OptionsListType">
         <xs:sequence>
-            <xs:element name="option" type="OptionType" minOccurs="1" maxOccurs="unbounded" />
+            <xs:element name="option" type="OptionType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="optional" />
     </xs:complexType>
-
 </xs:schema>

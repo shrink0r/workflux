@@ -4,19 +4,24 @@ namespace Workflux\State;
 
 use Workflux\Error\Error;
 use Workflux\StatefulSubjectInterface;
+use Params\Immutable\ImmutableOptionsTrait;
+use Params\Immutable\ImmutableOptions;
 
 class State implements StateInterface
 {
+    use ImmutableOptionsTrait;
+
     protected $name;
 
     protected $type;
 
-    public function __construct($name, $type = self::TYPE_ACTIVE)
+    public function __construct($name, $type = self::TYPE_ACTIVE, array $options = [])
     {
         $this->assertType($type);
 
         $this->name = $name;
         $this->type = $type;
+        $this->options = new ImmutableOptions($options);
     }
 
     public function getName()

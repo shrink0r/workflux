@@ -8,11 +8,22 @@
                 <transition target="transcoding">
                     <guard class="Workflux\Guard\ExpressionGuard">
                         <option name="expression">params.transcoding_required</option>
+                        <option name="options_list">
+                            <option>23</option>
+                            <option>5</option>
+                        </option>
                     </guard>
                 </transition>
                 <transition target="ready">
                     <guard class="Workflux\Guard\ExpressionGuard">
                         <option name="expression">not params.transcoding_required</option>
+                        <option name="options_map">
+                            <option name="key_one">value_one</option>
+                            <option name="key_two">true</option>
+                            <option name="key_three">
+                                <option name="nested_key">nested_value</option>
+                            </option>
+                        </option>
                     </guard>
                 </transition>
             </event>
@@ -45,7 +56,9 @@
             </event>
         </state>
 
-        <final name="rejected" />
+        <final name="rejected">
+            <option name="notify_owner">true</option>
+        </final>
         <final name="ready" />
 
     </state_machine>

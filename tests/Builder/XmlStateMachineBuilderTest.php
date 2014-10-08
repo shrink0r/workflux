@@ -18,7 +18,10 @@ class XmlStateMachineBuilderTest extends BaseTestCase
             [ 'state_machine_definition' => $state_machine_definition_file, 'name' => 'video_transcoding' ]
         );
 
-        $builder->build();
+        $state_machine = $builder->build();
+
+        $new_state = $state_machine->getState('rejected');
+        $this->assertTrue($new_state->getOption('notify_owner'));
     }
 
     public function testSuccessFlow()

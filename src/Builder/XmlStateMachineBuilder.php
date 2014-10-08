@@ -53,7 +53,11 @@ class XmlStateMachineBuilder extends StateMachineBuilder
                 )
             );
         }
-        $state = new $state_class($state_definition['name'], $state_definition['type']);
+        $state = new $state_class(
+            $state_definition['name'],
+            $state_definition['type'],
+            $state_definition['options']
+        );
 
         if (!$state instanceof StateInterface) {
             throw new Error(

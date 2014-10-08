@@ -15,6 +15,8 @@ Finite state machine for php.
 
 Please have a look at the [available releases](https://github.com/shrink0r/workflux/releases).
 
+![Screenshot of a rendered example state machine](https://raw.githubusercontent.com/shrink0r/workflux/master/docs/state_machine.svg)
+
 ## Requirements and installation
 
 - PHP v5.5+
@@ -38,7 +40,7 @@ Alternatively, you can download a release archive from the [github releases](rel
 
 ## Documentation
 
-tbd.
+The `workflux` library implements a `Finite State Machine` in a way that also allows to implement `Pushdown Automaton` and `Workflow Graphs`.
 
 ## Community
 

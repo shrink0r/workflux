@@ -26,7 +26,7 @@ class XmlStateMachineBuilder extends StateMachineBuilder
             $state_machine_definition = $state_machine_definitions[$name];
         } else {
             throw new Error(
-                sprintf('Unable to find configured state machine with name "%s"', $name)
+                sprintf('Unable to find configured state machine with name "%s".', $name)
             );
         }
 
@@ -47,9 +47,9 @@ class XmlStateMachineBuilder extends StateMachineBuilder
         if (!class_exists($state_class)) {
             throw new Error(
                 sprintf(
-                    'Unable to load configured custom implementor "%s" for state "%s"',
-                    $state_definition['name'],
-                    $state_class
+                    'Unable to load configured custom implementor "%s" for state "%s".',
+                    $state_class,
+                    $state_definition['name']
                 )
             );
         }
@@ -62,7 +62,7 @@ class XmlStateMachineBuilder extends StateMachineBuilder
         if (!$state instanceof StateInterface) {
             throw new Error(
                 sprintf(
-                    'Configured custom implementor for state %s does not implement "%s"',
+                    'Configured custom implementor for state %s does not implement "%s".',
                     $state_definition['name'],
                     StateInterface::CLASS
                 )

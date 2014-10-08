@@ -12,7 +12,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
 {
     public function testBuild()
     {
-        $state_machine_definition_file = dirname(__DIR__) . '/Parser/Xml/Fixture/state_machine.xml';
+        $state_machine_definition_file = __DIR__ . '/Fixture/state_machine.xml';
 
         $builder = new XmlStateMachineBuilder(
             [ 'state_machine_definition' => $state_machine_definition_file, 'name' => 'video_transcoding' ]
@@ -27,7 +27,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
     public function testSuccessFlow()
     {
         $builder = new XmlStateMachineBuilder(
-            [ 'state_machine_definition' => dirname(__DIR__) . '/Parser/Xml/Fixture/state_machine.xml' ]
+            [ 'state_machine_definition' => __DIR__ . '/Fixture/state_machine.xml' ]
         );
 
         $state_machine = $builder->build();
@@ -42,7 +42,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
     public function testErrorFlow()
     {
         $builder = new XmlStateMachineBuilder(
-            [ 'state_machine_definition' => dirname(__DIR__) . '/Parser/Xml/Fixture/state_machine.xml' ]
+            [ 'state_machine_definition' => __DIR__ . '/Fixture/state_machine.xml' ]
         );
 
         $state_machine = $builder->build();
@@ -66,9 +66,51 @@ class XmlStateMachineBuilderTest extends BaseTestCase
         );
 
         $builder = new XmlStateMachineBuilder(
-            [ 'state_machine_definition' => dirname(__DIR__) . '/Builder/Fixture/invalid_guard.xml' ]
+            [ 'state_machine_definition' => __DIR__ . '/Fixture/invalid_guard.xml' ]
         );
 
-        $state_machine = $builder->build();
+        $builder->build();
+    }
+
+    public function testNonExistantStateMachine()
+    {
+        $this->setExpectedException(
+            Error::CLASS,
+            'Unable to find configured state machine with name "not_there".'
+        );
+
+        $builder = new XmlStateMachineBuilder(
+            [ 'state_machine_definition' => __DIR__ . '/Fixture/state_machine.xml', 'name' => 'not_there' ]
+        );
+
+        $builder->build();
+    }
+
+    public function testNonExistantStateImplementor()
+    {
+        $this->setExpectedException(
+            Error::CLASS,
+            'Unable to load configured custom implementor "Foo\BarState" for state "new".'
+        );
+
+        $builder = new XmlStateMachineBuilder(
+            [ 'state_machine_definition' => __DIR__ . '/Fixture/non_existant_state_implementor.xml' ]
+        );
+
+        $builder->build();
+    }
+
+    public function testInvalidStateImplementor()
+    {
+        $this->setExpectedException(
+            Error::CLASS,
+            'Configured custom implementor for state new does not implement "Workflux\State\StateInterface".'
+        );
+
+        $builder = new XmlStateMachineBuilder(
+            [ 'state_machine_definition' => __DIR__ . '/Fixture/invalid_state_implementor.xml' ]
+        );
+
+        $builder->build();
     }
 }

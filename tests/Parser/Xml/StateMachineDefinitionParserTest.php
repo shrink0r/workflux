@@ -5,16 +5,18 @@ namespace Workflux\Tests\Parser\Xml;
 use Workflux\Tests\BaseTestCase;
 use Workflux\Error\Error;
 use Workflux\Parser\Xml\StateMachineDefinitionParser;
+use DOMException;
 
 class StateMachineDefinitionParserTest extends BaseTestCase
 {
     public function testParse()
     {
         $state_machine_definition_file = dirname(__FILE__) . '/Fixture/state_machine.xml';
+
         $parser = new StateMachineDefinitionParser();
+        $parsed_definition = $parser->parse($state_machine_definition_file);
 
         $expected = include dirname(__FILE__) . '/Fixture/state_machine.php';
-        $parsed_definition = $parser->parse($state_machine_definition_file);
 
         $this->assertEquals($expected, $parsed_definition);
     }
@@ -24,11 +26,11 @@ class StateMachineDefinitionParserTest extends BaseTestCase
         $state_machine_definition_file = dirname(__FILE__) . '/Fixture/literalize_test.xml';
 
         $parser = new StateMachineDefinitionParser();
+        $parsed_definition = $parser->parse($state_machine_definition_file);
+
         $expected = include dirname(__FILE__) . '/Fixture/literalize_test.php';
 
-        $parsed_config = $parser->parse($state_machine_definition_file);
-
-        $this->assertEquals($expected, $parsed_config);
+        $this->assertEquals($expected, $parsed_definition);
     }
 
     public function testNonReadableClass()
@@ -40,22 +42,28 @@ class StateMachineDefinitionParserTest extends BaseTestCase
         );
 
         $parser = new StateMachineDefinitionParser();
-
-        $expected = include dirname(__FILE__) . '/Fixture/state_machine.php';
         $parser->parse($state_machine_definition_file);
     }
 
     public function testInvalidXmlDefinition()
     {
+        $state_machine_definition_file = dirname(__FILE__) . '/Fixture/invalid_state_machine.xml';
         $this->setExpectedException(
             Error::CLASS,
             'The given state machine xml file does not validate against the workflux schema.'
         );
 
-        $state_machine_definition_file = dirname(__FILE__) . '/Fixture/invalid_state_machine.xml';
         $parser = new StateMachineDefinitionParser();
+        $parser->parse($state_machine_definition_file);
+    }
 
-        $expected = include dirname(__FILE__) . '/Fixture/state_machine.php';
+    public function testBrokenXmlDefinition()
+    {
+        $this->setExpectedException(DOMException::CLASS);
+
+        $state_machine_definition_file = dirname(__FILE__) . '/Fixture/broken_state_machine.xml';
+
+        $parser = new StateMachineDefinitionParser();
         $parser->parse($state_machine_definition_file);
     }
 }

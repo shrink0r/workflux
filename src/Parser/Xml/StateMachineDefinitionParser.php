@@ -6,6 +6,8 @@ use Workflux\Parser\ParserInterface;
 use Workflux\Error\Error;
 use Workflux\State\StateInterface;
 use Workflux\StateMachine\StateMachine;
+use Params\Immutable\ImmutableOptionsTrait;
+use Params\Immutable\ImmutableOptions;
 use DOMDocument;
 use DOMXpath;
 use DOMElement;
@@ -14,11 +16,18 @@ use LibXMLError;
 
 class StateMachineDefinitionParser implements ParserInterface
 {
+    use ImmutableOptionsTrait;
+
     const XSD_SCHMEMA_FILE = 'workflux.xsd';
 
     const NAMESPACE_PREFIX = 'wf';
 
     protected $xpath;
+
+    public function __construct(array $options = [])
+    {
+        $this->options = new ImmutableOptions($options);
+    }
 
     public function parse($state_machine_xml_file)
     {
@@ -74,9 +83,11 @@ class StateMachineDefinitionParser implements ParserInterface
 
     protected function validateXml(DOMDocument $state_machine_doc)
     {
-        $schema_path = dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . self::XSD_SCHMEMA_FILE;
+        $default_schema_path = dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . self::XSD_SCHMEMA_FILE;
+        $schema_path = $this->getOption('schema', $default_schema_path);
 
         $user_error_handling = $this->enableErrorHandling();
+
         if (!$state_machine_doc->schemaValidate($schema_path)) {
             throw new Error("The given state machine xml file does not validate against the workflux schema.");
         }

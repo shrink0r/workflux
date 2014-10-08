@@ -246,6 +246,9 @@ class StateMachineDefinitionParser implements ParserInterface
     protected function parseTransitionNode(DOMElement $transition_node)
     {
         $guard_node = $this->query('guard', $transition_node)->item(0);
+        if ($guard_node !== null && !$guard_node instanceof DOMElement) {
+            throw new Error("Invalid guard node given.");
+        }
 
         return [
             'outgoing_state_name' => $transition_node->getAttribute('target'),

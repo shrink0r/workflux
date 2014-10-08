@@ -43,6 +43,8 @@ Alternatively, you can download a release archive from the [github releases](rel
 * [API Doc](http://shrink0r.github.io/workflux/api/index.html)
 * [Usage](https://github.com/shrink0r/workflux/blob/master/docs/usage.md)
 
+For more feature and usage examples see the [tests](tests).
+
 ## Community
 
 None, but you may join the freenode IRC

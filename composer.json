@@ -23,7 +23,7 @@
     },
     "require": {
         "php": ">=5.5.0",
-        "graste/params": "~2.0",
+        "graste/params": "~2.1",
         "symfony/expression-language": "2.5.5"
     },
     "require-dev": {

@@ -8,6 +8,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shrink0r/workflux/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shrink0r/workflux/?branch=master)
 [![License](https://poser.pugx.org/shrink0r/workflux/license.svg)](http://creativecommons.org/licenses/by-sa/3.0/deed.en_US)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/c9d87c4a-f2f6-4f10-847e-8a9162d306d9/mini.png)](https://insight.sensiolabs.com/projects/c9d87c4a-f2f6-4f10-847e-8a9162d306d9)
+[![Stories in Ready](https://badge.waffle.io/shrink0r/workflux.png?label=ready&title=Issues%20Ready)](https://waffle.io/shrink0r/workflux)
 
 ## Purpose
 
@@ -45,7 +46,7 @@ Alternatively, you can download a release archive from the [github releases](rel
 ## Community
 
 None, but you may join the freenode IRC
-[`#honeybee`](irc://irc.freenode.org/honeybee) channel anytime. :-)
+[`irc://irc.freenode.org/honeybee`](irc://irc.freenode.org/honeybee) channel anytime. :-)
 
 ## Contributors
 

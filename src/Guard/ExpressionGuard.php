@@ -2,7 +2,7 @@
 
 namespace Workflux\Guard;
 
-use Workflux\IStatefulSubject;
+use Workflux\StatefulSubjectInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ExpressionGuard extends ConfigurableGuard
@@ -16,7 +16,7 @@ class ExpressionGuard extends ConfigurableGuard
         $this->expression_language = new ExpressionLanguage();
     }
 
-    public function accept(IStatefulSubject $subject)
+    public function accept(StatefulSubjectInterface $subject)
     {
         $execution_context = $subject->getExecutionContext();
 

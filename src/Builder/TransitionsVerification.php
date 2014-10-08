@@ -5,7 +5,7 @@ namespace Workflux\Builder;
 use Workflux\Error\VerificationError;
 use Workflux\StateMachine\StateMachine;
 
-class TransitionsVerification implements IVerification
+class TransitionsVerification implements VerificationInterface
 {
     protected $states;
 

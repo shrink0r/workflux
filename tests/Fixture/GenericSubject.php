@@ -2,10 +2,10 @@
 
 namespace Workflux\Tests\Fixture;
 
-use Workflux\IStatefulSubject;
+use Workflux\StatefulSubjectInterface;
 use Workflux\ExecutionContext;
 
-class GenericSubject implements IStatefulSubject
+class GenericSubject implements StatefulSubjectInterface
 {
     protected $state_machine_name;
 

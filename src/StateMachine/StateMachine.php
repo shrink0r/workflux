@@ -3,12 +3,12 @@
 namespace Workflux\StateMachine;
 
 use Workflux\Error\Error;
-use Workflux\IStatefulSubject;
-use Workflux\State\IState;
-use Workflux\Transition\ITransition;
-use Workflux\Builder\IStateMachineBuilder;
+use Workflux\StatefulSubjectInterface;
+use Workflux\State\StateInterface;
+use Workflux\Transition\TransitionInterface;
+use Workflux\Builder\StateMachineBuilderInterface;
 
-class StateMachine implements IStateMachine
+class StateMachine implements StateMachineInterface
 {
     const SEQ_TRANSITIONS_KEY = '_sequential';
 
@@ -75,7 +75,7 @@ class StateMachine implements IStateMachine
     public function isEventState($state_or_state_name)
     {
         $state_name = $state_or_state_name;
-        if ($state_or_state_name instanceof IState) {
+        if ($state_or_state_name instanceof StateInterface) {
             $state_name = $state_or_state_name->getName();
         }
 
@@ -87,7 +87,7 @@ class StateMachine implements IStateMachine
         return false;
     }
 
-    public function execute(IStatefulSubject $subject, $event_name)
+    public function execute(StatefulSubjectInterface $subject, $event_name)
     {
         $current_state = $this->getCurrentStateFor($subject);
         if (!$this->isEventState($current_state)) {
@@ -124,7 +124,7 @@ class StateMachine implements IStateMachine
         return $current_state;
     }
 
-    public function getCurrentStateFor(IStatefulSubject $subject)
+    public function getCurrentStateFor(StatefulSubjectInterface $subject)
     {
         return $this->getStateOrFail(
             $subject->getExecutionContext()->getCurrentStateName()
@@ -172,7 +172,7 @@ class StateMachine implements IStateMachine
         return $transitions;
     }
 
-    protected function getAcceptedTransition(IStatefulSubject $subject, IState $state, $event_name)
+    protected function getAcceptedTransition(StatefulSubjectInterface $subject, StateInterface $state, $event_name)
     {
         $accepted_transition = null;
         $possible_transitions = $this->getTransitions($state->getName(), $event_name);

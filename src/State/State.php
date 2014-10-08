@@ -3,9 +3,9 @@
 namespace Workflux\State;
 
 use Workflux\Error\Error;
-use Workflux\IStatefulSubject;
+use Workflux\StatefulSubjectInterface;
 
-class State implements IState
+class State implements StateInterface
 {
     protected $name;
 
@@ -44,12 +44,12 @@ class State implements IState
         return $this->type === self::TYPE_FINAL;
     }
 
-    public function onEntry(IStatefulSubject $subject)
+    public function onEntry(StatefulSubjectInterface $subject)
     {
         $subject->getExecutionContext()->onStateEntry($this);
     }
 
-    public function onExit(IStatefulSubject $subject)
+    public function onExit(StatefulSubjectInterface $subject)
     {
         $subject->getExecutionContext()->onStateExit($this);
     }

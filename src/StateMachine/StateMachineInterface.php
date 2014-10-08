@@ -2,15 +2,15 @@
 
 namespace Workflux\StateMachine;
 
-use Workflux\IStatefulSubject;
+use Workflux\StatefulSubjectInterface;
 
-interface IStateMachine
+interface StateMachineInterface
 {
     public function getName();
 
-    public function execute(IStatefulSubject $subject, $event_name);
+    public function execute(StatefulSubjectInterface $subject, $event_name);
 
-    public function getCurrentStateFor(IStatefulSubject $subject);
+    public function getCurrentStateFor(StatefulSubjectInterface $subject);
 
     public function getInitialState();
 

@@ -2,7 +2,7 @@
 
 namespace Workflux\Builder;
 
-interface IVerification
+interface VerificationInterface
 {
     /**
      * @throws Workflux\Error\VerificationError

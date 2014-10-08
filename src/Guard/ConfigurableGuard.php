@@ -5,7 +5,7 @@ namespace Workflux\Guard;
 use Params\Immutable\ImmutableOptionsTrait;
 use Params\Immutable\ImmutableOptions;
 
-abstract class ConfigurableGuard implements IGuard
+abstract class ConfigurableGuard implements GuardInterface
 {
     use ImmutableOptionsTrait;
 

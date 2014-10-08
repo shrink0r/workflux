@@ -2,15 +2,15 @@
 
 namespace Workflux\Builder;
 
-use Workflux\State\IState;
-use Workflux\StateMachine\IStateMachine;
+use Workflux\State\StateInterface;
+use Workflux\StateMachine\StateMachineInterface;
 use Workflux\StateMachine\StateMachine;
-use Workflux\Transition\ITransition;
+use Workflux\Transition\TransitionInterface;
 use Workflux\Error\VerificationError;
 use Params\Immutable\ImmutableOptionsTrait;
 use Params\Immutable\ImmutableOptions;
 
-class StateMachineBuilder implements IStateMachineBuilder
+class StateMachineBuilder implements StateMachineBuilderInterface
 {
     use ImmutableOptionsTrait;
 
@@ -47,7 +47,7 @@ class StateMachineBuilder implements IStateMachineBuilder
         return $this;
     }
 
-    public function addState(IState $state)
+    public function addState(StateInterface $state)
     {
         $state_name = $state->getName();
 
@@ -75,7 +75,7 @@ class StateMachineBuilder implements IStateMachineBuilder
         return $this;
     }
 
-    public function addTransition(ITransition $transition, $event_name = null)
+    public function addTransition(TransitionInterface $transition, $event_name = null)
     {
         $transition_key = $event_name ?: StateMachine::SEQ_TRANSITIONS_KEY;
 
@@ -129,12 +129,12 @@ class StateMachineBuilder implements IStateMachineBuilder
 
         $state_machine = new $state_machine_class($this->state_machine_name, $this->states, $this->transitions);
 
-        if (!$state_machine instanceof IStateMachine) {
+        if (!$state_machine instanceof StateMachineInterface) {
             throw new VerificationError(
                 sprintf(
                     'The given state machine class "%s" does not implement the required interface "%s"',
                     $state_machine_class,
-                    IStateMachine::CLASS
+                    StateMachineInterface::CLASS
                 )
             );
         }

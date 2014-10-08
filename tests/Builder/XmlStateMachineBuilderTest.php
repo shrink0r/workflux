@@ -59,7 +59,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
     {
         $this->setExpectedException(
             Error::CLASS,
-            'Configured guard classes must implement Workflux\Guard\IGuard.'
+            'Configured guard classes must implement Workflux\Guard\GuardInterface.'
         );
 
         $builder = new XmlStateMachineBuilder(

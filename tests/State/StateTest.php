@@ -4,17 +4,17 @@ namespace Workflux\Tests\State;
 
 use Workflux\Error\Error;
 use Workflux\Tests\BaseTestCase;
-use Workflux\State\IState;
+use Workflux\State\StateInterface;
 use Workflux\State\State;
 
 class StateTest extends BaseTestCase
 {
     public function testConstructorAndGetters()
     {
-        $state = new State('state1', IState::TYPE_INITIAL);
+        $state = new State('state1', StateInterface::TYPE_INITIAL);
 
         $this->assertEquals('state1', $state->getName());
-        $this->assertEquals(IState::TYPE_INITIAL, $state->getType());
+        $this->assertEquals(StateInterface::TYPE_INITIAL, $state->getType());
         $this->assertTrue($state->isInitial());
         $this->assertFalse($state->isActive());
         $this->assertFalse($state->isFinal());

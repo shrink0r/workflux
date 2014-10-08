@@ -3,10 +3,10 @@
 namespace Workflux\Tests\Builder;
 
 use Workflux\Error\VerificationError;
-use Workflux\StateMachine\IStateMachine;
+use Workflux\StateMachine\StateMachineInterface;
 use Workflux\StateMachine\StateMachine;
 use Workflux\Builder\StateMachineBuilder;
-use Workflux\State\IState;
+use Workflux\State\StateInterface;
 use Workflux\State\State;
 use Workflux\Transition\Transition;
 use Workflux\Renderer\DotGraphRenderer;
@@ -21,10 +21,10 @@ class StateMachineBuilderTest extends BaseTestCase
     public function testBuild()
     {
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
+            new State('editing', StateInterface::TYPE_INITIAL),
             new State('approval'),
             new State('published'),
-            new State('deleted', IState::TYPE_FINAL)
+            new State('deleted', StateInterface::TYPE_FINAL)
         ];
 
         $approve = new Transition('editing', 'approval');
@@ -54,9 +54,9 @@ class StateMachineBuilderTest extends BaseTestCase
         );
 
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
+            new State('editing', StateInterface::TYPE_INITIAL),
             new State('approval'),
-            new State('published', IState::TYPE_FINAL)
+            new State('published', StateInterface::TYPE_FINAL)
         ];
 
         $approve = new Transition('editing', 'approval');
@@ -85,9 +85,9 @@ class StateMachineBuilderTest extends BaseTestCase
         );
 
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
+            new State('editing', StateInterface::TYPE_INITIAL),
             new State('approval'),
-            new State('published', IState::TYPE_FINAL)
+            new State('published', StateInterface::TYPE_FINAL)
         ];
 
         $approve = new Transition('editing', 'approval');
@@ -116,8 +116,8 @@ class StateMachineBuilderTest extends BaseTestCase
         );
 
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
-            new State('published', IState::TYPE_FINAL)
+            new State('editing', StateInterface::TYPE_INITIAL),
+            new State('published', StateInterface::TYPE_FINAL)
         ];
 
         $transiton = new Transition('editing', 'published');
@@ -141,9 +141,9 @@ class StateMachineBuilderTest extends BaseTestCase
         );
 
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
+            new State('editing', StateInterface::TYPE_INITIAL),
             new State('editing'),
-            new State('published', IState::TYPE_FINAL)
+            new State('published', StateInterface::TYPE_FINAL)
         ];
 
         $builder = new StateMachineBuilder();
@@ -171,8 +171,8 @@ class StateMachineBuilderTest extends BaseTestCase
         );
 
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
-            new State('published', IState::TYPE_FINAL)
+            new State('editing', StateInterface::TYPE_INITIAL),
+            new State('published', StateInterface::TYPE_FINAL)
         ];
 
         $transiton = new Transition('editing', 'non_existant');
@@ -193,8 +193,8 @@ class StateMachineBuilderTest extends BaseTestCase
         );
 
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
-            new State('published', IState::TYPE_FINAL)
+            new State('editing', StateInterface::TYPE_INITIAL),
+            new State('published', StateInterface::TYPE_FINAL)
         ];
 
         $transiton = new Transition('non_existant', 'published');
@@ -216,7 +216,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
         $states = [
             new State('editing'),
-            new State('published', IState::TYPE_FINAL)
+            new State('published', StateInterface::TYPE_FINAL)
         ];
 
         $transiton = new Transition('editing', 'published');
@@ -237,7 +237,7 @@ class StateMachineBuilderTest extends BaseTestCase
         );
 
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
+            new State('editing', StateInterface::TYPE_INITIAL),
             new State('published')
         ];
 
@@ -260,8 +260,8 @@ class StateMachineBuilderTest extends BaseTestCase
         );
 
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
-            new State('published', IState::TYPE_INITIAL)
+            new State('editing', StateInterface::TYPE_INITIAL),
+            new State('published', StateInterface::TYPE_INITIAL)
         ];
 
         $transiton = new Transition([ 'editing' ], 'published');
@@ -282,8 +282,8 @@ class StateMachineBuilderTest extends BaseTestCase
         );
 
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
-            new State('published', IState::TYPE_FINAL)
+            new State('editing', StateInterface::TYPE_INITIAL),
+            new State('published', StateInterface::TYPE_FINAL)
         ];
 
         $transiton = new Transition('editing', 'published');
@@ -304,9 +304,9 @@ class StateMachineBuilderTest extends BaseTestCase
         );
 
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
+            new State('editing', StateInterface::TYPE_INITIAL),
             new State('transcoding'),
-            new State('published', IState::TYPE_FINAL)
+            new State('published', StateInterface::TYPE_FINAL)
         ];
 
         $transiton = new Transition('editing', 'published');
@@ -324,12 +324,12 @@ class StateMachineBuilderTest extends BaseTestCase
         $this->setExpectedException(
             VerificationError::CLASS,
             'The given state machine class "Workflux\Tests\StateMachine\Fixture\InvalidStateMachine"' .
-            ' does not implement the required interface "Workflux\StateMachine\IStateMachine"'
+            ' does not implement the required interface "Workflux\StateMachine\StateMachineInterface"'
         );
 
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
-            new State('published', IState::TYPE_FINAL)
+            new State('editing', StateInterface::TYPE_INITIAL),
+            new State('published', StateInterface::TYPE_FINAL)
         ];
 
         $transiton = new Transition('editing', 'published');
@@ -361,8 +361,8 @@ class StateMachineBuilderTest extends BaseTestCase
         );
 
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
-            new State('published', IState::TYPE_FINAL)
+            new State('editing', StateInterface::TYPE_INITIAL),
+            new State('published', StateInterface::TYPE_FINAL)
         ];
 
         $transiton = new Transition('editing', 'published');

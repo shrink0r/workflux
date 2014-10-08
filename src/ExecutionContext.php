@@ -3,9 +3,9 @@
 namespace Workflux;
 
 use Params\ParametersTrait;
-use Workflux\State\IState;
+use Workflux\State\StateInterface;
 
-class ExecutionContext implements IExecutionContext
+class ExecutionContext implements ExecutionContextInterface
 {
     use ParametersTrait;
 
@@ -32,12 +32,12 @@ class ExecutionContext implements IExecutionContext
         return $this->current_state_name;
     }
 
-    public function onStateEntry(IState $state)
+    public function onStateEntry(StateInterface $state)
     {
         $this->current_state_name = $state->getName();
     }
 
-    public function onStateExit(IState $state)
+    public function onStateExit(StateInterface $state)
     {
         // echo PHP_EOL . $this->getName() . ' -> exiting' . PHP_EOL;
     }

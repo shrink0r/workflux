@@ -5,7 +5,7 @@ namespace Workflux\Renderer;
 use Params\Immutable\ImmutableOptionsTrait;
 use Params\Immutable\ImmutableOptions;
 
-abstract class AbstractRenderer implements IGraphRenderer
+abstract class AbstractRenderer implements GraphRendererInterface
 {
     use ImmutableOptionsTrait;
 

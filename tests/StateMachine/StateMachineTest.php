@@ -4,23 +4,23 @@ namespace Workflux\Tests\StateMachine;
 
 use Workflux\Error\Error;
 use Workflux\Tests\BaseTestCase;
-use Workflux\StateMachine\IStateMachine;
+use Workflux\StateMachine\StateMachineInterface;
 use Workflux\StateMachine\StateMachine;
-use Workflux\State\IState;
+use Workflux\State\StateInterface;
 use Workflux\State\State;
 use Workflux\Transition\Transition;
 use Workflux\Guard\CallbackGuard;
 use Workflux\Guard\ExpressionGuard;
 use Workflux\Tests\Fixture\GenericSubject;
-use Workflux\IStatefulSubject;
+use Workflux\StatefulSubjectInterface;
 
 class StateMachineTest extends BaseTestCase
 {
     public function testGetters()
     {
         $states = [
-            'state1' => new State('state1', IState::TYPE_INITIAL),
-            'state2' => new State('state2', IState::TYPE_FINAL)
+            'state1' => new State('state1', StateInterface::TYPE_INITIAL),
+            'state2' => new State('state2', StateInterface::TYPE_FINAL)
         ];
         $transitions = [
             'state1' => [
@@ -44,9 +44,9 @@ class StateMachineTest extends BaseTestCase
     public function testExecute()
     {
         $states = [
-            'edit' => new State('edit', IState::TYPE_INITIAL),
+            'edit' => new State('edit', StateInterface::TYPE_INITIAL),
             'approval' => new State('approval'),
-            'published' => new State('published', IState::TYPE_FINAL)
+            'published' => new State('published', StateInterface::TYPE_FINAL)
         ];
         $transitions = [
             'edit' => [
@@ -70,9 +70,9 @@ class StateMachineTest extends BaseTestCase
         $subject = new GenericSubject('test_machine', 'new');
 
         $states = [
-            'new' => new State('new', IState::TYPE_INITIAL),
+            'new' => new State('new', StateInterface::TYPE_INITIAL),
             'transcoding' => new State('transcoding'),
-            'ready' => new State('ready', IState::TYPE_FINAL)
+            'ready' => new State('ready', StateInterface::TYPE_FINAL)
         ];
 
         $transitions = [
@@ -108,9 +108,9 @@ class StateMachineTest extends BaseTestCase
         $subject = new GenericSubject('test_machine', 'new');
 
         $states = [
-            'new' => new State('new', IState::TYPE_INITIAL),
+            'new' => new State('new', StateInterface::TYPE_INITIAL),
             'transcoding' => new State('transcoding'),
-            'ready' => new State('ready', IState::TYPE_FINAL)
+            'ready' => new State('ready', StateInterface::TYPE_FINAL)
         ];
 
         $transitions = [
@@ -150,9 +150,9 @@ class StateMachineTest extends BaseTestCase
         );
 
         $states = [
-            'edit' => new State('edit', IState::TYPE_INITIAL),
+            'edit' => new State('edit', StateInterface::TYPE_INITIAL),
             'approval' => new State('approval'),
-            'published' => new State('published', IState::TYPE_FINAL)
+            'published' => new State('published', StateInterface::TYPE_FINAL)
         ];
         $transitions = [
             'edit' => [
@@ -176,8 +176,8 @@ class StateMachineTest extends BaseTestCase
         );
 
         $states = [
-            'state1' => new State('state1', IState::TYPE_INITIAL),
-            'state2' => new State('state2', IState::TYPE_FINAL)
+            'state1' => new State('state1', StateInterface::TYPE_INITIAL),
+            'state2' => new State('state2', StateInterface::TYPE_FINAL)
         ];
         $transitions = [
             'state1' => [
@@ -199,8 +199,8 @@ class StateMachineTest extends BaseTestCase
         );
 
         $states = [
-            'state1' => new State('state1', IState::TYPE_INITIAL),
-            'state2' => new State('state2', IState::TYPE_FINAL)
+            'state1' => new State('state1', StateInterface::TYPE_INITIAL),
+            'state2' => new State('state2', StateInterface::TYPE_FINAL)
         ];
         $transitions = [
             'state1' => [
@@ -222,8 +222,8 @@ class StateMachineTest extends BaseTestCase
         );
 
         $states = [
-            'state1' => new State('state1', IState::TYPE_INITIAL),
-            'state2' => new State('state2', IState::TYPE_FINAL)
+            'state1' => new State('state1', StateInterface::TYPE_INITIAL),
+            'state2' => new State('state2', StateInterface::TYPE_FINAL)
         ];
         $transitions = [
             'state1' => [
@@ -244,14 +244,14 @@ class StateMachineTest extends BaseTestCase
         );
 
         $rejecting_guard = new CallbackGuard(
-            function (IStatefulSubject $subject) {
+            function (StatefulSubjectInterface $subject) {
                 return false;
             }
         );
 
         $states = [
-            'state1' => new State('state1', IState::TYPE_INITIAL),
-            'state2' => new State('state2', IState::TYPE_FINAL)
+            'state1' => new State('state1', StateInterface::TYPE_INITIAL),
+            'state2' => new State('state2', StateInterface::TYPE_FINAL)
         ];
         $transitions = [
             'state1' => [
@@ -273,15 +273,15 @@ class StateMachineTest extends BaseTestCase
         );
 
         $accepting_guard = new CallbackGuard(
-            function (IStatefulSubject $subject) {
+            function (StatefulSubjectInterface $subject) {
                 return true;
             }
         );
 
         $states = [
-            'state1' => new State('state1', IState::TYPE_INITIAL),
+            'state1' => new State('state1', StateInterface::TYPE_INITIAL),
             'state2' => new State('state2'),
-            'state2' => new State('state3', IState::TYPE_FINAL)
+            'state2' => new State('state3', StateInterface::TYPE_FINAL)
         ];
         $transitions = [
             'state1' => [

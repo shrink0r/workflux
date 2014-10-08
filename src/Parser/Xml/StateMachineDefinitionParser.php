@@ -2,15 +2,15 @@
 
 namespace Workflux\Parser\Xml;
 
-use Workflux\Parser\IParser;
+use Workflux\Parser\ParserInterface;
 use Workflux\Error\Error;
-use Workflux\State\IState;
+use Workflux\State\StateInterface;
 use Workflux\StateMachine\StateMachine;
 use DOMDocument;
 use DOMXpath;
 use DOMElement;
 
-class StateMachineDefinitionParser implements IParser
+class StateMachineDefinitionParser implements ParserInterface
 {
     const XSD_SCHMEMA_FILE = 'workflux.xsd';
 
@@ -76,13 +76,13 @@ class StateMachineDefinitionParser implements IParser
 
         switch ($state_node->nodeName) {
             case 'initial':
-                $state_type = IState::TYPE_INITIAL;
+                $state_type = StateInterface::TYPE_INITIAL;
                 break;
             case 'final':
-                $state_type = IState::TYPE_FINAL;
+                $state_type = StateInterface::TYPE_FINAL;
                 break;
             default:
-                $state_type = IState::TYPE_ACTIVE;
+                $state_type = StateInterface::TYPE_ACTIVE;
         }
 
         $state_class = null;

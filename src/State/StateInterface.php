@@ -2,9 +2,9 @@
 
 namespace Workflux\State;
 
-use Workflux\IStatefulSubject;
+use Workflux\StatefulSubjectInterface;
 
-interface IState
+interface StateInterface
 {
     const TYPE_INITIAL = 'initial';
 
@@ -22,7 +22,7 @@ interface IState
 
     public function isFinal();
 
-    public function onEntry(IStatefulSubject $subject);
+    public function onEntry(StatefulSubjectInterface $subject);
 
-    public function onExit(IStatefulSubject $subject);
+    public function onExit(StatefulSubjectInterface $subject);
 }

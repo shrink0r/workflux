@@ -2,7 +2,7 @@
 
 namespace Workflux;
 
-interface IStatefulSubject
+interface StatefulSubjectInterface
 {
     public function getExecutionContext();
 }

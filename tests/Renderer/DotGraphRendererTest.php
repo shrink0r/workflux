@@ -3,10 +3,10 @@
 namespace Workflux\Tests\Renderer;
 
 use Workflux\Tests\BaseTestCase;
-use Workflux\StateMachine\IStateMachine;
+use Workflux\StateMachine\StateMachineInterface;
 use Workflux\StateMachine\StateMachine;
 use Workflux\Builder\StateMachineBuilder;
-use Workflux\State\IState;
+use Workflux\State\StateInterface;
 use Workflux\State\State;
 use Workflux\Transition\Transition;
 use Workflux\Tests\Fixture\GenericSubject;
@@ -17,10 +17,10 @@ class DotGraphRendererTest extends BaseTestCase
     public function testRenderGraph()
     {
         $states = [
-            new State('editing', IState::TYPE_INITIAL),
+            new State('editing', StateInterface::TYPE_INITIAL),
             new State('approval'),
             new State('published'),
-            new State('deleted', IState::TYPE_FINAL)
+            new State('deleted', StateInterface::TYPE_FINAL)
         ];
 
         $approve = new Transition('editing', 'approval');

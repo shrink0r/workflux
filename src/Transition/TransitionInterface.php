@@ -2,7 +2,7 @@
 
 namespace Workflux\Transition;
 
-interface ITransition
+interface TransitionInterface
 {
     public function getIncomingStateNames();
 

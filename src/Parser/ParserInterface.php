@@ -2,7 +2,7 @@
 
 namespace Workflux\Parser;
 
-interface IParser
+interface ParserInterface
 {
 
 }

@@ -2,9 +2,9 @@
 
 namespace Workflux\Guard;
 
-use Workflux\IStatefulSubject;
+use Workflux\StatefulSubjectInterface;
 
-class CallbackGuard implements IGuard
+class CallbackGuard implements GuardInterface
 {
     protected $callback;
 
@@ -13,7 +13,7 @@ class CallbackGuard implements IGuard
         $this->callback = $callback;
     }
 
-    public function accept(IStatefulSubject $subject)
+    public function accept(StatefulSubjectInterface $subject)
     {
         return call_user_func($this->callback, $subject);
     }

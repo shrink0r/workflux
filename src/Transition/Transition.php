@@ -2,9 +2,9 @@
 
 namespace Workflux\Transition;
 
-use Workflux\Guard\IGuard;
+use Workflux\Guard\GuardInterface;
 
-class Transition implements ITransition
+class Transition implements TransitionInterface
 {
     protected $incoming_state_names;
 
@@ -12,7 +12,7 @@ class Transition implements ITransition
 
     protected $guard;
 
-    public function __construct($incoming_state_name_or_names, $outgoing_state_name, IGuard $guard = null)
+    public function __construct($incoming_state_name_or_names, $outgoing_state_name, GuardInterface $guard = null)
     {
         $this->incoming_state_names = (array)$incoming_state_name_or_names;
         $this->outgoing_state_name = $outgoing_state_name;

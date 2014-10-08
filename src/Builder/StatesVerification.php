@@ -3,9 +3,9 @@
 namespace Workflux\Builder;
 
 use Workflux\Error\VerificationError;
-use Workflux\State\IState;
+use Workflux\State\StateInterface;
 
-class StatesVerification implements IVerification
+class StatesVerification implements VerificationInterface
 {
     protected $states;
 
@@ -39,16 +39,16 @@ class StatesVerification implements IVerification
         }
     }
 
-    protected function verifyState(IState $state)
+    protected function verifyState(StateInterface $state)
     {
         $state_name = $state->getName();
         $transition_count = isset($this->transitions[$state_name]) ? count($this->transitions[$state_name]) : 0;
 
         switch ($state->getType()) {
-            case IState::TYPE_INITIAL:
+            case StateInterface::TYPE_INITIAL:
                 $this->verifyInitialState($state, $transition_count);
                 break;
-            case IState::TYPE_FINAL:
+            case StateInterface::TYPE_FINAL:
                 $this->verifyFinalState($state, $transition_count);
                 break;
             default:
@@ -56,7 +56,7 @@ class StatesVerification implements IVerification
         }
     }
 
-    protected function verifyInitialState(IState $state, $transition_count)
+    protected function verifyInitialState(StateInterface $state, $transition_count)
     {
         if ($this->initial_state) {
             throw new VerificationError(
@@ -72,7 +72,7 @@ class StatesVerification implements IVerification
         }
     }
 
-    protected function verifyFinalState(IState $state, $transition_count)
+    protected function verifyFinalState(StateInterface $state, $transition_count)
     {
         if ($transition_count > 0) {
             throw new VerificationError(
@@ -82,7 +82,7 @@ class StatesVerification implements IVerification
         $this->final_states[] = $state;
     }
 
-    protected function verifyActiveState(IState $state, $transition_count)
+    protected function verifyActiveState(StateInterface $state, $transition_count)
     {
         if ($transition_count === 0) {
             throw new VerificationError(
@@ -90,7 +90,7 @@ class StatesVerification implements IVerification
                     'State "%s" is expected to have at least one transition.' .
                     ' Only "%s" states are permitted to have no transitions.',
                     $state->getName(),
-                    IState::TYPE_FINAL
+                    StateInterface::TYPE_FINAL
                 )
             );
         }

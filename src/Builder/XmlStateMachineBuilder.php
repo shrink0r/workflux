@@ -4,8 +4,8 @@ namespace Workflux\Builder;
 
 use Workflux\Transition\Transition;
 use Workflux\State\State;
-use Workflux\State\IState;
-use Workflux\Guard\IGuard;
+use Workflux\State\StateInterface;
+use Workflux\Guard\GuardInterface;
 use Workflux\Error\Error;
 use Workflux\StateMachine\StateMachine;
 use Workflux\Parser\Xml\StateMachineDefinitionParser;
@@ -55,12 +55,12 @@ class XmlStateMachineBuilder extends StateMachineBuilder
         }
         $state = new $state_class($state_definition['name'], $state_definition['type']);
 
-        if (!$state instanceof IState) {
+        if (!$state instanceof StateInterface) {
             throw new Error(
                 sprintf(
                     'Configured custom implementor for state %s does not implement "%s"',
                     $state_definition['name'],
-                    IState::CLASS
+                    StateInterface::CLASS
                 )
             );
         }
@@ -101,9 +101,9 @@ class XmlStateMachineBuilder extends StateMachineBuilder
         if ($guard_definition) {
             $guard = new $guard_definition['class']($guard_definition['options']);
 
-            if (!$guard instanceof IGuard) {
+            if (!$guard instanceof GuardInterface) {
                 throw new Error(
-                    sprintf("Configured guard classes must implement %s.", IGuard::CLASS)
+                    sprintf("Configured guard classes must implement %s.", GuardInterface::CLASS)
                 );
             }
         }

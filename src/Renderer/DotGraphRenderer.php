@@ -2,10 +2,10 @@
 
 namespace Workflux\Renderer;
 
-use Workflux\StateMachine\IStateMachine;
-use Workflux\State\IState;
+use Workflux\StateMachine\StateMachineInterface;
+use Workflux\State\StateInterface;
 use Workflux\StateMachine\StateMachine;
-use Workflux\Transition\ITransition;
+use Workflux\Transition\TransitionInterface;
 use Params\Immutable\ImmutableOptions;
 
 class DotGraphRenderer extends AbstractRenderer
@@ -26,7 +26,7 @@ class DotGraphRenderer extends AbstractRenderer
 
     protected $styles;
 
-    public function renderGraph(IStateMachine $state_machine)
+    public function renderGraph(StateMachineInterface $state_machine)
     {
         $this->node_id_map = $this->buildNodeIdMap($state_machine);
         $this->styles = $this->getOption('style', new ImmutableOptions());
@@ -44,7 +44,7 @@ class DotGraphRenderer extends AbstractRenderer
         return $dot_code;
     }
 
-    protected function buildNodeIdMap(IStateMachine $state_machine)
+    protected function buildNodeIdMap(StateMachineInterface $state_machine)
     {
         $node_id_map = [];
         $node_number = 1;
@@ -55,7 +55,7 @@ class DotGraphRenderer extends AbstractRenderer
         return $node_id_map;
     }
 
-    protected function getNodes(IStateMachine $state_machine)
+    protected function getNodes(StateMachineInterface $state_machine)
     {
         $state_nodes = [];
         foreach ($state_machine->getStates() as $state) {
@@ -70,7 +70,7 @@ class DotGraphRenderer extends AbstractRenderer
         return $state_nodes;
     }
 
-    protected function createStateNode(IStateMachine $state_machine, IState $state)
+    protected function createStateNode(StateMachineInterface $state_machine, StateInterface $state)
     {
         $state_name = $state->getName();
         $fontcolor = $this->styles->getValues('state_node.fontcolor');
@@ -92,7 +92,7 @@ class DotGraphRenderer extends AbstractRenderer
         return sprintf('%s [%s]', $this->node_id_map[$state_name], implode(' ', $attributes));
     }
 
-    protected function getEdges(IStateMachine $state_machine)
+    protected function getEdges(StateMachineInterface $state_machine)
     {
         $edges = [];
         foreach ($state_machine->getTransitions() as $state_name => $state_transitions) {
@@ -114,7 +114,7 @@ class DotGraphRenderer extends AbstractRenderer
         return $edges;
     }
 
-    protected function createEdge(ITransition $transition, $state_name, $event_name)
+    protected function createEdge(TransitionInterface $transition, $state_name, $event_name)
     {
         $from_node = $this->node_id_map[$state_name];
         $to_node = $this->node_id_map[$transition->getOutgoingStateName()];

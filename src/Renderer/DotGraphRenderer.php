@@ -10,6 +10,14 @@ use Params\Immutable\ImmutableOptions;
 
 class DotGraphRenderer extends AbstractRenderer
 {
+    const DOT_TEMPLATE = <<<DOT
+digraph %s {
+%s
+
+%s
+}
+DOT;
+
     const STATE_NODE_COLOR = '#607d8b';
 
     const STATE_NODE_FONTCOLOR = '#000000';
@@ -28,20 +36,24 @@ class DotGraphRenderer extends AbstractRenderer
 
     public function renderGraph(StateMachineInterface $state_machine)
     {
-        $this->node_id_map = $this->buildNodeIdMap($state_machine);
-        $this->styles = $this->getOption('style', new ImmutableOptions());
+        $this->setUp($state_machine);
 
         $dot_code = sprintf(
-            $this->getDotCodeTemplate(),
+            self::DOT_TEMPLATE,
             $state_machine->getName(),
             implode(PHP_EOL, $this->getNodes($state_machine)),
             implode(PHP_EOL, $this->getEdges($state_machine))
         );
 
-        $this->node_id_map = null;
-        $this->styles = null;
+        $this->tearDown();
 
         return $dot_code;
+    }
+
+    protected function setUp(StateMachineInterface $state_machine)
+    {
+        $this->node_id_map = $this->buildNodeIdMap($state_machine);
+        $this->styles = $this->getOption('style', new ImmutableOptions());
     }
 
     protected function buildNodeIdMap(StateMachineInterface $state_machine)
@@ -73,13 +85,11 @@ class DotGraphRenderer extends AbstractRenderer
     protected function createStateNode(StateMachineInterface $state_machine, StateInterface $state)
     {
         $state_name = $state->getName();
-        $fontcolor = $this->styles->getValues('state_node.fontcolor');
-        $color = $this->styles->getValues('state_node.color');
 
         $attributes = [
             sprintf('label="%s"', $state_name),
-            sprintf('fontcolor="%s"', $fontcolor ?: self::STATE_NODE_FONTCOLOR),
-            sprintf('color="%s"', $color ?: self::STATE_NODE_COLOR)
+            sprintf('fontcolor="%s"', $this->getStyle('state_node.fontcolor', self::STATE_NODE_FONTCOLOR)),
+            sprintf('color="%s"', $this->getStyle('state_node.color', self::STATE_NODE_COLOR))
         ];
 
         if ($state->isFinal()) {
@@ -104,11 +114,10 @@ class DotGraphRenderer extends AbstractRenderer
         }
 
         $state_name = $state_machine->getInitialState()->getName();
-        $color = $this->styles->getValues('edge.colors.default');
         $edges[] = sprintf(
             '0 -> %s [color="%s"]',
             $this->node_id_map[$state_name],
-            $color ?: self::EDGE_DEFAULT_COLOR
+            $this->getStyle('edge.colors.default', self::EDGE_DEFAULT_COLOR)
         );
 
         return $edges;
@@ -124,10 +133,9 @@ class DotGraphRenderer extends AbstractRenderer
             $transition_label .= $transition->getGuard();
         }
 
-        $fontcolor = $this->styles->getValues('edge.fontcolor');
         $attributes = [
             sprintf('label="%s"', $transition_label),
-            sprintf('fontcolor="%s"', $fontcolor ?: self::EDGE_FONTCOLOR),
+            sprintf('fontcolor="%s"', $this->getStyle('edge.fontcolor', self::EDGE_FONTCOLOR)),
         ];
 
         $attributes[] = sprintf('color="%s"', $this->getEdgeColor($event_name));
@@ -139,29 +147,28 @@ class DotGraphRenderer extends AbstractRenderer
     {
         switch ($event_name) {
             case 'promote':
-                $color = $this->styles->getValues('edge.colors.promote');
-                $color = $color ?: self::EDGE_PROMOTE_COLOR;
+                $color = $this->getStyle('edge.colors.promote', self::EDGE_PROMOTE_COLOR);
                 break;
             case 'demote':
-                $color = $this->styles->getValues('edge.colors.demote');
-                $color = $color ?: self::EDGE_DEMOTE_COLOR;
+                $color = $this->getStyle('edge.colors.demote', self::EDGE_DEMOTE_COLOR);
                 break;
             default:
-                $color = $this->styles->getValues('edge.colors.default');
-                $color = $color ?: self::EDGE_DEFAULT_COLOR;
+                $color = $this->getStyle('edge.colors.default', self::EDGE_DEFAULT_COLOR);
         }
 
         return $color;
     }
 
-    protected function getDotCodeTemplate()
+    protected function getStyle($path, $default = null)
     {
-        return <<<DOT
-digraph %s {
-%s
+        $style = $this->styles->getValues('edge.colors.promote');
 
-%s
-}
-DOT;
+        return $style ?: $default;
+    }
+
+    protected function tearDown()
+    {
+        unset($this->node_id_map);
+        unset($this->styles);
     }
 }

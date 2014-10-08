@@ -177,19 +177,6 @@ class StateMachineDefinitionParser implements ParserInterface
 
     protected function parseStateNode(DOMElement $state_node)
     {
-        $state_name = $state_node->getAttribute('name');
-        $events = [];
-        foreach ($this->query('event', $state_node) as $event_node) {
-            $event_data = $this->parseEventNode($event_node);
-            $event_name = $event_data['name'];
-            $events[$event_name] = $event_data;
-        }
-        $seq_transitions = [];
-        foreach ($this->query('transition', $state_node) as $transition_node) {
-            $seq_transitions[] = $this->parseTransitionNode($transition_node);
-        }
-        $events[StateMachine::SEQ_TRANSITIONS_KEY] = $seq_transitions;
-
         switch ($state_node->nodeName) {
             case 'initial':
                 $state_type = StateInterface::TYPE_INITIAL;
@@ -207,12 +194,38 @@ class StateMachineDefinitionParser implements ParserInterface
         }
 
         return [
-            'name' => $state_name,
-            'events' => $events,
+            'name' => $state_node->getAttribute('name'),
             'type' => $state_type,
             'class' => $state_class,
-            'options' => $this->parseOptions($state_node)
+            'options' => $this->parseOptions($state_node),
+            'events' => array_merge(
+                $this->parseStateNodeEventOuts($state_node),
+                $this->parseStateNodeSequentialOuts($state_node)
+            )
         ];
+    }
+
+    protected function parseStateNodeEventOuts(DOMElement $state_node)
+    {
+        $state_name = $state_node->getAttribute('name');
+        $events = [];
+        foreach ($this->query('event', $state_node) as $event_node) {
+            $event_data = $this->parseEventNode($event_node);
+            $event_name = $event_data['name'];
+            $events[$event_name] = $event_data;
+        }
+
+        return $events;
+    }
+
+    protected function parseStateNodeSequentialOuts(DOMElement $state_node)
+    {
+        $seq_transitions = [];
+        foreach ($this->query('transition', $state_node) as $transition_node) {
+            $seq_transitions[] = $this->parseTransitionNode($transition_node);
+        }
+
+        return [ StateMachine::SEQ_TRANSITIONS_KEY => $seq_transitions ];
     }
 
     protected function parseEventNode(DOMElement $event_node)

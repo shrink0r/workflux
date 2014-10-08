@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    version="1.0"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="urn:schemas-workflux:statemachine:0.1.0"
+    targetNamespace="urn:schemas-workflux:statemachine:0.1.0"
+>
+    <xs:element name="state_machines" type="StateMachinesListType" />
+
+    <xs:complexType name="StateMachinesListType">
+        <xs:sequence>
+            <xs:element name="state_machine" type="StateMachineType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="StateMachineType">
+        <xs:sequence>
+            <xs:element name="initial" type="StateType" minOccurs="1" maxOccurs="1" />
+            <xs:element name="state" type="StateType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="final" type="StateType" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="StateType">
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="event" type="EventType" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="transition" type="TransitionType" minOccurs="0" maxOccurs="unbounded" />
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="class" type="xs:string" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="EventType">
+        <xs:sequence>
+            <xs:element name="transition" type="TransitionType" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="TransitionType">
+        <xs:sequence>
+            <xs:element name="guard" type="GuardType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="target" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="GuardType">
+        <xs:sequence>
+            <xs:element name="option" type="OptionType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="class" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="OptionType" mixed="true">
+        <xs:choice>
+            <xs:element name="option" type="OptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="options" type="OptionsListType" minOccurs="0" maxOccurs="1"/>
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="OptionsListType">
+        <xs:sequence>
+            <xs:element name="option" type="OptionType" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

@@ -12,6 +12,8 @@ use DOMElement;
 
 class StateMachineDefinitionParser implements IParser
 {
+    const XSD_SCHMEMA_FILE = 'workflux.xsd';
+
     protected $xpath;
 
     public function parse($state_machine_definition_file)
@@ -22,14 +24,22 @@ class StateMachineDefinitionParser implements IParser
             );
         }
 
+        $schema_path = dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . self::XSD_SCHMEMA_FILE;
         $document = new DOMDocument();
         $document->load($state_machine_definition_file);
-        // @todo write xsd and use it here to validate stuff.
-        $this->xpath = new DOMXpath($document);
+        $document->schemaValidate($schema_path);
 
-        return $this->parseStateMachineNode(
-            $this->xpath->query('//state_machine')->item(0)
-        );
+        $this->xpath = new DOMXpath($document);
+        $root_namespace = $document->lookupNamespaceUri($document->namespaceURI);
+        $this->xpath->registerNamespace('wf', $root_namespace);
+
+        $state_machines = [];
+        foreach ($this->xpath->query('//wf:state_machines/wf:state_machine') as $state_machine_node) {
+            $state_machine = $this->parseStateMachineNode($state_machine_node);
+            $state_machines[$state_machine['name']] = $state_machine;
+        }
+
+        return $state_machines;
     }
 
     protected function parseStateMachineNode(DOMElement $state_machine_node)
@@ -37,7 +47,7 @@ class StateMachineDefinitionParser implements IParser
         $state_machine_name = $state_machine_node->getAttribute('name');
 
         $state_nodes_data = [];
-        $state_node_expressions = [ 'initial', 'state', 'final' ];
+        $state_node_expressions = [ 'wf:initial', 'wf:state', 'wf:final' ];
         foreach ($state_node_expressions as $state_node_expression) {
             foreach ($this->xpath->query($state_node_expression, $state_machine_node) as $state_node) {
                 $state_node_data = $this->parseStateNode($state_node);
@@ -53,13 +63,13 @@ class StateMachineDefinitionParser implements IParser
     {
         $state_name = $state_node->getAttribute('name');
         $events = [];
-        foreach ($this->xpath->query('event', $state_node) as $event_node) {
+        foreach ($this->xpath->query('wf:event', $state_node) as $event_node) {
             $event_data = $this->parseEventNode($event_node);
             $event_name = $event_data['name'];
             $events[$event_name] = $event_data;
         }
         $seq_transitions = [];
-        foreach ($this->xpath->query('transition', $state_node) as $transition_node) {
+        foreach ($this->xpath->query('wf:transition', $state_node) as $transition_node) {
             $seq_transitions[] = $this->parseTransitionNode($transition_node);
         }
         $events[StateMachine::SEQ_TRANSITIONS_KEY] = $seq_transitions;
@@ -92,7 +102,7 @@ class StateMachineDefinitionParser implements IParser
     {
         $event_name = $event_node->getAttribute('name');
         $transitions = [];
-        foreach ($this->xpath->query('transition', $event_node) as $transition_node) {
+        foreach ($this->xpath->query('wf:transition', $event_node) as $transition_node) {
             $transitions[] = $this->parseTransitionNode($transition_node);
         }
 
@@ -102,7 +112,7 @@ class StateMachineDefinitionParser implements IParser
     protected function parseTransitionNode(DOMElement $transition_node)
     {
         $outgoing_state_name = $transition_node->getAttribute('target');
-        $guard_node = $this->xpath->query('guard', $transition_node)->item(0);
+        $guard_node = $this->xpath->query('wf:guard', $transition_node)->item(0);
 
         if (!$guard_node) {
             $guard_data = null;
@@ -117,7 +127,7 @@ class StateMachineDefinitionParser implements IParser
     {
         $guard_class = $guard_node->getAttribute('class');
         $guard_options = [];
-        foreach ($this->xpath->query('option', $guard_node) as $option_node) {
+        foreach ($this->xpath->query('wf:option', $guard_node) as $option_node) {
             $option_name = $option_node->getAttribute('name');
             $guard_options[$option_name] = $this->literalize($option_node->nodeValue);
         }

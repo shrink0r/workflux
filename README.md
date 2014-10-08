@@ -39,7 +39,8 @@ Alternatively, you can download a release archive from the [github releases](rel
 
 ## Documentation
 
-tbd
+* [API Doc](http://shrink0r.github.io/workflux/api/index.html)
+* [Usage](https://github.com/shrink0r/workflux/blob/master/docs/usage.md)
 
 ## Community
 

@@ -46,7 +46,7 @@ class StatesVerification implements VerificationInterface
 
         switch ($state->getType()) {
             case StateInterface::TYPE_INITIAL:
-                $this->verifyInitialState($state, $transition_count);
+                $this->verifyInitialState($state);
                 break;
             case StateInterface::TYPE_FINAL:
                 $this->verifyFinalState($state, $transition_count);

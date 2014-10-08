@@ -4,6 +4,7 @@ namespace Workflux\Builder;
 
 use Workflux\Transition\Transition;
 use Workflux\State\State;
+use Workflux\State\IState;
 use Workflux\Guard\IGuard;
 use Workflux\Error\Error;
 use Workflux\StateMachine\StateMachine;
@@ -20,13 +21,39 @@ class XmlStateMachineBuilder extends StateMachineBuilder
 
         $this->setStateMachineName($state_machine_definition['name']);
         foreach ($state_machine_definition['states'] as $state_name => $state_definition) {
-            $state = new State($state_name, $state_definition['type']);
-            $this->addState($state);
+            $this->addState($this->createState($state_definition));
             $this->addEventTransitions($state_definition);
             $this->addSequentialTransitions($state_definition);
         }
 
         return parent::build();
+    }
+
+    protected function createState(array $state_definition)
+    {
+        $state_class = isset($state_definition['class']) ? $state_definition['class'] : State::CLASS;
+        if (!class_exists($state_class)) {
+            throw new Error(
+                sprintf(
+                    'Unable to load configured custom implementor "%s" for state "%s"',
+                    $state_definition['name'],
+                    $state_class
+                )
+            );
+        }
+        $state = new $state_class($state_definition['name'], $state_definition['type']);
+
+        if (!$state instanceof IState) {
+            throw new Error(
+                sprintf(
+                    'Configured custom implementor for state %s does not implement "%s"',
+                    $state_definition['name'],
+                    IState::CLASS
+                )
+            );
+        }
+
+        return $state;
     }
 
     protected function addEventTransitions(array $state_definition)

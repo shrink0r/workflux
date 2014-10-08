@@ -18,7 +18,7 @@
             </event>
         </initial>
 
-        <state name="transcoding">
+        <state name="transcoding" class="Workflux\Tests\Parser\Xml\Fixture\CustomState">
             <transition target="ready">
                 <guard class="Workflux\Guard\ExpressionGuard">
                     <option name="expression">params.transcoding_success</option>

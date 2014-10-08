@@ -75,7 +75,17 @@ class StateMachineDefinitionParser implements IParser
                 $state_type = IState::TYPE_ACTIVE;
         }
 
-        return [ 'name' => $state_name, 'events' => $events, 'type' => $state_type ];
+        $state_class = null;
+        if ($state_node->hasAttribute('class')) {
+            $state_class = $state_node->getAttribute('class');
+        }
+
+        return [
+            'name' => $state_name,
+            'events' => $events,
+            'type' => $state_type,
+            'class' => $state_class
+        ];
     }
 
     protected function parseEventNode(DOMElement $event_node)

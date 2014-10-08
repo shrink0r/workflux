@@ -6,6 +6,7 @@ return [
         'new' => [
             'name' => 'new',
             'type' => 'initial',
+            'class' => null,
             'events' => [
                 'promote' => [
                     'name' => 'promote',
@@ -36,6 +37,7 @@ return [
         'transcoding' => [
             'name' => 'transcoding',
             'type' => 'active',
+            'class' => 'Workflux\Tests\Parser\Xml\Fixture\CustomState',
             'events' => [
                 '_sequential' => [
                     [
@@ -71,6 +73,7 @@ return [
         'error' => [
             'name' => 'error',
             'type' => 'active',
+            'class' => null,
             'events' => [
                 'promote' => [
                     'name' => 'promote',
@@ -96,6 +99,7 @@ return [
         'rejected' => [
             'name' => 'rejected',
             'type' => 'final',
+            'class' => null,
             'events' => [
                 '_sequential' => []
             ]
@@ -103,6 +107,7 @@ return [
         'ready' => [
             'name' => 'ready',
             'type' => 'final',
+            'class' => null,
             'events' => [
                 '_sequential' => []
             ]

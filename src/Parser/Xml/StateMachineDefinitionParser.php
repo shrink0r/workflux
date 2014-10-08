@@ -289,9 +289,11 @@ class StateMachineDefinitionParser implements ParserInterface
         }
 
         $lowercase_value = strtolower($value);
-        if ($lowercase_value === 'on' || $lowercase_value === 'yes' || $lowercase_value === 'true') {
+        $truthy_values = [ 'on', 'yes', 'true' ];
+        $falsy_values = [ 'off', 'no', 'false' ];
+        if (in_array($lowercase_value, $truthy_values, true)) {
             return true;
-        } elseif ($lowercase_value === 'off' || $lowercase_value === 'no' || $lowercase_value === 'false') {
+        } elseif (in_array($lowercase_value, $falsy_values, true)) {
             return false;
         }
 

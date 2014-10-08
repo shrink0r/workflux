@@ -8,7 +8,7 @@ use Workflux\State\StateInterface;
 use Workflux\StateMachine\StateMachine;
 use DOMDocument;
 use DOMXpath;
-use DOMElement;
+use DOMNode;
 use DOMException;
 use LibXMLError;
 
@@ -149,7 +149,7 @@ class StateMachineDefinitionParser implements ParserInterface
         return $msg;
     }
 
-    protected function query($xpath_expression, DOMElement $context = null)
+    protected function query($xpath_expression, DOMNode $context = null)
     {
         $search = [ '~/(\w+)~', '~^(\w+)$~' ];
         $replace = [ sprintf('/%s:$1', self::NAMESPACE_PREFIX), sprintf('%s:$1', self::NAMESPACE_PREFIX) ];
@@ -158,7 +158,7 @@ class StateMachineDefinitionParser implements ParserInterface
         return $this->xpath->query($namespaced_expression, $context);
     }
 
-    protected function parseStateMachineNode(DOMElement $state_machine_node)
+    protected function parseStateMachineNode(DOMNode $state_machine_node)
     {
         $state_machine_name = $state_machine_node->getAttribute('name');
 
@@ -175,7 +175,7 @@ class StateMachineDefinitionParser implements ParserInterface
         return [ 'name' => $state_machine_name, 'states' => $state_nodes_data ];
     }
 
-    protected function parseStateNode(DOMElement $state_node)
+    protected function parseStateNode(DOMNode $state_node)
     {
         switch ($state_node->nodeName) {
             case 'initial':
@@ -205,7 +205,7 @@ class StateMachineDefinitionParser implements ParserInterface
         ];
     }
 
-    protected function parseStateNodeEventOuts(DOMElement $state_node)
+    protected function parseStateNodeEventOuts(DOMNode $state_node)
     {
         $events = [];
         foreach ($this->query('event', $state_node) as $event_node) {
@@ -217,7 +217,7 @@ class StateMachineDefinitionParser implements ParserInterface
         return $events;
     }
 
-    protected function parseStateNodeSequentialOuts(DOMElement $state_node)
+    protected function parseStateNodeSequentialOuts(DOMNode $state_node)
     {
         $seq_transitions = [];
         foreach ($this->query('transition', $state_node) as $transition_node) {
@@ -227,7 +227,7 @@ class StateMachineDefinitionParser implements ParserInterface
         return [ StateMachine::SEQ_TRANSITIONS_KEY => $seq_transitions ];
     }
 
-    protected function parseEventNode(DOMElement $event_node)
+    protected function parseEventNode(DOMNode $event_node)
     {
         $event_name = $event_node->getAttribute('name');
         $transitions = [];
@@ -241,7 +241,7 @@ class StateMachineDefinitionParser implements ParserInterface
         ];
     }
 
-    protected function parseTransitionNode(DOMElement $transition_node)
+    protected function parseTransitionNode(DOMNode $transition_node)
     {
         $guard_node = $this->query('guard', $transition_node)->item(0);
 
@@ -251,7 +251,7 @@ class StateMachineDefinitionParser implements ParserInterface
         ];
     }
 
-    protected function parseGuardNode(DOMElement $guard_node)
+    protected function parseGuardNode(DOMNode $guard_node)
     {
         return [
             'class' => $guard_node->getAttribute('class'),
@@ -259,7 +259,7 @@ class StateMachineDefinitionParser implements ParserInterface
         ];
     }
 
-    protected function parseOptions(DOMElement $options_context)
+    protected function parseOptions(DOMNode $options_context)
     {
         $options = [];
 

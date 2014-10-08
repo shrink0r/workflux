@@ -1,19 +1,17 @@
 # Workflux
 
-Finite state machine for php.
+[![Latest Stable Version](https://poser.pugx.org/shrink0r/workflux/version.png)](https://packagist.org/packages/shrink0r/workflux)
+[![Latest Unstable Version](https://poser.pugx.org/shrink0r/workflux/v/unstable.png)](https://packagist.org/packages/shrink0r/workflux)
+[![Build Status](https://secure.travis-ci.org/shrink0r/workflux.png)](http://travis-ci.org/shrink0r/workflux)
+[![Coverage Status](https://coveralls.io/repos/shrink0r/workflux/badge.png?branch=master)](https://coveralls.io/r/shrink0r/workflux?branch=master)
+[![Dependency Status](https://www.versioneye.com/user/projects/542da521fc3f5ca427000299/badge.svg?style=flat)](https://www.versioneye.com/user/projects/542da521fc3f5ca427000299)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shrink0r/workflux/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shrink0r/workflux/?branch=master)
+[![License](https://poser.pugx.org/shrink0r/workflux/license.svg)](http://creativecommons.org/licenses/by-sa/3.0/deed.en_US)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/c9d87c4a-f2f6-4f10-847e-8a9162d306d9/mini.png)](https://insight.sensiolabs.com/projects/c9d87c4a-f2f6-4f10-847e-8a9162d306d9)
 
-## Status
+## Purpose
 
-* [![Latest Stable Version](https://poser.pugx.org/shrink0r/workflux/version.png)](https://packagist.org/packages/shrink0r/workflux)
-* [![Latest Unstable Version](https://poser.pugx.org/shrink0r/workflux/v/unstable.png)](https://packagist.org/packages/shrink0r/workflux)
-* [![Build Status](https://secure.travis-ci.org/shrink0r/workflux.png)](http://travis-ci.org/shrink0r/workflux)
-* [![Coverage Status](https://coveralls.io/repos/shrink0r/workflux/badge.png?branch=master)](https://coveralls.io/r/shrink0r/workflux?branch=master)
-* [![Dependency Status](https://www.versioneye.com/user/projects/542da521fc3f5ca427000299/badge.svg?style=flat)](https://www.versioneye.com/user/projects/542da521fc3f5ca427000299)
-* [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shrink0r/workflux/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shrink0r/workflux/?branch=master)
-* [![License](https://poser.pugx.org/shrink0r/workflux/license.svg)](http://creativecommons.org/licenses/by-sa/3.0/deed.en_US)
-* [![SensioLabsInsight](https://insight.sensiolabs.com/projects/c9d87c4a-f2f6-4f10-847e-8a9162d306d9/mini.png)](https://insight.sensiolabs.com/projects/c9d87c4a-f2f6-4f10-847e-8a9162d306d9)
-
-Please have a look at the [available releases](https://github.com/shrink0r/workflux/releases).
+The `workflux` library implements a `Finite State Machine` in a way that also allows to implement `Pushdown Automaton` and `Workflow Graphs`.
 
 ![Screenshot of a rendered example state machine](https://raw.githubusercontent.com/shrink0r/workflux/master/docs/state_machine.png)
 
@@ -40,7 +38,7 @@ Alternatively, you can download a release archive from the [github releases](rel
 
 ## Documentation
 
-The `workflux` library implements a `Finite State Machine` in a way that also allows to implement `Pushdown Automaton` and `Workflow Graphs`.
+tbd
 
 ## Community
 

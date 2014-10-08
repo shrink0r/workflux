@@ -161,7 +161,7 @@ DOT;
 
     protected function getStyle($path, $default = null)
     {
-        $style = $this->styles->getValues('edge.colors.promote');
+        $style = $this->styles->getValues($path);
 
         return $style ?: $default;
     }

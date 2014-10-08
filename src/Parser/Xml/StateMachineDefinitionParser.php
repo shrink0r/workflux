@@ -207,7 +207,6 @@ class StateMachineDefinitionParser implements ParserInterface
 
     protected function parseStateNodeEventOuts(DOMElement $state_node)
     {
-        $state_name = $state_node->getAttribute('name');
         $events = [];
         foreach ($this->query('event', $state_node) as $event_node) {
             $event_data = $this->parseEventNode($event_node);
@@ -276,7 +275,7 @@ class StateMachineDefinitionParser implements ParserInterface
             if ($child_options->length > 0) {
                 $option_value = $this->parseOptions($option_node);
             } else {
-                $option_value = $this->literalize($option_node->nodeValue);;
+                $option_value = $this->literalize($option_node->nodeValue);
             }
 
             $options[$option_index] = $option_value;

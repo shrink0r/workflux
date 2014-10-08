@@ -16,6 +16,6 @@ class ExpressionGuardTest extends BaseTestCase
         $subject->getExecutionContext()->setParameter('event', 'erp.derped');
 
         $this->assertTrue($guard->accept($subject));
-        $this->assertEquals(PHP_EOL . 'if params.event === "erp.derped"' , $guard->__toString());
+        $this->assertEquals(PHP_EOL . 'if params.event === "erp.derped"', $guard->__toString());
     }
 }

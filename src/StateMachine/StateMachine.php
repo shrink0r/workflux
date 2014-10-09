@@ -74,32 +74,13 @@ class StateMachine implements StateMachineInterface
 
     public function execute(StatefulSubjectInterface $subject, $event_name)
     {
-        $current_state = $this->getCurrentStateFor($subject);
-        if (!$this->isEventState($current_state)) {
-            throw new Error(
-                sprintf(
-                    "Current execution is pointing to an invalid state %s." .
-                    " The state machine execution must be started and resume by entering an event state.",
-                    $current_state->getName()
-                )
-            );
-        }
+        $current_state = $this->getValidStartStateFor($subject);
 
         do {
-            $accepted_transition = $this->getAcceptedTransition($subject, $current_state, $event_name);
-            if (!$accepted_transition) {
-                throw new Error(
-                    sprintf(
-                        'Transition for event "%s" at state "%s" was rejected.',
-                        $event_name,
-                        $current_state->getName()
-                    )
-                );
-            }
-
+            $next_state = $this->getNextState($subject, $current_state, $event_name);
             $current_state->onExit($subject);
-            $current_state = $this->getStateOrFail($accepted_transition->getOutgoingStateName());
-            $current_state->onEntry($subject);
+            $next_state->onEntry($subject);
+            $current_state = $next_state;
 
             // after the initial event has been processed, the only we to keep going are sequentially chained states
             $event_name = self::SEQ_TRANSITIONS_KEY;
@@ -107,13 +88,6 @@ class StateMachine implements StateMachineInterface
         } while (!$this->isEventState($current_state) && !$current_state->isFinal());
 
         return $current_state;
-    }
-
-    public function getCurrentStateFor(StatefulSubjectInterface $subject)
-    {
-        return $this->getStateOrFail(
-            $subject->getExecutionContext()->getCurrentStateName()
-        );
     }
 
     public function getStates()
@@ -173,6 +147,41 @@ class StateMachine implements StateMachineInterface
                 $this->event_states[] = $state;
             }
         }
+    }
+
+    protected function getValidStartStateFor(StatefulSubjectInterface $subject)
+    {
+        $start_state = $this->getStateOrFail(
+            $subject->getExecutionContext()->getCurrentStateName()
+        );
+
+        if (!$this->isEventState($start_state)) {
+            throw new Error(
+                sprintf(
+                    "Current execution is pointing to an invalid state %s." .
+                    " The state machine execution must be started and resume by entering an event state.",
+                    $start_state->getName()
+                )
+            );
+        }
+
+        return $start_state;
+    }
+
+    protected function getNextState(StatefulSubjectInterface $subject, StateInterface $current_state, $event_name)
+    {
+        $accepted_transition = $this->getAcceptedTransition($subject, $current_state, $event_name);
+        if (!$accepted_transition) {
+            throw new Error(
+                sprintf(
+                    'Transition for event "%s" at state "%s" was rejected.',
+                    $event_name,
+                    $current_state->getName()
+                )
+            );
+        }
+
+        return $this->getStateOrFail($accepted_transition->getOutgoingStateName());
     }
 
     protected function getAcceptedTransition(StatefulSubjectInterface $subject, StateInterface $state, $event_name)

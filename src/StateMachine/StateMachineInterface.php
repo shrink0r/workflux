@@ -10,8 +10,6 @@ interface StateMachineInterface
 
     public function execute(StatefulSubjectInterface $subject, $event_name);
 
-    public function getCurrentStateFor(StatefulSubjectInterface $subject);
-
     public function getInitialState();
 
     public function getFinalStates();

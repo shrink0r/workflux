@@ -13,7 +13,7 @@ use Workflux\Transition\Transition;
 
 $builder = new StateMachineBuilder();
 $state_machine = $builder
-    ->setStateMachineName(self::MACHINE_NAME)
+    ->setStateMachineName('test_machine')
     ->addStates(
         [
             new State('editing', StateInterface::TYPE_INITIAL),
@@ -22,12 +22,11 @@ $state_machine = $builder
             new State('deleted', StateInterface::TYPE_FINAL)
         ]
     )
-    ->addTransition('promote', new Transition('editing', 'approval'))
-    ->addTransition('promote', new Transition('approval', 'published'))
-    ->addTransition('demote', new Transition([ 'approval', 'published' ], 'editing'))
-    ->addTransition('delete', new Transition([ 'editing', 'approval', 'published' ], 'deleted'))
+    ->addTransition(new Transition('editing', 'approval'), 'promote')
+    ->addTransition(new Transition('approval', 'published'), 'promote')
+    ->addTransition(new Transition([ 'approval', 'published' ], 'editing'), 'demote')
+    ->addTransition(new Transition([ 'editing', 'approval', 'published' ], 'deleted'), 'delete')
     ->build();
-
 ```
 
 ## Using a state machine
@@ -38,7 +37,7 @@ $state_machine = $builder
 $subject = new GenericSubject('test_machine', 'edit');
 $target_state = $state_machine->execute($subject, 'promote');
 
-if ($target_state->getName() === $subject->getExecutionContext()->getCurrentStateName()) {
+if ($target_state->getName() === 'approval') {
     echo "Yay, it works!";
 }
 ```
@@ -53,20 +52,18 @@ use Workflux\Renderer\DotGraphRenderer;
 $renderer = new DotGraphRenderer();
 $dot_code = $renderer->renderGraph($state_machine);
 
-$dot_file_path = sprintf('/your/path/fsm-%s.dot', $state_machine->getName());
-$image_file_path = sprintf('/your/path/fsm-%s.svg', $state_machine->getName());;
+$dot_file_path = sprintf('/your/path/%s.dot', $state_machine->getName());
+$image_file_path = sprintf('/your/path/%s.svg', $state_machine->getName());;
 
 file_put_contents($dot_file_path, $dot_code);
 
-exec(
-    sprintf(
-        '/usr/bin/dot -Tsvg  %s -o %s 2>&1',
-        escapeshellarg($dot_file_path),
-        escapeshellarg($image_file_path)
-    ),
-    $output,
-    $status
+$command = sprintf(
+    '/usr/bin/dot -Tsvg  %s -o %s 2>&1',
+    escapeshellarg($dot_file_path),
+    escapeshellarg($image_file_path)
 );
+
+exec($command, $output, $status);
 ```
 
 ## Declaring a state machine

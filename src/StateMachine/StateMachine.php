@@ -138,6 +138,7 @@ class StateMachine implements StateMachineInterface
                 break;
             case StateInterface::TYPE_INITIAL:
                 $this->initial_state = $state;
+                // no break
             default:
                 $state_transitions = $this->getTransitions($state->getName());
                 if (!isset($state_transitions[StateMachine::SEQ_TRANSITIONS_KEY])) {

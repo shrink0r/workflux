@@ -119,6 +119,28 @@ class StateMachineBuilder implements StateMachineBuilderInterface
     {
         $this->verifyStateGraph();
 
+        $state_machine = $this->createStateMachine();
+
+        $this->tearDown();
+
+        return $state_machine;
+    }
+
+    protected function verifyStateGraph()
+    {
+        if (!$this->state_machine_name) {
+            throw new VerificationError(
+                'Required state machine name is missing. Make sure to call setStateMachineName.'
+            );
+        }
+
+        foreach ($this->getVerifications() as $verification) {
+            $verification->verify();
+        }
+    }
+
+    protected function createStateMachine()
+    {
         $state_machine_class = $this->getOption('state_machine_class', StateMachine::CLASS);
 
         if (!class_exists($state_machine_class)) {
@@ -139,25 +161,10 @@ class StateMachineBuilder implements StateMachineBuilderInterface
             );
         }
 
-        $this->clearIntrinsicState();
-
         return $state_machine;
     }
 
-    protected function verifyStateGraph()
-    {
-        if (!$this->state_machine_name) {
-            throw new VerificationError(
-                'Required state machine name is missing. Make sure to call setStateMachineName.'
-            );
-        }
-
-        foreach ($this->getVerifications() as $verification) {
-            $verification->verify();
-        }
-    }
-
-    protected function clearIntrinsicState()
+    protected function tearDown()
     {
         $this->state_machine_name = null;
         $this->states = [];

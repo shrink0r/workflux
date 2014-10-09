@@ -5,6 +5,7 @@ namespace Workflux\StateMachine;
 use Workflux\Error\Error;
 use Workflux\StatefulSubjectInterface;
 use Workflux\State\StateInterface;
+use Workflux\Transition\TransitionInterface;
 
 class StateMachine implements StateMachineInterface
 {
@@ -112,9 +113,7 @@ class StateMachine implements StateMachineInterface
 
         if (!empty($state_name)) {
             if (!isset($this->transitions[$state_name])) {
-                throw new Error(
-                    sprintf('No transitions available at state "%s".', $state_name)
-                );
+                throw new Error(sprintf('No transitions available at state "%s".', $state_name));
             }
             $transitions = $this->transitions[$state_name];
         }
@@ -133,19 +132,17 @@ class StateMachine implements StateMachineInterface
 
     protected function mapState(StateInterface $state)
     {
-        if ($state->isInitial()) {
-            $this->initial_state = $state;
-        } elseif ($state->isFinal()) {
-            $this->final_states[] = $state;
-        }
-
-        if (!$state->isFinal()) {
-            $state_transitions = $this->getTransitions($state->getName());
-            if (!isset($state_transitions[StateMachine::SEQ_TRANSITIONS_KEY])
-                && !$state->isFinal()
-            ) {
-                $this->event_states[] = $state;
-            }
+        switch ($state->getType()) {
+            case StateInterface::TYPE_FINAL:
+                $this->final_states[] = $state;
+                break;
+            case StateInterface::TYPE_INITIAL:
+                $this->initial_state = $state;
+            default:
+                $state_transitions = $this->getTransitions($state->getName());
+                if (!isset($state_transitions[StateMachine::SEQ_TRANSITIONS_KEY])) {
+                    $this->event_states[] = $state;
+                }
         }
     }
 
@@ -170,7 +167,7 @@ class StateMachine implements StateMachineInterface
 
     protected function getNextState(StatefulSubjectInterface $subject, StateInterface $current_state, $event_name)
     {
-        $accepted_transition = $this->getAcceptedTransition($subject, $current_state, $event_name);
+        $accepted_transition = $this->getActivatedTransition($subject, $current_state, $event_name);
         if (!$accepted_transition) {
             throw new Error(
                 sprintf(
@@ -184,28 +181,35 @@ class StateMachine implements StateMachineInterface
         return $this->getStateOrFail($accepted_transition->getOutgoingStateName());
     }
 
-    protected function getAcceptedTransition(StatefulSubjectInterface $subject, StateInterface $state, $event_name)
+    protected function getActivatedTransition(StatefulSubjectInterface $subject, StateInterface $state, $event_name)
     {
         $accepted_transition = null;
         $possible_transitions = $this->getTransitions($state->getName(), $event_name);
 
         foreach ($possible_transitions as $state_transition) {
-            if (!$state_transition->hasGuard() || $state_transition->getGuard()->accept($subject)) {
-                if (!$accepted_transition) {
-                    $accepted_transition = $state_transition;
-                } else {
-                    throw new Error(
-                        sprintf(
-                            'Only one transition is allowed to be active at a time.',
-                            $event_name,
-                            $state->getName()
-                        )
-                    );
-                }
+            if (!$this->mayProceed($subject, $state_transition)) {
+                continue;
             }
+
+            if ($accepted_transition) {
+                throw new Error(
+                    sprintf('Only one transition is allowed to be active at a time.', $event_name, $state->getName())
+                );
+            }
+
+            $accepted_transition = $state_transition;
         }
 
         return $accepted_transition;
+    }
+
+    protected function mayProceed(StatefulSubjectInterface $subject, TransitionInterface $transition)
+    {
+        if (!$transition->hasGuard()) {
+            return true;
+        }
+
+        return $transition->getGuard()->accept($subject);
     }
 
     protected function getStateOrFail($state_name)

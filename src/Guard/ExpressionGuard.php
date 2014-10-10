@@ -41,7 +41,7 @@ class ExpressionGuard extends ConfigurableGuard
     {
         $execution_context = $subject->getExecutionContext();
 
-        return $this->expression_language->evaluate(
+        return (bool)$this->expression_language->evaluate(
             $this->getOption('expression'),
             [ 'subject' => $subject, 'params' => $execution_context->getParameters() ]
         );

@@ -110,7 +110,7 @@ class StateMachine implements StateMachineInterface
     /**
      * Tells whether a given state has event based or sequential transitions.
      *
-     * @param string|StateInterface $state_name
+     * @param mixed $state_name Either an instance of StateInterface or string.
      *
      * @return bool
      */

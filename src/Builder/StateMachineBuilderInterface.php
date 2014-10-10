@@ -4,6 +4,7 @@ namespace Workflux\Builder;
 
 use Workflux\State\StateInterface;
 use Workflux\Transition\TransitionInterface;
+use Workflux\StateMachine\StateMachineInterface;
 
 /**
  * StateMachineBuilderInterface implementations are supposed to provide convenience for building state machines.
@@ -60,7 +61,7 @@ interface StateMachineBuilderInterface
     /**
      * Verifies the builder's current state and builds a state machine off of it.
      *
-     * @return Workflux\StateMachine\StateMachineInterface
+     * @return StateMachineInterface
      */
     public function build();
 }

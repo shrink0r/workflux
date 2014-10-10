@@ -26,7 +26,7 @@ class StatesVerification implements VerificationInterface
     protected $initial_state;
 
     /**
-     * @var StateInterface $final_states
+     * @var array $final_states
      */
     protected $final_states;
 

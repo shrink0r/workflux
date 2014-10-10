@@ -19,7 +19,7 @@ class XmlStateMachineBuilder extends StateMachineBuilder
     /**
      * Verifies the builder's current state and builds a state machine off of it.
      *
-     * @return StateMachineInterface
+     * @return Workflux\StateMachine\StateMachineInterface
      */
     public function build()
     {

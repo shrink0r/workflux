@@ -10,6 +10,10 @@ interface ExecutionContextInterface
 
     public function getCurrentStateName();
 
+    public function hasParameter($key);
+
+    public function getParameter($key, $default = null);
+
     public function setParameter($key, $value, $replace = true);
 
     public function removeParameter($key);

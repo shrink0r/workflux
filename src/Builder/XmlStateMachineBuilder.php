@@ -10,8 +10,15 @@ use Workflux\Error\Error;
 use Workflux\StateMachine\StateMachine;
 use Workflux\Parser\Xml\StateMachineDefinitionParser;
 
+/**
+ * The XmlStateMachineBuilder can build/load a state_machine from a given xml file,
+ * containing valid state machine declarations.
+ */
 class XmlStateMachineBuilder extends StateMachineBuilder
 {
+    /**
+     * @{inheritDoc}
+     */
     public function build()
     {
         $state_machine_definition_file = $this->getOption('state_machine_definition');
@@ -41,6 +48,13 @@ class XmlStateMachineBuilder extends StateMachineBuilder
         return parent::build();
     }
 
+    /**
+     * Creates a concrete StateInterface instance based on the given state definition.
+     *
+     * @param array $state_definition
+     *
+     * @return StateInterface
+     */
     protected function createState(array $state_definition)
     {
         $state_class = isset($state_definition['class']) ? $state_definition['class'] : State::CLASS;
@@ -72,6 +86,12 @@ class XmlStateMachineBuilder extends StateMachineBuilder
         return $state;
     }
 
+    /**
+     * Creates a list of event transitions from the given state definition
+     * and adds them to the builder's current state machine setup.
+     *
+     * @param array $state_definition
+     */
     protected function addEventTransitions(array $state_definition)
     {
         foreach ($state_definition['events'] as $event_name => $event_definition) {
@@ -87,6 +107,12 @@ class XmlStateMachineBuilder extends StateMachineBuilder
         }
     }
 
+    /**
+     * Creates a list of sequential transitions from the given state definition
+     * and adds them to the builder's current state machine setup.
+     *
+     * @param array $state_definition
+     */
     protected function addSequentialTransitions(array $state_definition)
     {
         foreach ($state_definition['events'][StateMachine::SEQ_TRANSITIONS_KEY] as $transition_definition) {
@@ -96,6 +122,14 @@ class XmlStateMachineBuilder extends StateMachineBuilder
         }
     }
 
+    /**
+     * Creates a state transition from the given transition definition.
+     *
+     * @param string $state_name
+     * @param array $transition_definition
+     *
+     * @return TransitionInterface
+     */
     protected function createTransition($state_name, array $transition_definition)
     {
         $target = $transition_definition['outgoing_state_name'];

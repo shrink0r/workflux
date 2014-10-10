@@ -10,16 +10,33 @@ use Workflux\Error\VerificationError;
 use Params\Immutable\ImmutableOptionsTrait;
 use Params\Immutable\ImmutableOptions;
 
+/**
+ * The StateMachineBuilder provides a fluent api for defining state machines.
+ * The builder verifies the setup before creating the state machine,
+ * which makes it easier to spot errors when building automata.
+ */
 class StateMachineBuilder implements StateMachineBuilderInterface
 {
     use ImmutableOptionsTrait;
 
+    /**
+     * @var string $state_machine_name
+     */
     protected $state_machine_name;
 
+    /**
+     * @var string $state_machine_name
+     */
     protected $states;
 
+    /**
+     * @var array $transitions
+     */
     protected $transitions;
 
+    /**
+     * @param array $options
+     */
     public function __construct(array $options = [])
     {
         $this->options = new ImmutableOptions($options);
@@ -28,6 +45,9 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         $this->transitions = [];
     }
 
+    /**
+     * @{inheritDoc}
+     */
     public function setStateMachineName($state_machine_name)
     {
         $name_regex = '/^[a-zA-Z0-9_]+$/';
@@ -47,6 +67,9 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         return $this;
     }
 
+    /**
+     * @{inheritDoc}
+     */
     public function addState(StateInterface $state)
     {
         $state_name = $state->getName();
@@ -66,6 +89,9 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         return $this;
     }
 
+    /**
+     * @{inheritDoc}
+     */
     public function addStates(array $states)
     {
         foreach ($states as $state) {
@@ -75,6 +101,9 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         return $this;
     }
 
+    /**
+     * @{inheritDoc}
+     */
     public function addTransition(TransitionInterface $transition, $event_name = '')
     {
         $transition_key = $event_name ?: StateMachine::SEQ_TRANSITIONS_KEY;
@@ -98,9 +127,22 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         return $this;
     }
 
-    public function addTransitions(array $events)
+    /**
+     * Convenience method for adding multiple event-transition combinations at once.
+     * This method does not work for adding sequential transitions, because they don't have an event.
+     *
+     * @param array $event_transitions The array is expected too be structured as followed by example:
+     * [
+     *     $event_name => [ $transition1, $transition1 ],
+     *     $other_event_name => $other_transition, // you can add either add an array of transitions or just one
+     *     ...
+     * ]
+     *
+     * @return StateMachineBuilderInterface
+     */
+    public function addTransitions(array $event_transitions)
     {
-        foreach ($events as $event_name => $transition_or_transitions) {
+        foreach ($event_transitions as $event_name => $transition_or_transitions) {
             if (!is_array($transition_or_transitions)) {
                 $transitions = [ $transition_or_transitions ];
             } else {
@@ -115,6 +157,9 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         return $this;
     }
 
+    /**
+     * @{inheritDoc}
+     */
     public function build()
     {
         $this->verifyStateGraph();
@@ -126,6 +171,11 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         return $state_machine;
     }
 
+    /**
+     * Asserts that the builder's current state reflects a valid state machine configuration.
+     *
+     * @throws VerificationError
+     */
     protected function verifyStateGraph()
     {
         if (!$this->state_machine_name) {
@@ -139,6 +189,11 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         }
     }
 
+    /**
+     * Creates a new state machine based on the builder's current state.
+     *
+     * @return StateMachineInterface
+     */
     protected function createStateMachine()
     {
         $state_machine_class = $this->getOption('state_machine_class', StateMachine::CLASS);
@@ -164,6 +219,9 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         return $state_machine;
     }
 
+    /**
+     * Resets the builder's internal state, so you can start building a new state machine.
+     */
     protected function tearDown()
     {
         $this->state_machine_name = null;
@@ -171,6 +229,11 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         $this->transitions = [];
     }
 
+    /**
+     * Returns a list of verifications that are run before a new state machine is created.
+     *
+     * @return array An array of VerficationInterface instances.
+     */
     protected function getVerifications()
     {
         return [

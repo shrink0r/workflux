@@ -5,22 +5,46 @@ namespace Workflux\Builder;
 use Workflux\Error\VerificationError;
 use Workflux\State\StateInterface;
 
+/**
+ * The StatesVerification is responsable for verifying the states configuration of a state machine setup.
+ */
 class StatesVerification implements VerificationInterface
 {
+    /**
+     * @var array $states An array of StateInterface
+     */
     protected $states;
 
+    /**
+     * @var array $transitions
+     */
     protected $transitions;
 
+    /**
+     * @var StateInterface $initial_state
+     */
     protected $initial_state;
 
+    /**
+     * @var StateInterface $final_states
+     */
     protected $final_states;
 
+    /**
+     * @param array $states
+     * @param array $transitions
+     */
     public function __construct(array $states, array $transitions)
     {
         $this->states = $states;
         $this->transitions = $transitions;
     }
 
+    /**
+     * Verifies the given states configuration.
+     *
+     * @throws VerificationError
+     */
     public function verify()
     {
         $this->initial_state = null;
@@ -39,6 +63,13 @@ class StatesVerification implements VerificationInterface
         }
     }
 
+    /**
+     * Verifies the given state by employing a state-type specific strategy.
+     *
+     * @param StateInterface $state
+     *
+     * @throws VerificationError
+     */
     protected function verifyState(StateInterface $state)
     {
         $state_name = $state->getName();
@@ -56,6 +87,13 @@ class StatesVerification implements VerificationInterface
         }
     }
 
+    /**
+     * Employs an initial-state specific verification.
+     *
+     * @param StateInterface $state
+     *
+     * @throws VerificationError
+     */
     protected function verifyInitialState(StateInterface $state)
     {
         if ($this->initial_state) {
@@ -72,6 +110,14 @@ class StatesVerification implements VerificationInterface
         }
     }
 
+    /**
+     * Employs a final-state specific verification.
+     *
+     * @param StateInterface $state
+     * @param int $transition_count Number of transitions attached to the given state.
+     *
+     * @throws VerificationError
+     */
     protected function verifyFinalState(StateInterface $state, $transition_count)
     {
         if ($transition_count > 0) {
@@ -82,6 +128,14 @@ class StatesVerification implements VerificationInterface
         $this->final_states[] = $state;
     }
 
+    /**
+     * Employs an active-state specific verification.
+     *
+     * @param StateInterface $state
+     * @param int $transition_count Number of transitions attached to the given state.
+     *
+     * @throws VerificationError
+     */
     protected function verifyActiveState(StateInterface $state, $transition_count)
     {
         if ($transition_count === 0) {

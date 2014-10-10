@@ -5,18 +5,36 @@ namespace Workflux\Builder;
 use Workflux\Error\VerificationError;
 use Workflux\StateMachine\StateMachine;
 
+/**
+ * The TransitionsVerification is responsable for making sure that a given transition configuration is valid.
+ */
 class TransitionsVerification implements VerificationInterface
 {
+    /**
+     * @var array $states
+     */
     protected $states;
 
+    /**
+     * @var array $transitions
+     */
     protected $transitions;
 
+    /**
+     * @param array $states
+     * @param array $transitions
+     */
     public function __construct(array $states, array $transitions)
     {
         $this->states = $states;
         $this->transitions = $transitions;
     }
 
+    /**
+     * Verifies that the defined transitions correctly connect all states.
+     *
+     * @throws VerificationError
+     */
     public function verify()
     {
         foreach ($this->transitions as $state_name => $state_transitions) {
@@ -31,6 +49,14 @@ class TransitionsVerification implements VerificationInterface
         }
     }
 
+    /**
+     * Verifies that transitions for a specific state are correctly connection.
+     *
+     * @param string state_name
+     * @param array $state_transitions
+     *
+     * @throws VerificationError
+     */
     protected function verifyStateTransitions($state_name, array $state_transitions)
     {
         foreach ($state_transitions as $event_name => $transitions) {
@@ -50,6 +76,14 @@ class TransitionsVerification implements VerificationInterface
         }
     }
 
+    /**
+     * Verifies that a given state only has either sequential or event transitions.
+     *
+     * @param string $state_name
+     * @param array $state_transitions
+     *
+     * @throws VerificationError
+     */
     protected function verifyBehaviouralType($state_name, array $state_transitions)
     {
         $event_names = array_keys($state_transitions);

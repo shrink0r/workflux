@@ -3,6 +3,7 @@
 namespace Workflux\StateMachine;
 
 use Workflux\StatefulSubjectInterface;
+use Workflux\State\StateInterface;
 
 /**
  * StateMachineInterface implementations are expected to act as event triggered finite state machines.

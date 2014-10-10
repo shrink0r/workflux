@@ -46,6 +46,13 @@ interface ExecutionContextInterface
     public function getParameter($key, $default = null);
 
     /**
+     * Returns execution context's parameters.
+     *
+     * @return mixed Returns either the parameter value or the given default, if the parameter isn't set.
+     */
+    public function getParameters();
+
+    /**
      * Sets the given parameter.
      *
      * @param string $key

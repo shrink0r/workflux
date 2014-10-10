@@ -12,7 +12,7 @@ class Transition implements TransitionInterface
     protected $incoming_state_names;
 
     /**
-     * @var array $outgoing_state_name
+     * @var string $outgoing_state_name
      */
     protected $outgoing_state_name;
 

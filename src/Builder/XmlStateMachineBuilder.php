@@ -17,7 +17,9 @@ use Workflux\Parser\Xml\StateMachineDefinitionParser;
 class XmlStateMachineBuilder extends StateMachineBuilder
 {
     /**
-     * @{inheritDoc}
+     * Verifies the builder's current state and builds a state machine off of it.
+     *
+     * @return StateMachineInterface
      */
     public function build()
     {

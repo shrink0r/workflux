@@ -14,21 +14,46 @@ use DOMElement;
 use DOMException;
 use LibXMLError;
 
+/**
+ * The StateMachineDefinitionParser can parse xml state machine definitions and provides an array,
+ * that is structured the way the StateMachineBuilder expects.
+ */
 class StateMachineDefinitionParser implements ParserInterface
 {
     use ImmutableOptionsTrait;
 
+    /**
+     * @var XSD_SCHMEMA_FILE
+     */
     const XSD_SCHMEMA_FILE = 'workflux.xsd';
 
+    /**
+     * @var NAMESPACE_PREFIX
+     */
     const NAMESPACE_PREFIX = 'wf';
 
+    /**
+     * @var array $options
+     */
     protected $xpath;
 
+    /**
+     * Creates a new StateMachineDefinitionParser instance.
+     *
+     * @param array $options
+     */
     public function __construct(array $options = [])
     {
         $this->options = new ImmutableOptions($options);
     }
 
+    /**
+     * Parses the given xml file and returns an array of state machine definition arrays.
+     *
+     * @param string $state_machine_xml_file Vaild filesystem path to a xml file defining state machines.
+     *
+     * @return array
+     */
     public function parse($state_machine_xml_file)
     {
         $this->setUp($state_machine_xml_file);
@@ -44,6 +69,11 @@ class StateMachineDefinitionParser implements ParserInterface
         return $state_machines;
     }
 
+    /**
+     * Sets up the internal state before the actual parsing is started.
+     *
+     * @param string $state_machine_xml_file
+     */
     protected function setUp($state_machine_xml_file)
     {
         if (!is_readable($state_machine_xml_file)) {
@@ -58,11 +88,21 @@ class StateMachineDefinitionParser implements ParserInterface
         $this->xpath->registerNamespace(self::NAMESPACE_PREFIX, $root_namespace);
     }
 
+    /**
+     * Tears down the internal state after parsing the payload.
+     */
     protected function tearDown()
     {
         unset($this->xpath);
     }
 
+    /**
+     * Creates a new DOMDocument, loads and schema-validates the xml from the given xml file path.
+     *
+     * @param string $state_machine_xml_file
+     *
+     * @return DOMDocument
+     */
     protected function createDocument($state_machine_xml_file)
     {
         $document = new DOMDocument();
@@ -81,6 +121,13 @@ class StateMachineDefinitionParser implements ParserInterface
         return $document;
     }
 
+    /**
+     * Validates the given DOMDocument against the workflux xsd schema.
+     *
+     * @param DOMDocument $state_machine_doc
+     *
+     * @throws Error | DOMException
+     */
     protected function validateXml(DOMDocument $state_machine_doc)
     {
         $default_schema_path = dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . self::XSD_SCHMEMA_FILE;
@@ -99,6 +146,11 @@ class StateMachineDefinitionParser implements ParserInterface
         );
     }
 
+    /**
+     * Disables libxml errors, allowing the parser to take care of the errors by itself.
+     *
+     * @return bool The former "use_errors" value.
+     */
     protected function enableErrorHandling()
     {
         $user_error_handling = libxml_use_internal_errors(true);
@@ -107,6 +159,16 @@ class StateMachineDefinitionParser implements ParserInterface
         return $user_error_handling;
     }
 
+    /**
+     * Checks for internal libxml errors and throws them in form of a single DOMException.
+     * If no errors occured, then nothing happens.
+     *
+     * @param string $msg_prefix Is prepended to the libxml error message.
+     * @param string $msg_suffix Is appended to the libxml error message.
+     * @param bool $user_error_handling Allows to enable or disable internal libxml error handling.
+     *
+     * @throws DOMException
+     */
     protected function handleErrors($msg_prefix = '', $msg_suffix = '', $user_error_handling = false)
     {
         if (libxml_get_last_error() !== false) {
@@ -124,6 +186,13 @@ class StateMachineDefinitionParser implements ParserInterface
         libxml_use_internal_errors($user_error_handling);
     }
 
+    /**
+     * Converts a given list of libxml errors into an error report.
+     *
+     * @param array $errors
+     *
+     * @return string
+     */
     protected function getErrorMessage(array $errors)
     {
         $error_message = '';
@@ -134,34 +203,43 @@ class StateMachineDefinitionParser implements ParserInterface
         return $error_message;
     }
 
+    /**
+     * Converts a given libxml error into an error message.
+     *
+     * @param LibXMLError $error
+     *
+     * @return string
+     */
     protected function parseError(LibXMLError $error)
     {
-        $msg = '';
-        switch ($error->level) {
-            case LIBXML_ERR_WARNING:
-                $msg .= 'Warning ' . $error->code . ': ';
-                break;
-            case LIBXML_ERR_FATAL:
-                $msg .= 'Fatal error: ' . $error->code . ': ';
-                break;
-            case LIBXML_ERR_ERROR:
-            default:
-                $msg .= 'Error ' . $error->code . ': ';
-                break;
-        }
+        $prefix_map = [
+            LIBXML_ERR_WARNING => '[warning]',
+            LIBXML_ERR_FATAL => '[fatal]',
+            LIBXML_ERR_ERROR => '[error]'
+        ];
+        $prefix = isset($prefix_map[$error->level]) ? $prefix_map[$error->level] : $prefix_map[LIBXML_ERR_ERROR];
 
-        $msg .= implode(
-            PHP_EOL,
-            [ trim($error->message), '  Line: ' . $error->line, 'Column: ' . $error->column ]
-        );
-
+        $msg_parts = [];
+        $msg_parts[] = sprintf('%s %s: %s', $prefix, $error->level, trim($error->message));
+        $msg_parts[] = sprintf('Line: %d', $error->line);
+        $msg_parts[] = sprintf('Column: %d', $error->column);
         if ($error->file) {
-            $msg .= PHP_EOL . '  File: ' . $error->file;
+            $msg_parts[] = sprintf('File: %s', $error->file);
         }
 
-        return $msg;
+        return implode(PHP_EOL, $msg_parts);
     }
 
+    /**
+     * Takes an xpath expression and preprends the parser's namespace prefix to each xpath segment.
+     * Then it runs the namespaced expression and returns the result.
+     * Example: '//state_machines/state_machine' - expands to -> '//wf:state_machines/wf:state_machine'
+     *
+     * @param string $xpath_expression Non namespaced xpath expression.
+     * @param DOMElement $context Allows to pass a context node that is used for the actual xpath query.
+     *
+     * @return DOMNodeList
+     */
     protected function query($xpath_expression, DOMElement $context = null)
     {
         $search = [ '~/(\w+)~', '~^(\w+)$~' ];
@@ -171,6 +249,13 @@ class StateMachineDefinitionParser implements ParserInterface
         return $this->xpath->query($namespaced_expression, $context);
     }
 
+    /**
+     * Returns an array representation of the given 'state_machine' node.
+     *
+     * @param DOMElement $state_machine_node
+     *
+     * @return array
+     */
     protected function parseStateMachineNode(DOMElement $state_machine_node)
     {
         $state_machine_name = $state_machine_node->getAttribute('name');
@@ -188,6 +273,13 @@ class StateMachineDefinitionParser implements ParserInterface
         return [ 'name' => $state_machine_name, 'states' => $state_nodes_data ];
     }
 
+    /**
+     * Returns an array representation of the given 'state' node.
+     *
+     * @param DOMElement $state_node
+     *
+     * @return array
+     */
     protected function parseStateNode(DOMElement $state_node)
     {
         switch ($state_node->nodeName) {
@@ -218,6 +310,13 @@ class StateMachineDefinitionParser implements ParserInterface
         ];
     }
 
+    /**
+     * Parses the given 'state' node and creates an array of event transitions.
+     *
+     * @param DOMElement $state_node
+     *
+     * @return array
+     */
     protected function parseStateNodeEventOuts(DOMElement $state_node)
     {
         $events = [];
@@ -230,6 +329,13 @@ class StateMachineDefinitionParser implements ParserInterface
         return $events;
     }
 
+    /**
+     * Parses the given 'state' node and creates an array of sequential transitions.
+     *
+     * @param DOMElement $state_node
+     *
+     * @return array
+     */
     protected function parseStateNodeSequentialOuts(DOMElement $state_node)
     {
         $seq_transitions = [];
@@ -240,6 +346,13 @@ class StateMachineDefinitionParser implements ParserInterface
         return [ StateMachine::SEQ_TRANSITIONS_KEY => $seq_transitions ];
     }
 
+    /**
+     * Returns an array representation of the given 'event' node.
+     *
+     * @param DOMElement $event_node
+     *
+     * @return array
+     */
     protected function parseEventNode(DOMElement $event_node)
     {
         $event_name = $event_node->getAttribute('name');
@@ -254,6 +367,13 @@ class StateMachineDefinitionParser implements ParserInterface
         ];
     }
 
+    /**
+     * Returns an array representation of the given 'transition' node.
+     *
+     * @param DOMElement $transition_node
+     *
+     * @return array
+     */
     protected function parseTransitionNode(DOMElement $transition_node)
     {
         $guard_node = $this->query('guard', $transition_node)->item(0);
@@ -267,6 +387,13 @@ class StateMachineDefinitionParser implements ParserInterface
         ];
     }
 
+    /**
+     * Returns an array representation of the given 'guard' node.
+     *
+     * @param DOMElement $guard_node
+     *
+     * @return array
+     */
     protected function parseGuardNode(DOMElement $guard_node)
     {
         return [
@@ -275,6 +402,13 @@ class StateMachineDefinitionParser implements ParserInterface
         ];
     }
 
+    /**
+     * Returns an array representation of all option nodes below the given context node.
+     *
+     * @param DOMElement $options_context
+     *
+     * @return array
+     */
     protected function parseOptions(DOMElement $options_context)
     {
         $options = [];
@@ -299,6 +433,13 @@ class StateMachineDefinitionParser implements ParserInterface
         return $options;
     }
 
+    /**
+     * Takes a xml node value and casts it to it's php scalar counterpart.
+     *
+     * @param string $value
+     *
+     * @return string | boolean | int
+     */
     protected function literalize($value)
     {
         if (preg_match('/^\d+$/', $value)) {
@@ -308,6 +449,13 @@ class StateMachineDefinitionParser implements ParserInterface
         }
     }
 
+    /**
+     * Takes an xml node value and returns it either as a string or boolean.
+     *
+     * @param string $value Following values are cast to bool true/false: on, yes, true/off, no, false
+     *
+     * @return string | boolean
+     */
     protected function literalizeString($value)
     {
         $value = trim($value);

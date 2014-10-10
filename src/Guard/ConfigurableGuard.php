@@ -13,7 +13,7 @@ abstract class ConfigurableGuard implements GuardInterface
     use ImmutableOptionsTrait;
 
     /**
-     * Creates a new ConfigurableGuard instance based on with the given options.
+     * Creates a new ConfigurableGuard instance, thereby setting the given options.
      *
      * @param array $options
      */

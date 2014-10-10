@@ -33,7 +33,7 @@ class StateMachineDefinitionParser implements ParserInterface
     const NAMESPACE_PREFIX = 'wf';
 
     /**
-     * @var array $options
+     * @var DOMXpath $xpath
      */
     protected $xpath;
 

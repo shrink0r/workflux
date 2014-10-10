@@ -21,7 +21,7 @@ interface TransitionInterface
     /**
      * Returns the name of the transition's outgoing state.
      *
-     * @return array
+     * @return string
      */
     public function getOutgoingStateName();
 

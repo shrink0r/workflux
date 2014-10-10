@@ -25,7 +25,7 @@ class Transition implements TransitionInterface
      * Creates a new Transition instance.
      *
      * @param mixed $incoming_state_name_or_names
-     * @param mixed $outgoing_state_name
+     * @param string $outgoing_state_name
      * @param GuardInterface $guard
      */
     public function __construct($incoming_state_name_or_names, $outgoing_state_name, GuardInterface $guard = null)
@@ -48,7 +48,7 @@ class Transition implements TransitionInterface
     /**
      * Returns the name of the transition's outgoing state.
      *
-     * @return array
+     * @return string
      */
     public function getOutgoingStateName()
     {

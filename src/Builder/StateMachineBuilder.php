@@ -150,13 +150,13 @@ class StateMachineBuilder implements StateMachineBuilderInterface
      *
      * @param array $event_transitions The array is expected too be structured as followed by example:
      *
-     * <pre>
+     * <code>
      * [
      *     $event_name => [ $transition1, $transition1 ],
      *     $other_event_name => $other_transition, // you can add either add an array of transitions or just one
      *     ...
      * ]
-     * </pre>
+     * </code>
      *
      * @return StateMachineBuilderInterface
      */

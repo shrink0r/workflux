@@ -91,8 +91,16 @@ DOT;
      */
     protected function setUp(StateMachineInterface $state_machine)
     {
+        $styles = $this->getOption('style', new ImmutableOptions());
+        if (!$styles instanceof ImmutableOptions) {
+            throw new Error(
+                'Encountered unexpected value type for "styles" option. Expected instance of %s',
+                ImmutableOptions::CLASS
+            );
+        }
+
+        $this->styles = $styles;
         $this->node_id_map = $this->buildNodeIdMap($state_machine);
-        $this->styles = $this->getOption('style', new ImmutableOptions());
     }
 
     /**

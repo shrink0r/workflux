@@ -2,6 +2,7 @@
 
 namespace Workflux\Renderer;
 
+use Workflux\Error\Error;
 use Workflux\StateMachine\StateMachineInterface;
 use Workflux\State\StateInterface;
 use Workflux\StateMachine\StateMachine;

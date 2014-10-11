@@ -68,7 +68,7 @@ interface StateMachineInterface
     /**
      * Tells whether a given state has event based or sequential transitions.
      *
-     * @param string $state_name
+     * @param mixed $state_name
      *
      * @return bool
      */

@@ -4,6 +4,9 @@ namespace Workflux\Transition;
 
 use Workflux\Guard\GuardInterface;
 
+/**
+ * Standard implementation of the TransitionInterface.
+ */
 class Transition implements TransitionInterface
 {
     /**

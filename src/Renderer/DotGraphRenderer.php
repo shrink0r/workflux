@@ -9,6 +9,10 @@ use Workflux\StateMachine\StateMachine;
 use Workflux\Transition\TransitionInterface;
 use Params\Immutable\ImmutableOptions;
 
+/**
+ * The DotGraphRenderer can render state machines as dot-graphs.
+ * It supports various options for changing the colors, shapes etc. that are used to style the graph.
+ */
 class DotGraphRenderer extends AbstractRenderer
 {
     /**

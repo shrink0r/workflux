@@ -6,7 +6,8 @@ use Params\Immutable\ImmutableOptionsTrait;
 use Params\Immutable\ImmutableOptions;
 
 /**
- * The AbstractRenderer is a base class that allows you to implement configurable GraphRendererInterface implementations.
+ * The AbstractRenderer is a base class,
+ * that allows you to implement configurable GraphRendererInterface implementations.
  */
 abstract class AbstractRenderer implements GraphRendererInterface
 {

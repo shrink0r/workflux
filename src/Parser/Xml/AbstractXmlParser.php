@@ -33,21 +33,21 @@ abstract class AbstractXmlParser implements ParserInterface
      *
      * @return string
      */
-    protected abstract function getNamespacePrefix();
+    abstract protected function getNamespacePrefix();
 
     /**
      * Return an absolute file system path pointing to the xsd schema file to use for validation.
      *
      * @return string
      */
-    protected abstract function getSchemaPath();
+    abstract protected function getSchemaPath();
 
     /**
      * Does the specific parsing and returns the corresponding result.
      *
      * @return mixed
      */
-    protected abstract function doParse();
+    abstract protected function doParse();
 
     /**
      * Creates a new StateMachineDefinitionParser instance.

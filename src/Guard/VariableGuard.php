@@ -23,7 +23,7 @@ class VariableGuard extends ExpressionGuard
 
         return (bool)$this->expression_language->evaluate(
             $this->getOption('expression'),
-            array_merge( [ 'subject' => $subject ], $execution_context->getParameters()->toArray())
+            array_merge([ 'subject' => $subject ], $execution_context->getParameters()->toArray())
         );
     }
 }

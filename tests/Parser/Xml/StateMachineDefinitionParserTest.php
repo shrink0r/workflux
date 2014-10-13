@@ -50,7 +50,7 @@ class StateMachineDefinitionParserTest extends BaseTestCase
         $state_machine_definition_file = dirname(__FILE__) . '/Fixture/invalid_state_machine.xml';
         $this->setExpectedException(
             Error::CLASS,
-            'The given state machine xml file does not validate against the workflux schema.'
+            'The given xml file does not validate against the given schema.'
         );
 
         $parser = new StateMachineDefinitionParser();

@@ -4,8 +4,8 @@
     elementFormDefault="qualified"
     attributeFormDefault="unqualified"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="urn:schemas-workflux:statemachine:0.1.0"
-    targetNamespace="urn:schemas-workflux:statemachine:0.1.0"
+    xmlns="urn:schemas-workflux:statemachine:0.4.0"
+    targetNamespace="urn:schemas-workflux:statemachine:0.4.0"
 >
     <xs:element name="state_machines" type="StateMachinesListType" />
 

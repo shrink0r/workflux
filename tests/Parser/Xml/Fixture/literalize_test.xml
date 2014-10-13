@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<state_machines xmlns="urn:schemas-workflux:statemachine:0.1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+<state_machines xmlns="urn:schemas-workflux:statemachine:0.4.0" xmlns:xi="http://www.w3.org/2001/XInclude">
     <state_machine name="derp_machine">
 
         <initial name="new">

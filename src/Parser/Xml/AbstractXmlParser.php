@@ -7,7 +7,6 @@ use Workflux\Error\Error;
 use Params\Immutable\ImmutableOptionsTrait;
 use Params\Immutable\ImmutableOptions;
 use DOMDocument;
-use DOMXpath;
 use DOMElement;
 use DOMException;
 use LibXMLError;
@@ -20,9 +19,14 @@ abstract class AbstractXmlParser implements ParserInterface
     use ImmutableOptionsTrait;
 
     /**
-     * @var DOMXpath $xpath
+     * @var Xpath $xpath
      */
     protected $xpath;
+
+    /**
+     * @var OptionsXpathParser $options_parser
+     */
+    protected $options_parser;
 
     /**
      * Returns the namespace prefix to use when running xpath queries.
@@ -85,10 +89,8 @@ abstract class AbstractXmlParser implements ParserInterface
         }
 
         $document = $this->createDocument($xml_file);
-        $this->xpath = new DOMXpath($document);
-
-        $root_namespace = $document->lookupNamespaceUri($document->namespaceURI);
-        $this->xpath->registerNamespace($this->getNamespacePrefix(), $root_namespace);
+        $this->xpath = new Xpath($document, $this->getNamespacePrefix());
+        $this->options_parser = new OptionsXpathParser($this->xpath);
     }
 
     /**
@@ -229,111 +231,5 @@ abstract class AbstractXmlParser implements ParserInterface
         }
 
         return implode(PHP_EOL, $msg_parts);
-    }
-
-    /**
-     * Takes an xpath expression and preprends the parser's namespace prefix to each xpath segment.
-     * Then it runs the namespaced expression and returns the result.
-     * Example: '//state_machines/state_machine' - expands to -> '//wf:state_machines/wf:state_machine'
-     *
-     * @param string $xpath_expression Non namespaced xpath expression.
-     * @param DOMElement $context Allows to pass a context node that is used for the actual xpath query.
-     *
-     * @return DOMNodeList
-     */
-    protected function query($xpath_expression, DOMElement $context = null)
-    {
-        $prefix = $this->getNamespacePrefix();
-        $search = [ '~/(\w+)~', '~^(\w+)$~' ];
-        $replace = [ sprintf('/%s:$1', $prefix), sprintf('%s:$1', $prefix) ];
-        $namespaced_expression = preg_replace($search, $replace, $xpath_expression);
-
-        return $this->xpath->query($namespaced_expression, $context);
-    }
-
-    /**
-     * Returns an array representation of all option nodes below the given context node.
-     *
-     * @param DOMElement $options_context
-     *
-     * @return array
-     */
-    protected function parseOptions(DOMElement $options_context)
-    {
-        $options = [];
-
-        foreach ($this->query('option', $options_context) as $option_node) {
-            if ($option_node->hasAttribute('name')) {
-                $option_index = $option_node->getAttribute('name');
-            } else {
-                $option_index = count($options);
-            }
-
-            $child_options = $this->query('option', $option_node);
-            if ($child_options->length > 0) {
-                $option_value = $this->parseOptions($option_node);
-            } else {
-                $option_value = $this->literalize($option_node->nodeValue);
-            }
-
-            $options[$option_index] = $option_value;
-        }
-
-        return $options;
-    }
-
-    /**
-     * Returns 
-     *
-     * @param DOMElement $options_context
-     *
-     * @return string|int
-     */
-    protected function resolveOptionKey(DOMElement $options_element)
-    {
-
-    }
-
-    /**
-     * Takes a xml node value and casts it to it's php scalar counterpart.
-     *
-     * @param string $value
-     *
-     * @return string | boolean | int
-     */
-    protected function literalize($value)
-    {
-        if (preg_match('/^\d+$/', $value)) {
-            return (int)$value;
-        } else {
-            return $this->literalizeString($value);
-        }
-    }
-
-    /**
-     * Takes an xml node value and returns it either as a string or boolean.
-     *
-     * @param string $value Following values are cast to bool true/false: on, yes, true/off, no, false
-     *
-     * @return string | boolean
-     */
-    protected function literalizeString($value)
-    {
-        $value = trim($value);
-        if ($value == '') {
-            return null;
-        }
-
-        $lowercase_value = strtolower($value);
-        $truthy_values = [ 'on', 'yes', 'true' ];
-        $falsy_values = [ 'off', 'no', 'false' ];
-
-        if (in_array($lowercase_value, $truthy_values, true)) {
-            return true;
-        } elseif (in_array($lowercase_value, $falsy_values, true)) {
-            return false;
-        }
-
-        return $value;
     }
 }

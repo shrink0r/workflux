@@ -14,23 +14,13 @@ use DOMElement;
 class StateMachineDefinitionParser extends AbstractXmlParser
 {
     /**
-     * @var XSD_SCHMEMA_FILE
-     */
-    const XSD_SCHMEMA_FILE = 'workflux.xsd';
-
-    /**
-     * @var NAMESPACE_PREFIX
-     */
-    const NAMESPACE_PREFIX = 'wf';
-
-    /**
      * Returns the namespace prefix to use when running xpath queries.
      *
      * @return string
      */
     protected function getNamespacePrefix()
     {
-        return self::NAMESPACE_PREFIX;
+        return 'wf';
     }
 
     /**
@@ -40,7 +30,7 @@ class StateMachineDefinitionParser extends AbstractXmlParser
      */
     protected function getSchemaPath()
     {
-        return dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . self::XSD_SCHMEMA_FILE;
+        return dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . 'workflux.xsd';
     }
 
     /**
@@ -48,10 +38,10 @@ class StateMachineDefinitionParser extends AbstractXmlParser
      *
      * @return mixed
      */
-    public function doParse()
+    protected function doParse()
     {
         $state_machines = [];
-        foreach ($this->query('//state_machines/state_machine') as $state_machine_node) {
+        foreach ($this->xpath->query('//state_machines/state_machine') as $state_machine_node) {
             $state_machine = $this->parseStateMachineNode($state_machine_node);
             $state_machines[$state_machine['name']] = $state_machine;
         }
@@ -73,7 +63,7 @@ class StateMachineDefinitionParser extends AbstractXmlParser
         $state_nodes_data = [];
         $state_node_expressions = [ 'initial', 'state', 'final' ];
         foreach ($state_node_expressions as $state_node_expression) {
-            foreach ($this->query($state_node_expression, $state_machine_node) as $state_node) {
+            foreach ($this->xpath->query($state_node_expression, $state_machine_node) as $state_node) {
                 $state_node_data = $this->parseStateNode($state_node);
                 $state_name = $state_node_data['name'];
                 $state_nodes_data[$state_name] = $state_node_data;
@@ -101,7 +91,7 @@ class StateMachineDefinitionParser extends AbstractXmlParser
             'name' => $state_node->getAttribute('name'),
             'type' => $this->parseStateType($state_node),
             'class' => $state_class,
-            'options' => $this->parseOptions($state_node),
+            'options' => $this->options_parser->parse($state_node),
             'events' => array_merge(
                 $this->parseStateNodeEventOuts($state_node),
                 $this->parseStateNodeSequentialOuts($state_node)
@@ -142,7 +132,7 @@ class StateMachineDefinitionParser extends AbstractXmlParser
     protected function parseStateNodeEventOuts(DOMElement $state_node)
     {
         $events = [];
-        foreach ($this->query('event', $state_node) as $event_node) {
+        foreach ($this->xpath->query('event', $state_node) as $event_node) {
             $event_data = $this->parseEventNode($event_node);
             $event_name = $event_data['name'];
             $events[$event_name] = $event_data;
@@ -161,7 +151,7 @@ class StateMachineDefinitionParser extends AbstractXmlParser
     protected function parseStateNodeSequentialOuts(DOMElement $state_node)
     {
         $seq_transitions = [];
-        foreach ($this->query('transition', $state_node) as $transition_node) {
+        foreach ($this->xpath->query('transition', $state_node) as $transition_node) {
             $seq_transitions[] = $this->parseTransitionNode($transition_node);
         }
 
@@ -179,7 +169,7 @@ class StateMachineDefinitionParser extends AbstractXmlParser
     {
         $event_name = $event_node->getAttribute('name');
         $transitions = [];
-        foreach ($this->query('transition', $event_node) as $transition_node) {
+        foreach ($this->xpath->query('transition', $event_node) as $transition_node) {
             $transitions[] = $this->parseTransitionNode($transition_node);
         }
 
@@ -198,7 +188,7 @@ class StateMachineDefinitionParser extends AbstractXmlParser
      */
     protected function parseTransitionNode(DOMElement $transition_node)
     {
-        $guard_node = $this->query('guard', $transition_node)->item(0);
+        $guard_node = $this->xpath->query('guard', $transition_node)->item(0);
         if ($guard_node !== null && !$guard_node instanceof DOMElement) {
             throw new Error("Invalid guard node given.");
         }
@@ -220,7 +210,7 @@ class StateMachineDefinitionParser extends AbstractXmlParser
     {
         return [
             'class' => $guard_node->getAttribute('class'),
-            'options' => $this->parseOptions($guard_node)
+            'options' => $this->options_parser->parse($guard_node)
         ];
     }
 }

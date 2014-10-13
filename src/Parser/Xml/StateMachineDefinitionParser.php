@@ -92,6 +92,32 @@ class StateMachineDefinitionParser extends AbstractXmlParser
      */
     protected function parseStateNode(DOMElement $state_node)
     {
+        $state_class = null;
+        if ($state_node->hasAttribute('class')) {
+            $state_class = $state_node->getAttribute('class');
+        }
+
+        return [
+            'name' => $state_node->getAttribute('name'),
+            'type' => $this->parseStateType($state_node),
+            'class' => $state_class,
+            'options' => $this->parseOptions($state_node),
+            'events' => array_merge(
+                $this->parseStateNodeEventOuts($state_node),
+                $this->parseStateNodeSequentialOuts($state_node)
+            )
+        ];
+    }
+
+    /**
+     * Maps the node name of the given state node to it's relating StateInterface::TYPE_* constant.
+     *
+     * @param DOMElement $state_node
+     *
+     * @return string One of StateInterface::TYPE_INITIAL, -TYPE_FINAL or -TYPE_ACTIVE.
+     */
+    protected function parseStateType(DOMElement $state_node)
+    {
         switch ($state_node->nodeName) {
             case 'initial':
                 $state_type = StateInterface::TYPE_INITIAL;
@@ -103,21 +129,7 @@ class StateMachineDefinitionParser extends AbstractXmlParser
                 $state_type = StateInterface::TYPE_ACTIVE;
         }
 
-        $state_class = null;
-        if ($state_node->hasAttribute('class')) {
-            $state_class = $state_node->getAttribute('class');
-        }
-
-        return [
-            'name' => $state_node->getAttribute('name'),
-            'type' => $state_type,
-            'class' => $state_class,
-            'options' => $this->parseOptions($state_node),
-            'events' => array_merge(
-                $this->parseStateNodeEventOuts($state_node),
-                $this->parseStateNodeSequentialOuts($state_node)
-            )
-        ];
+        return $state_type;
     }
 
     /**

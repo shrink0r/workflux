@@ -27,7 +27,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
     public function testSuccessFlow()
     {
         $builder = new XmlStateMachineBuilder(
-            [ 'state_machine_definition' => __DIR__ . '/Fixture/state_machine.xml' ]
+            [ 'state_machine_definition' => __DIR__ . '/Fixture/state_machine.xml', 'name' => 'video_transcoding' ]
         );
 
         $state_machine = $builder->build();
@@ -42,7 +42,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
     public function testErrorFlow()
     {
         $builder = new XmlStateMachineBuilder(
-            [ 'state_machine_definition' => __DIR__ . '/Fixture/state_machine.xml' ]
+            [ 'state_machine_definition' => __DIR__ . '/Fixture/state_machine.xml', 'name' => 'video_transcoding' ]
         );
 
         $state_machine = $builder->build();
@@ -66,7 +66,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
         );
 
         $builder = new XmlStateMachineBuilder(
-            [ 'state_machine_definition' => __DIR__ . '/Fixture/invalid_guard.xml' ]
+            [ 'state_machine_definition' => __DIR__ . '/Fixture/invalid_guard.xml', 'name' => 'invalid_machine' ]
         );
 
         $builder->build();
@@ -90,11 +90,14 @@ class XmlStateMachineBuilderTest extends BaseTestCase
     {
         $this->setExpectedException(
             Error::CLASS,
-            'Unable to load configured custom implementor "Foo\BarState" for state "new".'
+            'Unable to load configured custom state implementor "Foo\BarState".'
         );
 
         $builder = new XmlStateMachineBuilder(
-            [ 'state_machine_definition' => __DIR__ . '/Fixture/non_existant_state_implementor.xml' ]
+            [
+                'state_machine_definition' => __DIR__ . '/Fixture/non_existant_state_implementor.xml',
+                'name' => 'invalid_machine'
+            ]
         );
 
         $builder->build();
@@ -108,7 +111,10 @@ class XmlStateMachineBuilderTest extends BaseTestCase
         );
 
         $builder = new XmlStateMachineBuilder(
-            [ 'state_machine_definition' => __DIR__ . '/Fixture/invalid_state_implementor.xml' ]
+            [
+                'state_machine_definition' => __DIR__ . '/Fixture/invalid_state_implementor.xml',
+                'name' => 'invalid_machine'
+            ]
         );
 
         $builder->build();

@@ -23,21 +23,7 @@ class XmlStateMachineBuilder extends StateMachineBuilder
      */
     public function build()
     {
-        $state_machine_definition_file = $this->getOption('state_machine_definition');
-
-        $parser = new StateMachineDefinitionParser();
-        $state_machine_definitions = $parser->parse($state_machine_definition_file);
-
-        $name = $this->getOption('name', false);
-        if (!$name) {
-            $state_machine_definition = reset($state_machine_definitions);
-        } elseif (isset($state_machine_definitions[$name])) {
-            $state_machine_definition = $state_machine_definitions[$name];
-        } else {
-            throw new Error(
-                sprintf('Unable to find configured state machine with name "%s".', $name)
-            );
-        }
+        $state_machine_definition = $this->resolveStateMachineDefinition();
 
         $this->setStateMachineName($state_machine_definition['name']);
 
@@ -51,6 +37,44 @@ class XmlStateMachineBuilder extends StateMachineBuilder
     }
 
     /**
+     * Returns the appropiate parsed state machine definition to use for building the state machine.
+     *
+     * @return array
+     */
+    protected function resolveStateMachineDefinition()
+    {
+        $state_machine_definitions = $this->parseStateMachineDefitions();
+        if (!$this->hasOption('name')) {
+            throw new Error("Missing required state machine name.");
+        }
+
+        $name = $this->getOption('name');
+        if (isset($state_machine_definitions[$name])) {
+            $state_machine_definition = $state_machine_definitions[$name];
+        } else {
+            throw new Error(
+                sprintf('Unable to find configured state machine with name "%s". Maybe a type?', $name)
+            );
+        }
+
+        return $state_machine_definition;
+    }
+
+    /**
+     * Parses the configured state machine definition file and returns all parsed state machine definitions.
+     *
+     * @return array An assoc array with name of a state machine as key and the state machine def as value.
+     */
+    protected function parseStateMachineDefitions()
+    {
+        $state_machine_definition_file = $this->getOption('state_machine_definition');
+
+        $parser = new StateMachineDefinitionParser();
+
+        return $parser->parse($state_machine_definition_file);
+    }
+
+    /**
      * Creates a concrete StateInterface instance based on the given state definition.
      *
      * @param array $state_definition
@@ -59,17 +83,10 @@ class XmlStateMachineBuilder extends StateMachineBuilder
      */
     protected function createState(array $state_definition)
     {
-        $state_class = isset($state_definition['class']) ? $state_definition['class'] : State::CLASS;
-        if (!class_exists($state_class)) {
-            throw new Error(
-                sprintf(
-                    'Unable to load configured custom implementor "%s" for state "%s".',
-                    $state_class,
-                    $state_definition['name']
-                )
-            );
-        }
-        $state = new $state_class(
+        $state_implementor = isset($state_definition['class']) ? $state_definition['class'] : State::CLASS;
+        $this->loadStateImplementor($state_implementor);
+
+        $state = new $state_implementor(
             $state_definition['name'],
             $state_definition['type'],
             $state_definition['options']
@@ -86,6 +103,25 @@ class XmlStateMachineBuilder extends StateMachineBuilder
         }
 
         return $state;
+    }
+
+    /**
+     * Tries to autoload the given state implementor if the class doesn't exist.
+     *
+     * @param array $state_definition
+     *
+     * @throws Error If the given state implementor can't be loaded.
+     */
+    protected function loadStateImplementor($state_implementor)
+    {
+        if (!class_exists($state_implementor, true)) {
+            throw new Error(
+                sprintf(
+                    'Unable to load configured custom state implementor "%s".',
+                    $state_implementor
+                )
+            );
+        }
     }
 
     /**

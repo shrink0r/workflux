@@ -56,17 +56,17 @@ abstract class AbstractXmlParser implements ParserInterface
     }
 
     /**
-     * Parses the given xml file and returns an array of state machine definition arrays.
+     * Parses the given xml file and returns the corresponding data.
      *
-     * @param string $state_machine_xml_file Vaild filesystem path to a xml file defining state machines.
+     * @param string $xml_file Vaild filesystem path to a xml file.
      *
-     * @return array
+     * @return mixed The parsed data.
      */
-    public function parse($state_machine_xml_file)
+    public function parse($xml_file)
     {
-        $this->setUp($state_machine_xml_file);
+        $this->setUp($xml_file);
 
-        $result = $this->doParse($state_machine_xml_file);
+        $result = $this->doParse();
 
         $this->tearDown();
 
@@ -137,7 +137,7 @@ abstract class AbstractXmlParser implements ParserInterface
         $user_error_handling = $this->enableErrorHandling();
 
         if (!$dom_document->schemaValidate($schema_path)) {
-            throw new Error("The given state machine xml file does not validate against the workflux schema.");
+            throw new Error("The given xml file does not validate against the given schema.");
         }
 
         $this->handleErrors(
@@ -280,6 +280,18 @@ abstract class AbstractXmlParser implements ParserInterface
         }
 
         return $options;
+    }
+
+    /**
+     * Returns 
+     *
+     * @param DOMElement $options_context
+     *
+     * @return string|int
+     */
+    protected function resolveOptionKey(DOMElement $options_element)
+    {
+
     }
 
     /**

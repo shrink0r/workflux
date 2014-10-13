@@ -31,7 +31,7 @@ of your project works as well:
 ```json
 {
     "require": {
-        "shrink0r/workflux": "~0.3"
+        "shrink0r/workflux": "~0.4"
     }
 }
 ```

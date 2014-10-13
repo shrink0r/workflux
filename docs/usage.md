@@ -92,7 +92,7 @@ The example state machine xml file could look like this:
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<state_machines xmlns="urn:schemas-workflux:statemachine:0.1.0">
+<state_machines xmlns="urn:schemas-workflux:statemachine:0.4.0">
     <state_machine name="video_transcoding">
 
         <initial name="new">

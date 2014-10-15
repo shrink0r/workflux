@@ -4,6 +4,7 @@ namespace Workflux\Tests\Builder;
 
 use Workflux\Tests\BaseTestCase;
 use Workflux\Error\Error;
+use Workflux\StateMachine\EventEmittingStateMachine;
 use Workflux\Builder\XmlStateMachineBuilder;
 use Workflux\Tests\Fixture\GenericSubject;
 use Workflux\Renderer\DotGraphRenderer;
@@ -22,6 +23,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
 
         $new_state = $state_machine->getState('rejected');
         $this->assertTrue($new_state->getOption('notify_owner'));
+        $this->assertInstanceOf(EventEmittingStateMachine::CLASS, $state_machine);
     }
 
     public function testSuccessFlow()

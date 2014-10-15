@@ -1,6 +1,7 @@
 <?php
 return [
     'derp_machine' => [
+        'class' => null,
         'name' => 'derp_machine',
         'states' => [
             'new' => [

@@ -26,6 +26,9 @@ class XmlStateMachineBuilder extends StateMachineBuilder
         $state_machine_definition = $this->resolveStateMachineDefinition();
 
         $this->setStateMachineName($state_machine_definition['name']);
+        if (isset($state_machine_definition['class'])) {
+            $this->setStateMachineClass($state_machine_definition['class']);
+        }
 
         foreach ($state_machine_definition['states'] as $state_name => $state_definition) {
             $this->addState($this->createState($state_definition));

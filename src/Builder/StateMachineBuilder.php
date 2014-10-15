@@ -25,6 +25,11 @@ class StateMachineBuilder implements StateMachineBuilderInterface
     protected $state_machine_name;
 
     /**
+     * @var string $state_machine_class
+     */
+    protected $state_machine_class;
+
+    /**
      * @var array $states
      */
     protected $states;
@@ -67,6 +72,26 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         }
 
         $this->state_machine_name = $state_machine_name;
+
+        return $this;
+    }
+
+    /**
+     * Sets the state machine's class/implementor.
+     *
+     * @param string $state_machine_class
+     *
+     * @return StateMachineBuilderInterface
+     */
+    public function setStateMachineClass($state_machine_class)
+    {
+        if (!class_exists($state_machine_class)) {
+            throw new VerificationError(
+                sprintf('Unable to load state machine class "%s".', $state_machine_class)
+            );
+        }
+
+        $this->state_machine_class = $state_machine_class;
 
         return $this;
     }
@@ -218,12 +243,10 @@ class StateMachineBuilder implements StateMachineBuilderInterface
      */
     protected function createStateMachine()
     {
-        $state_machine_class = $this->getOption('state_machine_class', StateMachine::CLASS);
-
-        if (!class_exists($state_machine_class)) {
-            throw new VerificationError(
-                sprintf('Unable to load state machine class "%s".', $state_machine_class)
-            );
+        if (!$this->state_machine_class) {
+            $state_machine_class = StateMachine::CLASS;
+        } else {
+            $state_machine_class = $this->state_machine_class;
         }
 
         $state_machine = new $state_machine_class($this->state_machine_name, $this->states, $this->transitions);

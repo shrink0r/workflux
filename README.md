@@ -6,6 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/shrink0r/workflux/badge.png?branch=master)](https://coveralls.io/r/shrink0r/workflux?branch=master)
 [![Dependency Status](https://www.versioneye.com/user/projects/542da521fc3f5ca427000299/badge.svg?style=flat)](https://www.versioneye.com/user/projects/542da521fc3f5ca427000299)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shrink0r/workflux/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shrink0r/workflux/?branch=master)
+[![Code Climate](https://codeclimate.com/github/shrink0r/workflux/badges/gpa.svg)](https://codeclimate.com/github/shrink0r/workflux)
 [![License](https://poser.pugx.org/shrink0r/workflux/license.svg)](http://creativecommons.org/licenses/by-sa/3.0/deed.en_US)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/c9d87c4a-f2f6-4f10-847e-8a9162d306d9/mini.png)](https://insight.sensiolabs.com/projects/c9d87c4a-f2f6-4f10-847e-8a9162d306d9)
 [![Stories in Ready](https://badge.waffle.io/shrink0r/workflux.png?label=ready&title=Issues%20Open)](https://waffle.io/shrink0r/workflux)

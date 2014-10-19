@@ -83,7 +83,7 @@ class EventEmittingStateMachine extends StateMachine implements EventEmitterInte
      *
      * @return StateInterface The state at which the execution was suspended or finished.
      */
-    public function execute(StatefulSubjectInterface $subject, $transition_event)
+    public function execute(StatefulSubjectInterface $subject, $transition_event = null)
     {
         $current_state = parent::execute($subject, $transition_event);
 

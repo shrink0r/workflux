@@ -138,8 +138,9 @@ class StateMachine implements StateMachineInterface
      *
      * @return StateInterface The state at which the execution suspended or finished.
      */
-    public function execute(StatefulSubjectInterface $subject, $event_name)
+    public function execute(StatefulSubjectInterface $subject, $event_name = null)
     {
+        $event_name = $event_name ?: self::SEQ_TRANSITIONS_KEY;
         $current_state = $this->getValidStartStateFor($subject);
 
         do {

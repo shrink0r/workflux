@@ -27,7 +27,7 @@ interface StateMachineInterface
      *
      * @return StateInterface The state at which the execution was suspended.
      */
-    public function execute(StatefulSubjectInterface $subject, $event_name);
+    public function execute(StatefulSubjectInterface $subject, $event_name = null);
 
     /**
      * Returns the state machine's initial state.

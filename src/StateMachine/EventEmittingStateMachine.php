@@ -5,7 +5,6 @@ namespace Workflux\StateMachine;
 use Workflux\Error\Error;
 use Workflux\StatefulSubjectInterface;
 use Workflux\State\StateInterface;
-use Workflux\Transition\TransitionInterface;
 use Evenement\EventEmitter;
 use Evenement\EventEmitterInterface;
 

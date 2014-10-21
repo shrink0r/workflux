@@ -202,7 +202,7 @@ class StateMachine implements StateMachineInterface
     {
         if (!empty($event_name)) {
             return $this->getEventTransitions($state_name, $event_name);
-        } else if (!empty($state_name)) {
+        } elseif (!empty($state_name)) {
             return $this->getStateTransitions($state_name);
         } else {
             return $this->transitions;

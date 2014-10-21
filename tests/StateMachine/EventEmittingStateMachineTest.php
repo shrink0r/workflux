@@ -22,7 +22,7 @@ class EventEmittingStateMachineTest extends BaseTestCase
         $execution_was_started = false;
         $state_machine->on(
             EventEmittingStateMachine::ON_EXECUTION_STARTED,
-            function(
+            function (
                 StateMachineInterface $state_machine,
                 StatefulSubjectInterface $subject,
                 StateInterface $entered_state
@@ -44,7 +44,7 @@ class EventEmittingStateMachineTest extends BaseTestCase
         $execution_was_suspended = false;
         $state_machine->on(
             EventEmittingStateMachine::ON_EXECUTION_SUSPENDED,
-            function(
+            function (
                 StateMachineInterface $state_machine,
                 StatefulSubjectInterface $subject,
                 StateInterface $entered_state
@@ -66,7 +66,7 @@ class EventEmittingStateMachineTest extends BaseTestCase
         $execution_was_resumed = false;
         $state_machine->on(
             EventEmittingStateMachine::ON_EXECUTION_RESUMED,
-            function(
+            function (
                 StateMachineInterface $state_machine,
                 StatefulSubjectInterface $subject,
                 StateInterface $entered_state
@@ -88,7 +88,7 @@ class EventEmittingStateMachineTest extends BaseTestCase
         $execution_was_finished = false;
         $state_machine->on(
             EventEmittingStateMachine::ON_EXECUTION_FINISHED,
-            function(
+            function (
                 StateMachineInterface $state_machine,
                 StatefulSubjectInterface $subject,
                 StateInterface $entered_state
@@ -110,7 +110,7 @@ class EventEmittingStateMachineTest extends BaseTestCase
         $entered_states = [];
         $state_machine->on(
             EventEmittingStateMachine::ON_STATE_ENTERED,
-            function(
+            function (
                 StateMachineInterface $state_machine,
                 StatefulSubjectInterface $subject,
                 StateInterface $entered_state
@@ -132,7 +132,7 @@ class EventEmittingStateMachineTest extends BaseTestCase
         $exited_states = [];
         $state_machine->on(
             EventEmittingStateMachine::ON_STATE_EXITED,
-            function(
+            function (
                 StateMachineInterface $state_machine,
                 StatefulSubjectInterface $subject,
                 StateInterface $exited_state

@@ -2,7 +2,7 @@
 
 All new features, changes and fixes should be listed here. Please use tickets to reference changes.
 
-## 0.5.0 (2014/10/21)
+## 0.5.0 (2014/10/22)
 
 Added an event emitting implementation of the state machine.
 Thanks to @MrHash who provided the feedback, that this release is based on.

@@ -47,10 +47,9 @@ Alternatively, you can download a release archive from the [github releases](rel
 
 ## Documentation
 
-At the moment there are some basic usage examples and a completed API doc.  
-The brave may look into the `tests` folder for more insights. ^^  
-More documentation is up the pipeline.  
-Until then, feel free to ask via irc or issues tracker.
+At the moment there are some basic usage examples and a completed API doc.
+The brave may look into the `tests` folder for more insights. More documentation is up the pipeline.
+Feel free to ask via irc or issues tracker.
 
 * [API Doc](http://shrink0r.github.io/workflux/api/index.html)
 * [Usage](https://github.com/shrink0r/workflux/blob/master/docs/usage.md)

@@ -151,14 +151,7 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         $transition_key = $event_name ?: StateMachine::SEQ_TRANSITIONS_KEY;
 
         foreach ($transition->getIncomingStateNames() as $state_name) {
-            if (!isset($this->transitions[$state_name])) {
-                $this->transitions[$state_name] = [];
-            }
-
-            if (!isset($this->transitions[$state_name][$transition_key])) {
-                $this->transitions[$state_name][$transition_key] = [];
-            }
-
+            $this->allocateTransitionKey($state_name, $transition_key);
             if (in_array($transition, $this->transitions[$state_name][$transition_key], true)) {
                 throw new VerificationError('Adding the same transition instance twice is not supported.');
             }
@@ -216,6 +209,23 @@ class StateMachineBuilder implements StateMachineBuilderInterface
         $this->tearDown();
 
         return $state_machine;
+    }
+
+    /**
+     * Makes sure that the transitions array for the given event is initialized.
+     *
+     * @param string $state_name
+     * @param string $transition_key
+     */
+    protected function allocateTransitionKey($state_name, $transition_key)
+    {
+        if (!isset($this->transitions[$state_name])) {
+            $this->transitions[$state_name] = [];
+        }
+
+        if (!isset($this->transitions[$state_name][$transition_key])) {
+            $this->transitions[$state_name][$transition_key] = [];
+        }
     }
 
     /**

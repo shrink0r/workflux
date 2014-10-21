@@ -7,6 +7,9 @@ use Workflux\StatefulSubjectInterface;
 use Workflux\State\StateInterface;
 use Workflux\Transition\TransitionInterface;
 
+/**
+ * General default implementation of the StateMachineInterface.
+ */
 class StateMachine implements StateMachineInterface
 {
     /**
@@ -185,34 +188,66 @@ class StateMachine implements StateMachineInterface
     }
 
     /**
-     * Depending on what parameters are set either all transitions are returned or a filtered subset.
+     * Depending on what parameters are set either returns all transitions for a given state
+     * or just the state transitions for a particular event.
      *
      * @param string $state_name Only return transitions for the given state.
      * @param string $event_name Only return the state-transitions for the given event.
      *
-     * @return array
+     * @return array An array of Workflux\Transition\TransitionInterface
+     *
+     * @throws Error if either a given state and/or event are not supported.
      */
     public function getTransitions($state_name = '', $event_name = '')
     {
-        $transitions = $this->transitions;
-
-        if (!empty($state_name)) {
-            if (!isset($this->transitions[$state_name])) {
-                throw new Error(sprintf('No transitions available at state "%s".', $state_name));
-            }
-            $transitions = $this->transitions[$state_name];
-        }
-
         if (!empty($event_name)) {
-            if (!isset($transitions[$event_name])) {
-                throw new Error(
-                    sprintf('No transitions available for event "%s" at state "%s".', $event_name, $state_name)
-                );
-            }
-            $transitions = $transitions[$event_name];
+            return $this->getEventTransitions($state_name, $event_name);
+        } else if (!empty($state_name)) {
+            return $this->getStateTransitions($state_name);
+        } else {
+            return $this->transitions;
+        }
+    }
+
+    /**
+     * Returns an array of transition belonging to the given state-event tuple.
+     *
+     * @param string $state_name
+     * @param string $event_name
+     *
+     * @return array An array of Workflux\Transition\TransitionInterface.
+     *
+     * @throws Error if the given state does not exist or doesn't have any transitions set.
+     */
+    protected function getEventTransitions($state_name, $event_name)
+    {
+        $state_transitions = $this->getStateTransitions($state_name);
+
+        if (!isset($state_transitions[$event_name])) {
+            throw new Error(
+                sprintf('No transitions available for event "%s" at state "%s".', $event_name, $state_name)
+            );
         }
 
-        return $transitions;
+        return $state_transitions[$event_name];
+    }
+
+    /**
+     * Returns an array of transition belonging to the given state.
+     *
+     * @param string $state_name
+     *
+     * @return array An array of Workflux\Transition\TransitionInterface.
+     *
+     * @throws Error if the given state does not exist or doesn't have any transitions set.
+     */
+    protected function getStateTransitions($state_name)
+    {
+        if (!isset($this->transitions[$state_name])) {
+            throw new Error(sprintf('No transitions available at state "%s".', $state_name));
+        }
+
+        return $this->transitions[$state_name];
     }
 
     /**
@@ -399,11 +434,23 @@ class StateMachine implements StateMachineInterface
         return $state;
     }
 
+    /**
+     * Executes the onExit handler for the current state before applying a transition.
+     *
+     * @param StatefulSubjectInterface $subject
+     * @param StateInterface $current_state
+     */
     protected function leaveState(StatefulSubjectInterface $subject, StateInterface $current_state)
     {
         $current_state->onExit($subject);
     }
 
+    /**
+     * Executes the onEnter handler for the current state before applying a transition.
+     *
+     * @param StatefulSubjectInterface $subject
+     * @param StateInterface $current_state
+     */
     protected function enterState(StatefulSubjectInterface $subject, StateInterface $next_state)
     {
         $next_state->onEntry($subject);

@@ -9,6 +9,9 @@ use Workflux\Transition\TransitionInterface;
 use Evenement\EventEmitter;
 use Evenement\EventEmitterInterface;
 
+/**
+ * Adds events to the default StateMachine implementation.
+ */
 class EventEmittingStateMachine extends StateMachine implements EventEmitterInterface
 {
     /**

@@ -13,8 +13,14 @@
 
 ## Purpose
 
-The `workflux` library implements a [Finite State Machine](http://en.wikipedia.org/wiki/Finite-state_machine) in a way
-that also allows to implement [Pushdown Automaton](http://en.wikipedia.org/wiki/Pushdown_automaton) and other FSM flavors.
+`Workflux` is a [Finite State Machine(FSM)](http://en.wikipedia.org/wiki/Finite-state_machine) for php.
+It's supposed to be useful for implementing all kinds of FSM suiting scenarios like e.g. workflows or matching.
+Here are two reads on the topic, dealing with why/where you might want to use a FSM.
+
+* [Why developers should be force-fed state machines](http://www.shopify.com/technology/3383012-why-developers-should-be-force-fed-state-machines)
+* [Why Developers Never Use State Machines](http://www.skorks.com/2011/09/why-developers-never-use-state-machines/)
+
+Below is an example of a state machine instance rendered by the library's DotGraphRenderer + [Graphviz](http://www.graphviz.org).
 
 ![Screenshot of a rendered example state machine](https://raw.githubusercontent.com/shrink0r/workflux/master/docs/state_machine.png)
 
@@ -32,7 +38,7 @@ of your project works as well:
 ```json
 {
     "require": {
-        "shrink0r/workflux": "~0.4"
+        "shrink0r/workflux": "~0.5"
     }
 }
 ```
@@ -41,10 +47,13 @@ Alternatively, you can download a release archive from the [github releases](rel
 
 ## Documentation
 
+At the moment there are some basic usage examples and a completed API doc.  
+The brave may look into the `tests` folder for more insights. ^^  
+More documentation is up the pipeline.  
+Until then, feel free to ask via irc or issues tracker.
+
 * [API Doc](http://shrink0r.github.io/workflux/api/index.html)
 * [Usage](https://github.com/shrink0r/workflux/blob/master/docs/usage.md)
-
-For more feature and usage examples see the [tests](tests).
 
 ## Community
 

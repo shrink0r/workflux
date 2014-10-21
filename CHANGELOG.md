@@ -2,6 +2,22 @@
 
 All new features, changes and fixes should be listed here. Please use tickets to reference changes.
 
+## 0.5.0 (2014/10/21)
+
+Added an event emitting implementation of the state machine.
+Thanks to @MrHash who provided the feedback, that this release is based on.
+
+* [new] #26 Added `Workflux\StateMaching\EventEmittingStateMachine` which will let you hook into the execution of the statemachine via event listeners.
+* [chg] #28 State machines may now start with sequential states.
+* [chg] #27 The initial state must not be provided within a given execution state when beginning a new execution.
+* [chg] Refactored StateMachine and StateMachineBuilder internals.
+* [chg] Updated README intro.
+* [fix] #27 State transitions are guaranteed to be executed only once.
+
+## 0.4.1 (2014/13/13)
+
+Fixed coding style violations (#24).
+
 ## 0.4.0 (2014/10/13)
 
 Added several features such as the VaribaleState and -Guard and fixed some bug. Also the api doc has been completed for `/src'.

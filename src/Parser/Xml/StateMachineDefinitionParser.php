@@ -70,7 +70,17 @@ class StateMachineDefinitionParser extends AbstractXmlParser
             }
         }
 
-        return [ 'name' => $state_machine_name, 'states' => $state_nodes_data ];
+        if ($state_machine_node->hasAttribute('class')) {
+            $state_machine_class = $state_machine_node->getAttribute('class');
+        } else {
+            $state_machine_class = null;
+        }
+
+        return [
+            'class' => $state_machine_class,
+            'name' => $state_machine_name,
+            'states' => $state_nodes_data
+        ];
     }
 
     /**

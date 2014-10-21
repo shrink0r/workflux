@@ -136,21 +136,23 @@ class StateMachine implements StateMachineInterface
      * @param StatefulSubjectInterface $subject
      * @param string $event_name
      *
-     * @return StateInterface The state at which the execution was suspended.
+     * @return StateInterface The state at which the execution suspended or finished.
      */
-    public function execute(StatefulSubjectInterface $subject, $event_name)
+    public function execute(StatefulSubjectInterface $subject, $event_name = null)
     {
+        $event_name = $event_name ?: self::SEQ_TRANSITIONS_KEY;
         $current_state = $this->getValidStartStateFor($subject);
 
         do {
-            $next_state = $this->getNextState($subject, $current_state, $event_name);
-            $current_state->onExit($subject);
-            $next_state->onEntry($subject);
-            $current_state = $next_state;
+            $this->leaveState($subject, $current_state);
 
-            // after the initial event has been processed, the only we to keep going are sequentially chained states
+            $next_state = $this->getNextState($subject, $current_state, $event_name);
+            $this->enterState($subject, $next_state);
+
+            $current_state = $next_state;
+            // after the initial event has been processed, only sequential transitions will continue execution
             $event_name = self::SEQ_TRANSITIONS_KEY;
-            // so we keep executing until we reach the next event state or the end of the graph.
+            // keep traversing the graph until we reach an event- or final state.
         } while (!$this->isEventState($current_state) && !$current_state->isFinal());
 
         return $current_state;
@@ -244,9 +246,13 @@ class StateMachine implements StateMachineInterface
      */
     protected function getValidStartStateFor(StatefulSubjectInterface $subject)
     {
-        $start_state = $this->getStateOrFail(
-            $subject->getExecutionContext()->getCurrentStateName()
-        );
+        $state_name = $subject->getExecutionContext()->getCurrentStateName();
+
+        if (!$state_name) {
+            $start_state = $this->initializeExecutionState($subject);
+        } else {
+            $start_state = $this->resumeExecutionState($subject);
+        }
 
         if (!$this->isEventState($start_state)) {
             throw new Error(
@@ -259,6 +265,37 @@ class StateMachine implements StateMachineInterface
         }
 
         return $start_state;
+    }
+
+    /**
+     * Initializes the execution context of the given subject, hence enters the initial state.
+     *
+     * @param StatefulSubjectInterface $subject
+     *
+     * @return StateInterface
+     */
+    protected function initializeExecutionState(StatefulSubjectInterface $subject)
+    {
+        $start_state = $this->getInitialState();
+        $this->enterState($subject, $start_state);
+
+        return $start_state;
+    }
+
+    /**
+     * Determines the state at which to resume the exexution.
+     *
+     * @param StatefulSubjectInterface $subject
+     *
+     * @return StateInterface
+     *
+     * @throws Error If the state exposed by the subject's execution context is invalid or does not exist.
+     */
+    protected function resumeExecutionState(StatefulSubjectInterface $subject)
+    {
+        return $this->getStateOrFail(
+            $subject->getExecutionContext()->getCurrentStateName()
+        );
     }
 
     /**
@@ -360,5 +397,15 @@ class StateMachine implements StateMachineInterface
         }
 
         return $state;
+    }
+
+    protected function leaveState(StatefulSubjectInterface $subject, StateInterface $current_state)
+    {
+        $current_state->onExit($subject);
+    }
+
+    protected function enterState(StatefulSubjectInterface $subject, StateInterface $next_state)
+    {
+        $next_state->onEntry($subject);
     }
 }

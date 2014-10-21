@@ -334,9 +334,10 @@ class StateMachineBuilderTest extends BaseTestCase
 
         $transiton = new Transition('editing', 'published');
 
-        $builder = new StateMachineBuilder([ 'state_machine_class' => InvalidStateMachine::CLASS ]);
+        $builder = new StateMachineBuilder();
         $state_machine = $builder
             ->setStateMachineName(self::MACHINE_NAME)
+            ->setStateMachineClass(InvalidStateMachine::CLASS)
             ->addStates($states)
             ->addTransition($transiton, 'promote')
             ->build();
@@ -367,9 +368,10 @@ class StateMachineBuilderTest extends BaseTestCase
 
         $transiton = new Transition('editing', 'published');
 
-        $builder = new StateMachineBuilder([ 'state_machine_class' => 'HeisenStateMachine' ]);
+        $builder = new StateMachineBuilder();
         $state_machine = $builder
             ->setStateMachineName(self::MACHINE_NAME)
+            ->setStateMachineClass('HeisenStateMachine')
             ->addStates($states)
             ->addTransition($transiton, 'promote')
             ->build();

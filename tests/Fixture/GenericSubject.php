@@ -13,7 +13,7 @@ class GenericSubject implements StatefulSubjectInterface
 
     protected $execution_context;
 
-    public function __construct($state_machine_name, $current_state_name)
+    public function __construct($state_machine_name, $current_state_name = null)
     {
         $this->state_machine_name = $state_machine_name;
         $this->current_state_name = $current_state_name;

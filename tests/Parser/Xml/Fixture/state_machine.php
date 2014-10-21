@@ -2,6 +2,7 @@
 
 return [
     'video_transcoding' => [
+        'class' => 'Workflux\StateMachine\EventEmittingStateMachine',
         'name' => 'video_transcoding',
         'states' => [
             'new' => [

@@ -34,7 +34,7 @@ class ExecutionContext implements ExecutionContextInterface
      * @param string $current_state_name
      * @param array $attributes
      */
-    public function __construct($state_machine_name, $current_state_name, array $attributes = [])
+    public function __construct($state_machine_name, $current_state_name = null, array $attributes = [])
     {
         $this->state_machine_name = $state_machine_name;
         $this->current_state_name = $current_state_name;

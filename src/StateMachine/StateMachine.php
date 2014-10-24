@@ -289,7 +289,7 @@ class StateMachine implements StateMachineInterface
             $start_state = $this->resumeExecutionState($subject);
         }
 
-        if ($start_state->isFinal($start_state)) {
+        if ($start_state->isFinal()) {
             throw new Error(
                 sprintf(
                     'Current execution is pointing to a final state "%s".' .

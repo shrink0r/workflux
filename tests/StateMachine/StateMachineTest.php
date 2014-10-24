@@ -145,8 +145,8 @@ class StateMachineTest extends BaseTestCase
     {
         $this->setExpectedException(
             Error::CLASS,
-            'Current execution is pointing to an invalid state approval.' .
-            ' The state machine execution must be started and resume by entering an event state.'
+            'Current execution is pointing to a final state "published".' .
+            ' The state machine execution may not be resumed at a final state.'
         );
 
         $states = [
@@ -163,7 +163,7 @@ class StateMachineTest extends BaseTestCase
             ]
         ];
 
-        $subject = new GenericSubject('test_machine', 'approval');
+        $subject = new GenericSubject('test_machine', 'published');
         $state_machine = new StateMachine('test_machine', $states, $transitions);
         $state_machine->execute($subject, 'promote');
     }
@@ -296,5 +296,33 @@ class StateMachineTest extends BaseTestCase
         $state_machine = new StateMachine('test_machine', $states, $transitions);
 
         $state_machine->execute($subject, 'promote');
+    }
+
+    public function testIssue30()
+    {
+        $states = [
+            'state1' => new State('state1', StateInterface::TYPE_INITIAL),
+            'state2' => new State('state2'),
+            'state2' => new State('state3', StateInterface::TYPE_FINAL)
+        ];
+        $transitions = [
+            'state1' => [
+                '_sequential' => [
+                    new Transition('state1', 'state2')
+                ]
+            ],
+            'state2' => [
+                '_sequential' => [
+                    new Transition('state2', 'state3')
+                ]
+            ]
+        ];
+
+        $subject = new GenericSubject('test_machine');
+        $state_machine = new StateMachine('test_machine', $states, $transitions);
+
+        $suspend_state = $state_machine->execute($subject);
+
+        $this->assertEquals('state3', $suspend_state->getName());
     }
 }

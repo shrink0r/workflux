@@ -289,11 +289,11 @@ class StateMachine implements StateMachineInterface
             $start_state = $this->resumeExecutionState($subject);
         }
 
-        if (!$this->isEventState($start_state)) {
+        if ($start_state->isFinal($start_state)) {
             throw new Error(
                 sprintf(
-                    "Current execution is pointing to an invalid state %s." .
-                    " The state machine execution must be started and resume by entering an event state.",
+                    'Current execution is pointing to a final state "%s".' .
+                    ' The state machine execution may not be resumed at a final state.',
                     $start_state->getName()
                 )
             );

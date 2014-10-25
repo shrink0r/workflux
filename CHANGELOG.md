@@ -2,6 +2,16 @@
 
 All new features, changes and fixes should be listed here. Please use tickets to reference changes.
 
+## 0.5.1 (2014/10/25)
+
+Fixed two bugs and increased code coverage.
+
+* [chg] updated composer dependencies:
+  * symfony/* (v2.5.6)
+  * phpunit/phpunit (4.3.4)
+* [chg] #32 Increased code coverage
+* [fix] #30 Sequential initial state doesn't run
+
 ## 0.5.0 (2014/10/22)
 
 Added an event emitting implementation of the state machine.

@@ -240,7 +240,7 @@ class EventEmittingStateMachine extends StateMachine implements EventEmitterInte
     {
         parent::leaveState($subject, $current_state);
 
-        $this->event_emitter->emit(self::ON_STATE_EXITED, [ $this, $subject, $current_state ]);
+        $this->fireEvent(self::ON_STATE_EXITED, $subject, $current_state);
     }
 
     /**

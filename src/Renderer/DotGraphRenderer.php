@@ -99,8 +99,10 @@ DOT;
         $styles = $this->getOption('style', new ImmutableOptions());
         if (!$styles instanceof ImmutableOptions) {
             throw new Error(
-                'Encountered unexpected value type for "styles" option. Expected instance of %s',
-                ImmutableOptions::CLASS
+                sprintf(
+                    'Encountered unexpected value type for "styles" option. Expected instance of %s',
+                    ImmutableOptions::CLASS
+                )
             );
         }
 

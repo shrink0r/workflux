@@ -121,4 +121,15 @@ class XmlStateMachineBuilderTest extends BaseTestCase
 
         $builder->build();
     }
+
+    public function testMissingStateMachineName()
+    {
+        $this->setExpectedException(Error::CLASS, 'Missing required state machine name.');
+
+        $builder = new XmlStateMachineBuilder(
+            [ 'state_machine_definition' => __DIR__ . '/Fixture/invalid_state_implementor.xml' ]
+        );
+
+        $builder->build();
+    }
 }

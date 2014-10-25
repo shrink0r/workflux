@@ -199,6 +199,9 @@ class StateMachineDefinitionParser extends AbstractXmlParser
     protected function parseTransitionNode(DOMElement $transition_node)
     {
         $guard_node = $this->xpath->query('guard', $transition_node)->item(0);
+        // this check is "just in case, but shouldn't happen" :)
+        // in theory we could be getting back only a DOMNode here, instead of an DOMElement
+        // in practice we are using a xsd schema to make sure it's not
         if ($guard_node !== null && !$guard_node instanceof DOMElement) {
             throw new Error("Invalid guard node given.");
         }

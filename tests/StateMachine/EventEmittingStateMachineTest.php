@@ -15,6 +15,16 @@ use Workflux\Transition\Transition;
 
 class EventEmittingStateMachineTest extends BaseTestCase
 {
+    const FSM_NAME = 'test_machine';
+
+    const S1 = 'state_one';
+
+    const S2 = 'state_two';
+
+    const S3 = 'state_three';
+
+    const S4 = 'state_four';
+
     public function testExecutionStartedEvent()
     {
         $state_machine = $this->buildStateMachine();
@@ -31,7 +41,7 @@ class EventEmittingStateMachineTest extends BaseTestCase
             }
         );
 
-        $subject = new GenericSubject('test_machine', null);
+        $subject = new GenericSubject(self::FSM_NAME, null);
         $state_machine->execute($subject, 'promote');
 
         $this->assertTrue($execution_was_started);
@@ -53,7 +63,7 @@ class EventEmittingStateMachineTest extends BaseTestCase
             }
         );
 
-        $subject = new GenericSubject('test_machine', null);
+        $subject = new GenericSubject(self::FSM_NAME, null);
         $state_machine->execute($subject, 'promote');
 
         $this->assertTrue($execution_was_suspended);
@@ -75,7 +85,7 @@ class EventEmittingStateMachineTest extends BaseTestCase
             }
         );
 
-        $subject = new GenericSubject('test_machine', 'state1');
+        $subject = new GenericSubject(self::FSM_NAME, self::S1);
         $state_machine->execute($subject, 'promote');
 
         $this->assertTrue($execution_was_resumed);
@@ -97,7 +107,7 @@ class EventEmittingStateMachineTest extends BaseTestCase
             }
         );
 
-        $subject = new GenericSubject('test_machine', 'state3');
+        $subject = new GenericSubject(self::FSM_NAME, self::S3);
         $state_machine->execute($subject, 'promote');
 
         $this->assertTrue($execution_was_finished);
@@ -119,10 +129,13 @@ class EventEmittingStateMachineTest extends BaseTestCase
             }
         );
 
-        $subject = new GenericSubject('test_machine', null);
+        $subject = new GenericSubject(self::FSM_NAME);
         $state_machine->execute($subject, 'promote');
 
-        $this->assertEquals([ 'state1', 'state2', 'state3' ], $entered_states);
+        $this->assertEquals([ self::S1, self::S2, self::S3 ], $entered_states);
+
+        $state_machine->execute($subject, 'promote');
+        $this->assertEquals([ self::S1, self::S2, self::S3, self::S4 ], $entered_states);
     }
 
     public function testStateExited()
@@ -141,32 +154,193 @@ class EventEmittingStateMachineTest extends BaseTestCase
             }
         );
 
-        $subject = new GenericSubject('test_machine', null);
+        $subject = new GenericSubject(self::FSM_NAME, null);
         $state_machine->execute($subject, 'promote');
 
-        $this->assertEquals([ 'state1', 'state2' ], $exited_states);
+        $this->assertEquals([ self::S1, self::S2 ], $exited_states);
+    }
+
+    public function testEventListenOnce()
+    {
+        $state_machine = $this->buildStateMachine();
+
+        $entered_states = [];
+        $state_machine->once(
+            EventEmittingStateMachine::ON_STATE_ENTERED,
+            function (
+                StateMachineInterface $state_machine,
+                StatefulSubjectInterface $subject,
+                StateInterface $entered_state
+            ) use (&$entered_states) {
+                $entered_states[] = $entered_state->getName();
+            }
+        );
+
+        $subject = new GenericSubject(self::FSM_NAME);
+        $state_machine->execute($subject, 'promote');
+
+        $this->assertEquals([ self::S1 ], $entered_states);
+    }
+
+    public function testRemoveEventListener()
+    {
+        $state_machine = $this->buildStateMachine();
+
+        $entered_states = [];
+        $callback = function (
+            StateMachineInterface $state_machine,
+            StatefulSubjectInterface $subject,
+            StateInterface $entered_state
+        ) use (&$entered_states) {
+            $entered_states[] = $entered_state->getName();
+        };
+
+        $state_machine->on(EventEmittingStateMachine::ON_STATE_ENTERED, $callback);
+        $state_machine->removeListener(EventEmittingStateMachine::ON_STATE_ENTERED, $callback);
+
+        $subject = new GenericSubject(self::FSM_NAME);
+        $state_machine->execute($subject, 'promote');
+
+        $this->assertEquals([], $entered_states);
+    }
+
+    public function testRemoveAllEventListeners()
+    {
+        $state_machine = $this->buildStateMachine();
+
+        $entered_states = [];
+        $callback = function (
+            StateMachineInterface $state_machine,
+            StatefulSubjectInterface $subject,
+            StateInterface $entered_state
+        ) use (&$entered_states) {
+            $entered_states[] = $entered_state->getName();
+        };
+
+        $state_machine->on(EventEmittingStateMachine::ON_STATE_ENTERED, $callback);
+        $state_machine->removeAllListeners(EventEmittingStateMachine::ON_STATE_ENTERED);
+
+        $subject = new GenericSubject(self::FSM_NAME);
+        $state_machine->execute($subject, 'promote');
+
+        $this->assertEquals([], $entered_states);
+    }
+
+    public function testRemoveAllListeners()
+    {
+        $state_machine = $this->buildStateMachine();
+
+        $entered_states = [];
+        $callback = function (
+            StateMachineInterface $state_machine,
+            StatefulSubjectInterface $subject,
+            StateInterface $entered_state
+        ) use (&$entered_states) {
+            $entered_states[] = $entered_state->getName();
+        };
+
+        $state_machine->on(EventEmittingStateMachine::ON_STATE_ENTERED, $callback);
+        $state_machine->removeAllListeners();
+
+        $subject = new GenericSubject(self::FSM_NAME);
+        $state_machine->execute($subject, 'promote');
+
+        $this->assertEquals([], $entered_states);
+    }
+
+    public function testEmit()
+    {
+        $state_machine = $this->buildStateMachine();
+        $subject = new GenericSubject(self::FSM_NAME);
+
+        $entered_states = [];
+        $callback = function (
+            StateMachineInterface $state_machine,
+            StatefulSubjectInterface $subject,
+            StateInterface $entered_state
+        ) use (&$entered_states) {
+            $entered_states[] = $entered_state->getName();
+        };
+
+        $state_machine->on(EventEmittingStateMachine::ON_STATE_ENTERED, $callback);
+        $state_machine->emit(
+            EventEmittingStateMachine::ON_STATE_ENTERED,
+            [ $state_machine, $subject, $state_machine->getState(self::S1) ]
+        );
+
+        $this->assertEquals([ self::S1 ], $entered_states);
+    }
+
+    public function testListenersGetter()
+    {
+        $state_machine = $this->buildStateMachine();
+        $subject = new GenericSubject(self::FSM_NAME);
+
+        $entered_states = [];
+        $callback = function (
+            StateMachineInterface $state_machine,
+            StatefulSubjectInterface $subject,
+            StateInterface $entered_state
+        ) use (&$entered_states) {
+            $entered_states[] = $entered_state->getName();
+        };
+
+        $state_machine->on(EventEmittingStateMachine::ON_STATE_ENTERED, $callback);
+        $listeners = $state_machine->listeners(EventEmittingStateMachine::ON_STATE_ENTERED);
+
+        $this->assertCount(1, $listeners);
+        $this->assertEquals($callback, $listeners[0]);
+    }
+
+    public function testGuardInvalidEvent()
+    {
+        $this->setExpectedException(
+            Error::CLASS,
+            'Trying to register non supported event "on_erpen_derp".' .
+            ' Supported are: workflux.state_machine.execution_started, workflux.state_machine.state_entered,' .
+            ' workflux.state_machine.state_exited, workflux.state_machine.execution_suspended,' .
+            ' workflux.state_machine.execution_resumed, workflux.state_machine.execution_finished'
+        );
+
+        $state_machine = $this->buildStateMachine();
+        $subject = new GenericSubject(self::FSM_NAME);
+
+        $entered_states = [];
+        $callback = function (
+            StateMachineInterface $state_machine,
+            StatefulSubjectInterface $subject,
+            StateInterface $entered_state
+        ) use (&$entered_states) {
+            $entered_states[] = $entered_state->getName();
+        };
+
+        $state_machine->on(EventEmittingStateMachine::ON_STATE_ENTERED, $callback);
+        $state_machine->emit(
+            'on_erpen_derp',
+            [ $state_machine, $subject, $state_machine->getState(self::S1) ]
+        );
     }
 
     protected function buildStateMachine()
     {
         $states = [
-            'state1' => new State('state1', StateInterface::TYPE_INITIAL),
-            'state2' => new State('state2'),
-            'state3' => new State('state3'),
-            'state4' => new State('state4', StateInterface::TYPE_FINAL)
+            self::S1 => new State(self::S1, StateInterface::TYPE_INITIAL),
+            self::S2 => new State(self::S2),
+            self::S3 => new State(self::S3),
+            self::S4 => new State(self::S4, StateInterface::TYPE_FINAL)
         ];
         $transitions = [
-            'state1' => [
-                'promote' => [ new Transition('state1', 'state2') ]
+            self::S1 => [
+                'promote' => [ new Transition(self::S1, self::S2) ]
             ],
-            'state2' => [
-                StateMachine::SEQ_TRANSITIONS_KEY => [ new Transition('state2', 'state3') ]
+            self::S2 => [
+                StateMachine::SEQ_TRANSITIONS_KEY => [ new Transition(self::S2, self::S3) ]
             ],
-            'state3' => [
-                'promote' => [ new Transition('state3', 'state4') ]
+            self::S3 => [
+                'promote' => [ new Transition(self::S3, self::S4) ]
             ]
         ];
 
-        return new EventEmittingStateMachine('test_machine', $states, $transitions);
+        return new EventEmittingStateMachine(self::FSM_NAME, $states, $transitions);
     }
 }

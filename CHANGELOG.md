@@ -4,7 +4,7 @@ All new features, changes and fixes should be listed here. Please use tickets to
 
 ## 0.5.1 (2014/10/25)
 
-Fixed two bugs and increased code coverage.
+Fixed bug #30 and increased code coverage.
 
 * [chg] updated composer dependencies:
   * symfony/* (v2.5.6)

@@ -99,6 +99,7 @@ abstract class AbstractXmlParser implements ParserInterface
     protected function tearDown()
     {
         unset($this->xpath);
+        unset($this->options_parser);
     }
 
     /**

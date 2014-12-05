@@ -20,10 +20,19 @@ class VariableGuard extends ExpressionGuard
     public function accept(StatefulSubjectInterface $subject)
     {
         $execution_context = $subject->getExecutionContext();
+        $parameters = $execution_context->getParameters();
+
+        if (is_object($parameters) && is_callable(array($parameters, 'toArray'))) {
+            $params = $parameters->toArray();
+        } elseif (is_array($parameters)) {
+            $params = $parameters;
+        } else {
+            throw new RuntimeError('Invalid return type given by execution context get parameters method.');
+        }
 
         return (bool)$this->expression_language->evaluate(
             $this->getOption('expression'),
-            array_merge([ 'subject' => $subject ], $execution_context->getParameters()->toArray())
+            array_merge([ 'subject' => $subject ], $params)
         );
     }
 }

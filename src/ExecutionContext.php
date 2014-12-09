@@ -3,6 +3,7 @@
 namespace Workflux;
 
 use Params\ParametersTrait;
+use Params\Parameters;
 use Workflux\State\StateInterface;
 
 /**
@@ -23,22 +24,17 @@ class ExecutionContext implements ExecutionContextInterface
     protected $current_state_name;
 
     /**
-     * @var array $attributes
-     */
-    protected $attributes;
-
-    /**
      * Creates a new ExecutionContext instance.
      *
      * @param string $state_machine_name
      * @param string $current_state_name
      * @param array $attributes
      */
-    public function __construct($state_machine_name, $current_state_name = null, array $attributes = [])
+    public function __construct($state_machine_name, $current_state_name = null, array $parameters = [])
     {
         $this->state_machine_name = $state_machine_name;
         $this->current_state_name = $current_state_name;
-        $this->attributes = $attributes;
+        $this->parameters = new Parameters($parameters);
     }
 
     /**

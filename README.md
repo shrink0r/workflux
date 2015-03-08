@@ -61,7 +61,7 @@ None, but you may join the freenode IRC
 
 ## Contributors
 
-Please contribute by [forking](http://help.github.com/forking/) and sending a [pull request](http://help.github.com/pull-requests/). More information can be found in the [`CONTRIBUTING.md`](CONTRIBUTING.md) file. The authors and contributors are mentioned in the [github contributors graph](graphs/contributors) of this repository.
+Please contribute by [forking](http://help.github.com/forking/) and sending a [pull request](http://help.github.com/pull-requests/). More information can be found in the [`CONTRIBUTING.md`](CONTRIBUTING.md) file. The authors and contributors are mentioned in the [github contributors graph](https://github.com/shrink0r/workflux/graphs/contributors) of this repository.
 
 The code tries to adhere to the following PHP-FIG standards: [PSR-4][6], [PSR-1][7] and [PSR-2][8].
 

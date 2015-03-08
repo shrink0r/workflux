@@ -1,11 +1,13 @@
 language: php
 php:
-- 5.5
-- 5.6
-before_script: make install-dependencies-dev
+  - 5.5
+  - 5.6
+  - nightly
+  - hhvm
+before_script: make install
 script:
-- make tests
-- make code-sniffer
+  - make tests
+  - make code-sniffer
 after_script:
   - php vendor/bin/coveralls -v
 notifications:

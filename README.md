@@ -47,12 +47,12 @@ Alternatively, you can download a release archive from the [github releases](rel
 
 ## Documentation
 
-At the moment there are some basic usage examples and a completed API doc.
-The brave may look into the `tests` folder for more insights. More documentation is up the pipeline.
-Feel free to ask via irc or issues tracker.
+At the moment there are some basic usage examples and a completed [API doc](docs/api).
+The brave may look into the `tests` folder for more insights.
+Feel free to ask via IRC or the [issue tracker](/issues).
 
-* [API Doc](http://shrink0r.github.io/workflux/api/index.html)
-* [Usage](https://github.com/shrink0r/workflux/blob/master/docs/usage.md)
+* [API Doc](http://shrink0r.github.io/workflux/api/html/master/index.html)
+* [Usage](docs/README.md)
 
 ## Community
 
@@ -61,9 +61,9 @@ None, but you may join the freenode IRC
 
 ## Contributors
 
-Please contribute by [forking](http://help.github.com/forking/) and sending a
-[pull request](http://help.github.com/pull-requests/). More information can be
-found in the [`CONTRIBUTING.md`](CONTRIBUTING.md) file.
+Please contribute by [forking](http://help.github.com/forking/) and sending a [pull request](http://help.github.com/pull-requests/). More information can be found in the [`CONTRIBUTING.md`](CONTRIBUTING.md) file. The authors and contributors are mentioned in the [github contributors graph](graphs/contributors) of this repository.
+
+The code tries to adhere to the following PHP-FIG standards: [PSR-4][6], [PSR-1][7] and [PSR-2][8].
 
 ## Changelog
 
@@ -71,15 +71,11 @@ See [`CHANGELOG.md`](CHANGELOG.md) for more information about changes.
 
 ## License
 
-<a rel="license"
-href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US"><img
-alt="Creative Commons License" style="border-width:0"
-src="http://i.creativecommons.org/l/by-sa/3.0/88x31.png" /></a><br /><span
-xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Workflux</span>
-is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.
-
-CC-BY-SA-3.0 means, you are free to share, remix and make commercial use of the
-work as long as you attribute and share alike. See [linked license](LICENSE.md) for details.
+This project is MIT licensed. See the [linked license](LICENSE.md) for details.
 
 * Total Composer Downloads: [![Composer
   Downloads](https://poser.pugx.org/shrink0r/workflux/d/total.png)](https://packagist.org/packages/shrink0r/workflux)
+
+[6]: http://www.php-fig.org/psr/psr-4/ "PSR-4 Autoloading Standard"
+[7]: http://www.php-fig.org/psr/psr-1/ "PSR-1 Basic Coding Standard"
+[8]: http://www.php-fig.org/psr/psr-2/ "PSR-2 Coding Style Guide"

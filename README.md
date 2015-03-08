@@ -51,7 +51,7 @@ At the moment there are some basic usage examples and a completed [API doc](docs
 The brave may look into the `tests` folder for more insights.
 Feel free to ask via IRC or the [issue tracker](/issues).
 
-* [API Doc](http://shrink0r.github.io/workflux/api/html/master/index.html)
+* [API Doc](http://shrink0r.github.io/workflux/docs/api/html/master/index.html)
 * [Usage](docs/README.md)
 
 ## Community

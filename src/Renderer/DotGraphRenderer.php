@@ -228,7 +228,7 @@ DOT;
         }
 
         $attributes = [
-            sprintf('label="%s"', $transition_label),
+            sprintf('label="%s"', addslashes($transition_label)),
             sprintf('fontcolor="%s"', $this->getStyle('edge.fontcolor', self::EDGE_FONTCOLOR)),
         ];
 

@@ -42,7 +42,7 @@
             </transition>
             <transition target="rejected">
                 <guard class="Workflux\Guard\ExpressionGuard">
-                    <option name="expression">params.retry_limit_reached and not params.transcoding_success</option>
+                    <option name="expression">params.retry_limit_reached and not params.transcoding_success and "true" == "true"</option>
                 </guard>
             </transition>
         </state>

@@ -37,9 +37,29 @@ DOT;
     const STATE_NODE_FONTCOLOR = '#000000';
 
     /**
+     * @var string STATE_NODE_FONTSIZE
+     */
+    const STATE_NODE_FONTSIZE = '13';
+
+    /**
+     * @var string STATE_NODE_FONTNAME
+     */
+    const STATE_NODE_FONTNAME = 'Arial';
+
+    /**
      * @var string EDGE_FONTCOLOR
      */
     const EDGE_FONTCOLOR = '#7f8c8d';
+
+    /**
+     * @var string EDGE_FONTNAME
+     */
+    const EDGE_FONTNAME = 'Arial';
+
+    /**
+     * @var string EDGE_FONTSIZE
+     */
+    const EDGE_FONTSIZE = '12';
 
     /**
      * @var string EDGE_PROMOTE_COLOR
@@ -145,7 +165,9 @@ DOT;
         }
 
         $state_nodes[] = sprintf(
-            '0 [label="X" fontsize="13" margin="0" fontname="arial" width="0.15" color="%s" shape="circle"]',
+            '0 [label="X" fontsize="%s" margin="0" fontname="%s" width="0.15" color="%s" shape="circle"]',
+            self::STATE_NODE_FONTSIZE,
+            self::STATE_NODE_FONTNAME,
             self::STATE_NODE_COLOR
         );
 
@@ -166,6 +188,8 @@ DOT;
 
         $attributes = [
             sprintf('label="%s"', $state_name),
+            sprintf('fontname="%s"', $this->getStyle('state_node.fontname', self::STATE_NODE_FONTNAME)),
+            sprintf('fontsize="%s"', $this->getStyle('state_node.fontsize', self::STATE_NODE_FONTSIZE)),
             sprintf('fontcolor="%s"', $this->getStyle('state_node.fontcolor', self::STATE_NODE_FONTCOLOR)),
             sprintf('color="%s"', $this->getStyle('state_node.color', self::STATE_NODE_COLOR))
         ];
@@ -228,7 +252,9 @@ DOT;
         }
 
         $attributes = [
-            sprintf('label="%s"', addslashes($transition_label)),
+            sprintf('label="%s"', trim(addslashes($transition_label))),
+            sprintf('fontname="%s"', $this->getStyle('edge.fontname', self::EDGE_FONTNAME)),
+            sprintf('fontsize="%s"', $this->getStyle('edge.fontsize', self::EDGE_FONTSIZE)),
             sprintf('fontcolor="%s"', $this->getStyle('edge.fontcolor', self::EDGE_FONTCOLOR)),
         ];
 

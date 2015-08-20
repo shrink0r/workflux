@@ -1,24 +1,22 @@
 digraph video_transcoding {
-node1 [label="new" fontcolor="#000000" color="#607d8b"]
-node2 [label="transcoding" fontcolor="#000000" color="#607d8b" shape="parallelogram"]
-node3 [label="error" fontcolor="#000000" color="#607d8b"]
-node4 [label="rejected" fontcolor="#000000" color="#607d8b" style="bold"]
-node5 [label="ready" fontcolor="#000000" color="#607d8b" style="bold"]
-0 [label="X" fontsize="13" margin="0" fontname="arial" width="0.15" color="#607d8b" shape="circle"]
+node1 [label="new" fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b"]
+node2 [label="transcoding" fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b" shape="parallelogram"]
+node3 [label="error" fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b"]
+node4 [label="rejected" fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b" style="bold"]
+node5 [label="ready" fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b" style="bold"]
+0 [label="X" fontsize="13" margin="0" fontname="Arial" width="0.15" color="#607d8b" shape="circle"]
 
 node1 -> node2 [label="promote
-if params.transcoding_required" fontcolor="#7f8c8d" color="#2ecc71"]
+if params.transcoding_required" fontname="Arial" fontsize="12" fontcolor="#7f8c8d" color="#2ecc71"]
 node1 -> node5 [label="promote
-if not params.transcoding_required" fontcolor="#7f8c8d" color="#2ecc71"]
-node2 -> node5 [label="
-if params.transcoding_success" fontcolor="#7f8c8d" color="#607d8b"]
-node2 -> node3 [label="
-if not params.retry_limit_reached 
-and not params.transcoding_success" fontcolor="#7f8c8d" color="#607d8b"]
-node2 -> node4 [label="
-if params.retry_limit_reached 
-and not params.transcoding_success" fontcolor="#7f8c8d" color="#607d8b"]
-node3 -> node2 [label="promote" fontcolor="#7f8c8d" color="#2ecc71"]
-node3 -> node4 [label="demote" fontcolor="#7f8c8d" color="#3498db"]
+if not params.transcoding_required" fontname="Arial" fontsize="12" fontcolor="#7f8c8d" color="#2ecc71"]
+node2 -> node5 [label="if params.transcoding_success" fontname="Arial" fontsize="12" fontcolor="#7f8c8d" color="#607d8b"]
+node2 -> node3 [label="if not params.retry_limit_reached
+and not params.transcoding_success" fontname="Arial" fontsize="12" fontcolor="#7f8c8d" color="#607d8b"]
+node2 -> node4 [label="if params.retry_limit_reached
+and not params.transcoding_success
+and \"true\" == \"true\"" fontname="Arial" fontsize="12" fontcolor="#7f8c8d" color="#607d8b"]
+node3 -> node2 [label="promote" fontname="Arial" fontsize="12" fontcolor="#7f8c8d" color="#2ecc71"]
+node3 -> node4 [label="demote" fontname="Arial" fontsize="12" fontcolor="#7f8c8d" color="#3498db"]
 0 -> node1 [color="#607d8b"]
 }

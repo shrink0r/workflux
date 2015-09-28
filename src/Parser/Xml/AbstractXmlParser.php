@@ -114,6 +114,7 @@ abstract class AbstractXmlParser implements ParserInterface
         $document = new DOMDocument();
 
         $user_error_handling = $this->enableErrorHandling();
+        $document->substituteEntities = true;
         $document->load($xml_file);
 
         $this->handleErrors(
@@ -139,9 +140,7 @@ abstract class AbstractXmlParser implements ParserInterface
         $schema_path = $this->getOption('schema', $this->getSchemaPath());
         $user_error_handling = $this->enableErrorHandling();
 
-        if (!$dom_document->schemaValidate($schema_path)) {
-            throw new Error("The given xml file does not validate against the given schema.");
-        }
+        $dom_document->schemaValidate($schema_path);
 
         $this->handleErrors(
             'Validating the document failed. Details are:' . PHP_EOL . PHP_EOL,

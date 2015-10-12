@@ -48,10 +48,8 @@ class StateMachineDefinitionParserTest extends BaseTestCase
     public function testInvalidXmlDefinition()
     {
         $state_machine_definition_file = dirname(__FILE__) . '/Fixture/invalid_state_machine.xml';
-        $this->setExpectedException(
-            Error::CLASS,
-            'The given xml file does not validate against the given schema.'
-        );
+        $this->setExpectedException(Error::CLASS);
+        $this->setExpectedException(DOMException::CLASS);
 
         $parser = new StateMachineDefinitionParser();
         $parser->parse($state_machine_definition_file);

@@ -1,0 +1,7 @@
+# project related stuff
+/bin/phpunit
+/build/
+
+# composer related stuff
+/vendor/
+composer.phar

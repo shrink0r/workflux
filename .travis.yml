@@ -6,7 +6,7 @@ php:
 before_script:
   - composer install
 script:
-  - composer tests
+  - composer test
   - composer code-sniffer
 after_script:
   - php vendor/bin/coveralls -v

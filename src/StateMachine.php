@@ -3,6 +3,7 @@
 namespace Workflux;
 
 use Ds\Map;
+use Ds\Set;
 
 class StateMachine implements StateMachineInterface
 {
@@ -43,10 +44,10 @@ class StateMachine implements StateMachineInterface
             $from_state = $transition->getFrom();
             $to_state = $transition->getTo();
             if (!$this->states->hasKey($from_state)) {
-                throw new Error('Trying to add transition start for unknown state: ' . $from_state);
+                throw new Error('Trying to add transition start for unknown state: '.$from_state);
             }
             if (!$this->states->hasKey($to_state)) {
-                throw new Error('Trying to add transition target for unknown state: ' . $to_state);
+                throw new Error('Trying to add transition target for unknown state: '.$to_state);
             }
             $this->transitions->put(
                 $from_state,
@@ -54,8 +55,8 @@ class StateMachine implements StateMachineInterface
             );
         }
 
-        $reachable_states = $this->depthFirstScan($this->initial_state);
-        if (count($reachable_states) !== $this->states->count()) {
+        $reachable_states = $this->depthFirstScan($this->initial_state, new Set);
+        if ($reachable_states->count() !== $this->states->count()) {
             throw new Error('Not all states are properly connected.');
         }
     }
@@ -70,7 +71,7 @@ class StateMachine implements StateMachineInterface
     {
         $current_state = $this->getState($start_state);
         if ($current_state->isFinal()) {
-            throw new Error("Trying to execute already finished statemachine at final state: " . $start_state);
+            throw new Error("Trying to execute already finished statemachine at final state: ".$start_state);
         }
         do {
             $output = $current_state->execute($input);
@@ -79,9 +80,9 @@ class StateMachine implements StateMachineInterface
                 if ($transition->isActivatedBy($input, $output)) {
                     if ($current_state !== null) {
                         throw new Error(
-                            'Trying to activate more than one transition at a time. Transition: ' .
-                            $output->getCurrentState() . ' -> ' . $current_state->getName() . ' was activated first.' .
-                            ' Now ' . $transition->getFrom() . ' -> ' . $transition->getTo() . ' is being activated too.'
+                            'Trying to activate more than one transition at a time. Transition: '.
+                            $output->getCurrentState().' -> '.$current_state->getName().' was activated first.'.
+                            ' Now '.$transition->getFrom().' -> '.$transition->getTo().' is being activated too.'
                         );
                     }
                     $current_state = $this->getState($transition->getTo());
@@ -92,7 +93,7 @@ class StateMachine implements StateMachineInterface
 
         if ($current_state && !($current_state->isFinal() || $current_state->isBreakpoint())) {
             throw new Error(
-                'Trying to halt statemachine on an unexpected state: ' . $current_state->getName() .
+                'Trying to halt statemachine on an unexpected state: '.$current_state->getName().
                 '. Pausing execution is only allowed on FinalStates and Breakpoints.'
             );
         }
@@ -136,7 +137,7 @@ class StateMachine implements StateMachineInterface
     public function getState(string $state_name): StateInterface
     {
         if (!$this->states->hasKey($state_name)) {
-            throw new Error('Trying to obtain unknown state: ' . $state_name);
+            throw new Error('Trying to obtain unknown state: '.$state_name);
         }
         return $this->states->get($state_name);
     }
@@ -149,7 +150,7 @@ class StateMachine implements StateMachineInterface
     public function getStateTransitions(string $state_name): TransitionSet
     {
         if (!$this->states->hasKey($state_name)) {
-            throw new Error('Trying to obtain transitions for unknown state: ' . $state_name);
+            throw new Error('Trying to obtain transitions for unknown state: '.$state_name);
         }
 
         return $this->transitions->get($state_name, new TransitionSet);
@@ -165,16 +166,16 @@ class StateMachine implements StateMachineInterface
 
     /**
      * @param StateInterface $state
-     * @param string[] $visited_states
+     * @param Set $visited_states
      *
-     * @return string[]
+     * @return Set
      */
-    protected function depthFirstScan(StateInterface $state, array $visited_states = []): array
+    protected function depthFirstScan(StateInterface $state, Set $visited_states): Set
     {
-        if (in_array($state, $visited_states, true)) {
+        if ($visited_states->contains($state)) {
             return $visited_states;
         }
-        $visited_states[] = $state;
+        $visited_states->add($state);
 
         $child_states = array_map(
             function (TransitionInterface $transition) {

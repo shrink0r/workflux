@@ -9,7 +9,7 @@ interface StateInterface
      *
      * @return OutputInterface
      */
-     public function execute(InputInterface $input): OutputInterface;
+    public function execute(InputInterface $input): OutputInterface;
 
     /**
      * @return string

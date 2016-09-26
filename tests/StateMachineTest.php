@@ -30,6 +30,6 @@ class StateMachineTest extends TestCase
         $output = $statemachine->execute(new Input, 'initial');
         $output = $statemachine->execute(Input::fromOutput($output), $output->getCurrentState());
 
-        var_dump(__METHOD__, $output);
+        $this->assertEquals('final', $output->getCurrentState());
     }
 }

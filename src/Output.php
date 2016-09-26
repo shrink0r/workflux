@@ -14,7 +14,7 @@ class Output implements OutputInterface
     /**
      * @param mixed[] $params
      */
-    public function __construct($current_state, array $params = [])
+    public function __construct(string $current_state, array $params = [])
     {
         $this->current_state = $current_state;
         $this->params = $params;
@@ -23,12 +23,12 @@ class Output implements OutputInterface
     /**
      * @return string
      */
-    public function getCurrentState()
+    public function getCurrentState(): string
     {
         return $this->current_state;
     }
 
-    public function withCurrentState($current_state)
+    public function withCurrentState(string $current_state): OutputInterface
     {
         $output = clone $this;
         $output->current_state = $current_state;
@@ -42,12 +42,12 @@ class Output implements OutputInterface
      *
      * @return OutputInterface
      */
-    public static function fromInput($current_state, InputInterface $input)
+    public static function fromInput(string $current_state, InputInterface $input): OutputInterface
     {
         return new static($current_state, $input->toArray());
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [ 'params' => $this->params, 'current_state' => $this->current_state ];
     }

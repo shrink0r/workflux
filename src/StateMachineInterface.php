@@ -10,20 +10,39 @@ interface StateMachineInterface
      *
      * @return OutputInterface
      */
-    public function execute(InputInterface $input, $start_state);
+    public function execute(InputInterface $input, string $start_state): OutputInterface;
+
+        /**
+     * @return StateSet
+     */
+    public function getStates(): StateSet;
 
     /**
      * @return StateInterface
      */
-    public function getInitialState();
+    public function getInitialState(): StateInterface;
 
     /**
-     * @return StateInterface[]
+     * @return StateSet
      */
-    public function getStates();
+    public function getFinalStates(): StateSet;
 
     /**
-     * @return TransitionInterface[]
+     * @param string $state_name
+     *
+     * @return StateInterface
      */
-    public function getTransitions();
+    public function getState(string $state_name): StateInterface;
+
+    /**
+     * @param string $state_name
+     *
+     * @return TransitionSet
+     */
+    public function getStateTransitions(string $state_name): TransitionSet;
+
+    /**
+     * @return TransitionSet
+     */
+    public function getTransitions(): TransitionSet;
 }

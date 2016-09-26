@@ -4,7 +4,7 @@ namespace Workflux;
 
 class Breakpoint extends State
 {
-    public function isBreakpoint()
+    public function isBreakpoint(): bool
     {
         return true;
     }

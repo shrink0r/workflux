@@ -9,16 +9,25 @@ interface StateInterface
      *
      * @return OutputInterface
      */
-     public function execute(InputInterface $input);
+     public function execute(InputInterface $input): OutputInterface;
 
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
-    public function isInitial();
+    /**
+     * @return bool
+     */
+    public function isInitial(): bool;
 
-    public function isFinal();
+    /**
+     * @return bool
+     */
+    public function isFinal(): bool;
 
-    public function isBreakpoint();
+    /**
+     * @return bool
+     */
+    public function isBreakpoint(): bool;
 }

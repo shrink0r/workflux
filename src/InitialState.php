@@ -4,7 +4,7 @@ namespace Workflux;
 
 class InitialState extends State
 {
-    public function isInitial()
+    public function isInitial(): bool
     {
         return true;
     }

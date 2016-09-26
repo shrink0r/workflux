@@ -9,14 +9,14 @@ interface ParamBagInterface
      *
      * @return mixed
      */
-    public function get($param_name);
+    public function get(string $param_name);
 
     /**
      * @param string $param_name
      *
      * @return bool
      */
-    public function has($param_name);
+    public function has(string $param_name): bool;
 
     /**
      * @param string $param_name
@@ -25,31 +25,31 @@ interface ParamBagInterface
      *
      * @return ParamBagInterface
      */
-    public function withParam($param_name, $param_value, $treat_name_as_path = true);
+    public function withParam(string $param_name, $param_value, bool $treat_name_as_path = true): ParamBagInterface;
 
     /**
      * @param mixed[] $params
      *
      * @return ParamBagInterface
      */
-    public function withParams(array $params);
+    public function withParams(array $params): ParamBagInterface;
 
     /**
      * @param string $param_name
      *
      * @return ParamBagInterface
      */
-    public function withoutParam($param_name);
+    public function withoutParam(string $param_name): ParamBagInterface;
 
     /**
      * @param string[] $param_names
      *
      * @return ParamBagInterface
      */
-    public function withoutParams(array $param_names);
+    public function withoutParams(array $param_names): ParamBagInterface;
 
     /**
      * @return mixed[]
      */
-    public function toArray();
+    public function toArray(): array;
 }

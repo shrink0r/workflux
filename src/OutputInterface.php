@@ -10,10 +10,10 @@ interface OutputInterface extends ParamBagInterface
      *
      * @return OutputInterface
      */
-    public static function fromInput($current_state, InputInterface $input);
+    public static function fromInput(string $current_state, InputInterface $input): OutputInterface;
 
     /**
      * @return string
      */
-    public function getCurrentState();
+    public function getCurrentState(): string;
 }

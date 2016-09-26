@@ -4,7 +4,7 @@ namespace Workflux;
 
 class FinalState extends State
 {
-    public function isFinal()
+    public function isFinal(): bool
     {
         return true;
     }

@@ -15,7 +15,7 @@ trait ParamBagTrait
      *
      * @return mixed
      */
-    public function get($param_name, $treat_name_as_path = true)
+    public function get(string $param_name, bool $treat_name_as_path = true)
     {
         if (!$treat_name_as_path) {
             return $this->has($param_name) ? $this->params[$param_name] : null;
@@ -38,7 +38,7 @@ trait ParamBagTrait
      *
      * @return bool
      */
-    public function has($param_name)
+    public function has(string $param_name): bool
     {
         return array_key_exists($param_name, $this->params);
     }
@@ -50,7 +50,7 @@ trait ParamBagTrait
      *
      * @return self
      */
-    public function withParam($param_name, $param_value, $treat_name_as_path = true)
+    public function withParam(string $param_name, $param_value, bool $treat_name_as_path = true): ParamBagInterface
     {
         $param_bag = clone $this;
         if ($treat_name_as_path) {
@@ -76,7 +76,7 @@ trait ParamBagTrait
      *
      * @return self
      */
-    public function withParams(array $params)
+    public function withParams(array $params): ParamBagInterface
     {
         $param_bag = clone $this;
         $param_bag->params = array_merge($param_bag->params, $params);
@@ -89,7 +89,7 @@ trait ParamBagTrait
      *
      * @return self
      */
-    public function withoutParam($param_name)
+    public function withoutParam(string $param_name): ParamBagInterface
     {
         if (!$this->has($param_name)) {
             return $this;
@@ -105,7 +105,7 @@ trait ParamBagTrait
      *
      * @return self
      */
-    public function withoutParams(array $param_names)
+    public function withoutParams(array $param_names): ParamBagInterface
     {
         return array_reduce(
             $param_names,
@@ -119,7 +119,7 @@ trait ParamBagTrait
     /**
      * @return mixed[]
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->params;
     }

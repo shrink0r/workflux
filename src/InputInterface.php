@@ -9,5 +9,5 @@ interface InputInterface extends ParamBagInterface
      *
      * @return InputInterface
      */
-    public static function fromOutput(OutputInterface $input);
+    public static function fromOutput(OutputInterface $input): InputInterface;
 }

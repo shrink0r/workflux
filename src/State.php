@@ -12,7 +12,7 @@ class State implements StateInterface
     /**
      * @param string $name
      */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
@@ -22,7 +22,7 @@ class State implements StateInterface
      *
      * @return OutputInterface
      */
-    public function execute(InputInterface $input)
+    public function execute(InputInterface $input): OutputInterface
     {
         return Output::fromInput($this->name, $input);
     }
@@ -30,22 +30,31 @@ class State implements StateInterface
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function isInitial()
+    /**
+     * @return boolean
+     */
+    public function isInitial(): bool
     {
         return false;
     }
 
-    public function isFinal()
+    /**
+     * @return boolean
+     */
+    public function isFinal(): bool
     {
         return false;
     }
 
-    public function isBreakpoint()
+    /**
+     * @return boolean
+     */
+    public function isBreakpoint(): bool
     {
         return false;
     }

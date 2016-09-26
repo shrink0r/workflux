@@ -4,27 +4,46 @@ namespace Workflux;
 
 class Transition implements TransitionInterface
 {
-    private $in;
+    /**
+     * @var string
+     */
+    private $from;
 
-    private $out;
+    /**
+     * @var string
+     */
+    private $to;
 
-    public function __construct($in, $out)
+    /**
+     * @param string $from
+     * @param string $to
+     */
+    public function __construct(string $from, string $to)
     {
-        $this->in = $in;
-        $this->out = $out;
+        $this->from = $from;
+        $this->to = $to;
     }
 
-    public function getIn()
+    /**
+     * @return string
+     */
+    public function getFrom(): string
     {
-        return $this->in;
+        return $this->from;
     }
 
-    public function getOut()
+    public function getTo(): string
     {
-        return $this->out;
+        return $this->to;
     }
 
-    public function isActivatedBy(InputInterface $input, OutputInterface $output)
+    /**
+     * @param  InputInterface $input
+     * @param  OutputInterface $output
+     *
+     * @return boolean
+     */
+    public function isActivatedBy(InputInterface $input, OutputInterface $output): bool
     {
         return true;
     }

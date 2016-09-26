@@ -10,15 +10,15 @@ interface TransitionInterface
      *
      * @return boolean
      */
-    public function isActivatedBy(InputInterface $input, OutputInterface $output);
+    public function isActivatedBy(InputInterface $input, OutputInterface $output): bool;
 
     /**
      * @return string
      */
-    public function getIn();
+    public function getFrom(): string;
 
     /**
      * @return string
      */
-    public function getOut();
+    public function getTo(): string;
 }

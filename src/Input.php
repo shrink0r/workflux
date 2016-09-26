@@ -19,7 +19,7 @@ class Input implements InputInterface
      *
      * @return InputInterface
      */
-    public static function fromOutput(OutputInterface $output)
+    public static function fromOutput(OutputInterface $output): InputInterface
     {
         $output_arr = $output->toArray();
 

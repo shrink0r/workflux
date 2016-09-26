@@ -8,19 +8,28 @@ use Workflux\InitialState;
 use Workflux\Input;
 use Workflux\State;
 use Workflux\StateMachine;
+use Workflux\StateSet;
 use Workflux\Transition;
+use Workflux\TransitionSet;
 
 class StateMachineTest extends TestCase
 {
     public function testConstruct()
     {
-        $states = [ new InitialState('initial'), new Breakpoint('foobar'), new FinalState('final') ];
-        $transitions = [ new Transition('initial', 'foobar'), new Transition('foobar', 'final') ];
+        $states = new StateSet([
+            new InitialState('initial'),
+            new Breakpoint('foobar'),
+            new FinalState('final')
+        ]);
+
+        $transitions = (new TransitionSet)
+            ->add(new Transition('initial', 'foobar'))
+            ->add(new Transition('foobar', 'final'));
 
         $statemachine = new StateMachine($states, $transitions);
         $output = $statemachine->execute(new Input, 'initial');
         $output = $statemachine->execute(Input::fromOutput($output), $output->getCurrentState());
 
-        var_dump($output);
+        var_dump(__METHOD__, $output);
     }
 }

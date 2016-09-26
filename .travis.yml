@@ -2,10 +2,6 @@ language: php
 php:
   - 7.0
   - nightly
-  - hhvm
-matrix:
-  allow_failures:
-    - hhvm
 before_script:
   - composer install
 script:

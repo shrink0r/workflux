@@ -32,7 +32,18 @@ class StateSet implements IteratorAggregate
      */
     public function add(StateInterface $state): StateSet
     {
-        $this->internal_set->add($state);
+        $cloned_set = clone $this;
+        $cloned_set->internal_set->add($state);
+
+        return $cloned_set;
+    }
+
+    /**
+     * @return int
+     */
+    public function count(): int
+    {
+        return $this->internal_set->count();
     }
 
     /**
@@ -49,5 +60,10 @@ class StateSet implements IteratorAggregate
     public function toArray()
     {
         return $this->internal_set->toArray();
+    }
+
+    public function __clone()
+    {
+        $this->internal_set = clone $this->internal_set;
     }
 }

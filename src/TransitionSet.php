@@ -62,4 +62,9 @@ class TransitionSet implements IteratorAggregate, Countable
     {
         return $this->internal_set->toArray();
     }
+
+    public function __clone()
+    {
+        $this->internal_set = clone $this->internal_set;
+    }
 }

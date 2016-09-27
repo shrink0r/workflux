@@ -8,19 +8,24 @@ use Ds\Set;
 class StateMachine implements StateMachineInterface
 {
     /**
-     * @var StateSet $states
+     * @var StateMap $states
      */
     private $states;
 
     /**
-     * @var TransitionSet $transitions
+     * @var StateTransitionMap $transitions
      */
     private $transitions;
 
     /**
-     * @var string $initial_state
+     * @var StateInterface $initial_state
      */
     private $initial_state;
+
+    /**
+     * @var StateMap $final_states
+     */
+    private $final_states;
 
     /**
      * @param StateSet $states
@@ -28,31 +33,37 @@ class StateMachine implements StateMachineInterface
      */
     public function __construct(StateSet $states, TransitionSet $transitions)
     {
-        $this->states = new Map;
+        $this->states = new StateMap;
+        $this->final_states = new StateMap;
         foreach ($states as $state) {
             if ($state->isInitial()) {
                 if ($this->initial_state !== null) {
                     throw new Error('Trying to add more than one initial state.');
                 }
                 $this->initial_state = $state;
+            } elseif ($state->isFinal()) {
+                $this->final_states = $this->final_states->put($state);
             }
-            $this->states->put($state->getName(), $state);
+            $this->states = $this->states->put($state);
+        }
+        if (!$this->initial_state) {
+            throw new Error('Trying to create statemachine without an initial state.');
+        }
+        if ($this->getFinalStates()->count() === 0) {
+            throw new Error('Trying to create statemachine without at least one final state.');
         }
 
-        $this->transitions = new Map;
+        $this->transitions = new StateTransitionMap;
         foreach ($transitions as $transition) {
             $from_state = $transition->getFrom();
             $to_state = $transition->getTo();
-            if (!$this->states->hasKey($from_state)) {
-                throw new Error('Trying to add transition start for unknown state: '.$from_state);
+            if (!$this->states->has($from_state)) {
+                throw new Error('Trying to add transition start from unknown state: '.$from_state);
             }
-            if (!$this->states->hasKey($to_state)) {
-                throw new Error('Trying to add transition target for unknown state: '.$to_state);
+            if (!$this->states->has($to_state)) {
+                throw new Error('Trying to add transition to unknown state: '.$to_state);
             }
-            $this->transitions->put(
-                $from_state,
-                $this->transitions->get($from_state, new TransitionSet)->add($transition)
-            );
+            $this->transitions = $this->transitions->put($transition);
         }
 
         $reachable_states = $this->depthFirstScan($this->initial_state, new Set);
@@ -104,9 +115,9 @@ class StateMachine implements StateMachineInterface
     }
 
     /**
-     * @return StateSet
+     * @return StateMap
      */
-    public function getStates(): StateSet
+    public function getStates(): StateMap
     {
         return $this->states;
     }
@@ -120,13 +131,11 @@ class StateMachine implements StateMachineInterface
     }
 
     /**
-     * @return StateSet
+     * @return StateMap
      */
-    public function getFinalStates(): StateSet
+    public function getFinalStates(): StateMap
     {
-        return $this->states->filter(function (StateInterface $state): bool {
-            return $state->isFinal();
-        });
+        return $this->final_states;
     }
 
     /**
@@ -136,7 +145,7 @@ class StateMachine implements StateMachineInterface
      */
     public function getState(string $state_name): StateInterface
     {
-        if (!$this->states->hasKey($state_name)) {
+        if (!$this->states->has($state_name)) {
             throw new Error('Trying to obtain unknown state: '.$state_name);
         }
         return $this->states->get($state_name);
@@ -149,7 +158,7 @@ class StateMachine implements StateMachineInterface
      */
     public function getStateTransitions(string $state_name): TransitionSet
     {
-        if (!$this->states->hasKey($state_name)) {
+        if (!$this->states->has($state_name)) {
             throw new Error('Trying to obtain transitions for unknown state: '.$state_name);
         }
 
@@ -157,9 +166,9 @@ class StateMachine implements StateMachineInterface
     }
 
     /**
-     * @return TransitionSet
+     * @return StateTransitionMap
      */
-    public function getTransitions(): TransitionSet
+    public function getTransitions(): StateTransitionMap
     {
         return $this->transitions;
     }
@@ -188,5 +197,13 @@ class StateMachine implements StateMachineInterface
         }
 
         return $visited_states;
+    }
+
+    public function __clone()
+    {
+        $this->states = clone $this->states;
+        $this->transitions = clone $this->transitions;
+        $this->initial_state = clone $this->initial_state;
+        $this->final_states = clone $this->final_states;
     }
 }

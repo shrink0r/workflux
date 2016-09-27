@@ -13,9 +13,9 @@ interface StateMachineInterface
     public function execute(InputInterface $input, string $start_state): OutputInterface;
 
         /**
-     * @return StateSet
+     * @return StateMap
      */
-    public function getStates(): StateSet;
+    public function getStates(): StateMap;
 
     /**
      * @return StateInterface
@@ -23,9 +23,9 @@ interface StateMachineInterface
     public function getInitialState(): StateInterface;
 
     /**
-     * @return StateSet
+     * @return StateMap
      */
-    public function getFinalStates(): StateSet;
+    public function getFinalStates(): StateMap;
 
     /**
      * @param string $state_name
@@ -42,7 +42,7 @@ interface StateMachineInterface
     public function getStateTransitions(string $state_name): TransitionSet;
 
     /**
-     * @return TransitionSet
+     * @return StateTransitionMap
      */
-    public function getTransitions(): TransitionSet;
+    public function getTransitions(): StateTransitionMap;
 }

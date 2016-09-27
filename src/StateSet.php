@@ -39,6 +39,16 @@ class StateSet implements IteratorAggregate
     }
 
     /**
+     * @param StateInterface $state
+     *
+     * @return bool
+     */
+    public function contains(StateInterface $state): bool
+    {
+        return $this->internal_set->contains($state);
+    }
+
+    /**
      * @return int
      */
     public function count(): int

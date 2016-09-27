@@ -2,9 +2,6 @@
 
 namespace Workflux;
 
-use Ds\Map;
-use Ds\Set;
-
 class StateMachine implements StateMachineInterface
 {
     /**
@@ -66,7 +63,7 @@ class StateMachine implements StateMachineInterface
             $this->transitions = $this->transitions->put($transition);
         }
 
-        $reachable_states = $this->depthFirstScan($this->initial_state, new Set);
+        $reachable_states = $this->depthFirstScan($this->initial_state, new StateSet);
         if ($reachable_states->count() !== $this->states->count()) {
             throw new Error('Not all states are properly connected.');
         }
@@ -175,11 +172,11 @@ class StateMachine implements StateMachineInterface
 
     /**
      * @param StateInterface $state
-     * @param Set $visited_states
+     * @param StateSet $visited_states
      *
-     * @return Set
+     * @return StateSet
      */
-    protected function depthFirstScan(StateInterface $state, Set $visited_states): Set
+    protected function depthFirstScan(StateInterface $state, StateSet $visited_states): StateSet
     {
         if ($visited_states->contains($state)) {
             return $visited_states;

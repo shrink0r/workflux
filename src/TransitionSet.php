@@ -40,6 +40,16 @@ class TransitionSet implements IteratorAggregate, Countable
     }
 
     /**
+     * @param TransitionInterface $transition
+     *
+     * @return bool
+     */
+    public function contains(TransitionInterface $transition): bool
+    {
+        return $this->internal_set->contains($transition);
+    }
+
+    /**
      * @return Traversable
      */
     public function getIterator(): Traversable

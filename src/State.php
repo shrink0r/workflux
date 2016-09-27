@@ -2,7 +2,7 @@
 
 namespace Workflux;
 
-class State implements StateInterface
+final class State implements StateInterface
 {
     /**
      * @var string $name

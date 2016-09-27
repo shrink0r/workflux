@@ -2,7 +2,7 @@
 
 namespace Workflux;
 
-class Output implements OutputInterface
+final class Output implements OutputInterface
 {
     use ParamBagTrait;
 

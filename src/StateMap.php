@@ -6,7 +6,7 @@ use Ds\Map;
 use Traversable;
 use IteratorAggregate;
 
-class StateMap implements IteratorAggregate
+final class StateMap implements IteratorAggregate
 {
     /**
      * @var Map $internal_map

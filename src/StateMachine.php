@@ -2,7 +2,7 @@
 
 namespace Workflux;
 
-class StateMachine implements StateMachineInterface
+final class StateMachine implements StateMachineInterface
 {
     /**
      * @var StateMap $states

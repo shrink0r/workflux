@@ -7,7 +7,7 @@ use Ds\Set;
 use IteratorAggregate;
 use Traversable;
 
-class TransitionSet implements IteratorAggregate, Countable
+final class TransitionSet implements IteratorAggregate, Countable
 {
     /**
      * @var Set $interal_set

@@ -2,7 +2,7 @@
 
 namespace Workflux;
 
-class Transition implements TransitionInterface
+final class Transition implements TransitionInterface
 {
     /**
      * @var string

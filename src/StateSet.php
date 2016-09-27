@@ -6,7 +6,7 @@ use Ds\Set;
 use Traversable;
 use IteratorAggregate;
 
-class StateSet implements IteratorAggregate
+final class StateSet implements IteratorAggregate
 {
     /**
      * @var Set $internal_set

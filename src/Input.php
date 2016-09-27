@@ -2,7 +2,7 @@
 
 namespace Workflux;
 
-class Input implements InputInterface
+final class Input implements InputInterface
 {
     use ParamBagTrait;
 

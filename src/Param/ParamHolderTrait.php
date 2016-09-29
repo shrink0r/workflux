@@ -22,9 +22,11 @@ trait ParamHolderTrait
         if (!$treat_name_as_path) {
             return $this->has($param_name) ? $this->params[$param_name] : null;
         }
+
         $params = $this->params;
         $name_parts = array_reverse(explode('.', $param_name));
         $cur_val = &$params;
+
         while (count($name_parts) > 1 && $cur_name = array_pop($name_parts)) {
             if (!array_key_exists($cur_name, $cur_val)) {
                 return null;
@@ -55,9 +57,11 @@ trait ParamHolderTrait
     public function withParam(string $param_name, $param_value, bool $treat_name_as_path = true): ParamHolderInterface
     {
         $param_holder = clone $this;
+
         if ($treat_name_as_path) {
             $name_parts = array_reverse(explode('.', $param_name));
             $cur_val = &$param_holder->params;
+
             while (count($name_parts) > 1 && $cur_name = array_pop($name_parts)) {
                 if (!isset($cur_val[$cur_name])) {
                     $cur_val[$cur_name] = [];
@@ -96,6 +100,7 @@ trait ParamHolderTrait
         if (!$this->has($param_name)) {
             return $this;
         }
+
         $param_holder = clone $this;
         unset($param_holder->params[$param_name]);
 

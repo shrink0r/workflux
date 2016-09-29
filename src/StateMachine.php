@@ -47,9 +47,11 @@ final class StateMachine implements StateMachineInterface
         list($initial_state, $all_states, $final_states) = $this->adoptStates($states);
         $state_transitions = $this->adoptStateTransitions($all_states, $transitions);
         $reachable_states = $this->depthFirstScan($all_states, $state_transitions, $initial_state, new StateSet);
+
         if (count($reachable_states) !== count($all_states)) {
             throw new InvalidWorkflowStructure('Not all states are properly connected.');
         }
+
         $this->initial_state = $initial_state;
         $this->states = $all_states;
         $this->final_states = $final_states;
@@ -58,27 +60,38 @@ final class StateMachine implements StateMachineInterface
 
     /**
      * @param InputInterface $input
-     * @param string $start_state
+     * @param string $state_name
      *
      * @return OutputInterface
      */
-    public function execute(InputInterface $input, string $start_state): OutputInterface
+    public function execute(InputInterface $input, string $state_name): OutputInterface
     {
-        $next_state = $this->getStartStateByName($start_state);
-        do {
-            list($next_state, $input, $output) = $this->activateTransitions($input, $next_state->execute($input));
-        } while ($next_state && !$next_state->isBreakpoint());
+        // @todo this needs to be configurable somehow; maybe a good ol' "define" or an "env var" might do?
+        static $max_allowed_executions = 100;
 
-        if ($next_state) {
-            if (!$next_state->isBreakpoint()) {
-                throw new CorruptExecutionFlow(
-                    'Trying to halt statemachine on an unexpected state: '.$next_state->getName().
-                    '. Pausing/halting execution is only allowed on Breakpoints.'
-                );
-            }
-            return $output->withCurrentState($next_state->getName());
+        $bread_crumbs = [];
+        $next_state = $this->getStartStateByName($state_name);
+
+        do {
+            $bread_crumbs[] = $next_state->getName();
+            $output = $next_state->execute($input);
+            $next_state = $this->activateTransition($input, $output);
+            $input = Input::fromOutput($output);
+            // @todo this needs a better runtime-cycle detetection than just counting max executions.
+            // maybe somehow use the bread-crumbs to find reoccuring path patterns?
+        } while ($next_state && !$next_state->isBreakpoint() && count($bread_crumbs) < $max_allowed_executions);
+
+        if (count($bread_crumbs) === $max_allowed_executions) {
+            // @todo would be nice to collapse recursive paths in the output
+            // in order to prevent the ridiculous length of the exception while still providing some insight.
+            throw new CorruptExecutionFlow(
+                "Trying to execute more than the allowed number of max: $max_allowed_executions workflow steps.\n".
+                "It is likely that an intentional cycle inside the workflow isn't properly exiting. ".
+                "The executed states where:\n".implode(' -> ', $bread_crumbs)
+            );
         }
-        return $output;
+
+        return $next_state ? $output->withCurrentState($next_state->getName()) : $output;
     }
 
     /**
@@ -118,11 +131,12 @@ final class StateMachine implements StateMachineInterface
      *
      * @return mixed[]
      */
-    private function adoptStates(StateSet $state_set)
+    private function adoptStates(StateSet $state_set): array
     {
         $initial_state = null;
         $all_states = new StateMap;
         $final_states = new StateMap;
+
         foreach ($state_set as $state) {
             if ($state->isInitial()) {
                 if ($initial_state !== null) {
@@ -130,14 +144,17 @@ final class StateMachine implements StateMachineInterface
                 }
                 $initial_state = $state;
             }
+
             if ($state->isFinal()) {
                 if ($state->isInitial()) {
                     throw new InvalidWorkflowStructure('Trying to add state as initial and final at the same time.');
                 }
                 $final_states = $final_states->put($state);
             }
+
             $all_states = $all_states->put($state);
         }
+
         if (!$initial_state) {
             throw new InvalidWorkflowStructure('Trying to create statemachine without an initial state.');
         }
@@ -157,15 +174,25 @@ final class StateMachine implements StateMachineInterface
     private function adoptStateTransitions(StateMap $states, TransitionSet $transitions)
     {
         $state_transitions = new StateTransitions;
+
         foreach ($transitions as $transition) {
             $from_state = $transition->getFrom();
             $to_state = $transition->getTo();
+
             if (!$states->has($from_state)) {
-                throw new InvalidWorkflowStructure('Trying to add transition start from unknown state: '.$from_state);
+                throw new InvalidWorkflowStructure('Trying to transition from unknown state: '.$from_state);
             }
+            if ($states->get($from_state)->isFinal()) {
+                throw new InvalidWorkflowStructure('Trying to transition from final-state: '.$from_state);
+            }
+
             if (!$states->has($to_state)) {
-                throw new InvalidWorkflowStructure('Trying to add transition to unknown state: '.$to_state);
+                throw new InvalidWorkflowStructure('Trying to transition to unknown state: '.$to_state);
             }
+            if ($states->get($to_state)->isInitial()) {
+                throw new InvalidWorkflowStructure('Trying to transition to initial-state: '.$to_state);
+            }
+
             $state_transitions = $state_transitions->put($transition);
         }
 
@@ -190,12 +217,14 @@ final class StateMachine implements StateMachineInterface
             return $visited_states;
         }
         $visited_states->add($state);
+
         $child_states = array_map(
             function (TransitionInterface $transition) use ($all_states): StateInterface {
                 return $all_states->get($transition->getTo());
             },
             $state_transitions->get($state->getName())->toArray()
         );
+
         foreach ($child_states as $child_state) {
             $visited_states = $this->depthFirstScan($all_states, $state_transitions, $child_state, $visited_states);
         }
@@ -211,11 +240,13 @@ final class StateMachine implements StateMachineInterface
     private function getStartStateByName(string $state_name)
     {
         $start_state = $this->states->get($state_name);
+
+        if (!$start_state) {
+            throw new UnsupportedState("Trying to start statemachine execution at unknown state: ".$state_name);
+        }
+
         if ($start_state->isFinal()) {
             throw new CorruptExecutionFlow("Trying to (re)execute statemachine at final state: ".$state_name);
-        }
-        if ($start_state->isFinal()) {
-            throw new UnsupportedState("Trying to start statemachine execution at unknown state: ".$state_name);
         }
 
         return $start_state;
@@ -225,12 +256,12 @@ final class StateMachine implements StateMachineInterface
      * @param  InputInterface $input
      * @param  OutputInterface $output
      *
-     * @return mixed[]
+     * @return StateInterface|null
      */
-    private function activateTransitions(InputInterface $input, OutputInterface $output)
+    private function activateTransition(InputInterface $input, OutputInterface $output)
     {
         $next_state = null;
-        $next_input = null;
+
         foreach ($this->state_transitions->get($output->getCurrentState()) as $transition) {
             if ($transition->isActivatedBy($input, $output)) {
                 if ($next_state !== null) {
@@ -241,10 +272,9 @@ final class StateMachine implements StateMachineInterface
                     );
                 }
                 $next_state = $this->states->get($transition->getTo());
-                $next_input = Input::fromOutput($output);
             }
         }
 
-        return [ $next_state, $next_input, $output ];
+        return $next_state;
     }
 }

@@ -1,20 +1,25 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\State;
 
-final class InitialState implements StateInterface
+use Workflux\Param\InputInterface;
+use Workflux\Param\Output;
+use Workflux\Param\OutputInterface;
+use Workflux\State\StateInterface;
+
+final class State implements StateInterface
 {
     /**
-     * @var StateInterface $internal_state
+     * @var string $name
      */
-    private $internal_state;
+    private $name;
 
     /**
      * @param string $name
      */
     public function __construct(string $name)
     {
-        $this->internal_state = new State($name);
+        $this->name = $name;
     }
 
     /**
@@ -24,7 +29,7 @@ final class InitialState implements StateInterface
      */
     public function execute(InputInterface $input): OutputInterface
     {
-        return $this->internal_state->execute($input);
+        return Output::fromInput($this->name, $input);
     }
 
     /**
@@ -32,7 +37,7 @@ final class InitialState implements StateInterface
      */
     public function getName(): string
     {
-        return $this->internal_state->getName();
+        return $this->name;
     }
 
     /**
@@ -40,7 +45,7 @@ final class InitialState implements StateInterface
      */
     public function isInitial(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -48,7 +53,7 @@ final class InitialState implements StateInterface
      */
     public function isFinal(): bool
     {
-        return $this->internal_state->isFinal();
+        return false;
     }
 
     /**
@@ -56,6 +61,6 @@ final class InitialState implements StateInterface
      */
     public function isBreakpoint(): bool
     {
-        return $this->internal_state->isBreakpoint();
+        return false;
     }
 }

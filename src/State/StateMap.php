@@ -1,12 +1,13 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\State;
 
 use Ds\Map;
-use Traversable;
 use IteratorAggregate;
+use Traversable;
+use Workflux\State\StateInterface;
 
-final class StateTransitionMap implements IteratorAggregate
+final class StateMap implements IteratorAggregate
 {
     /**
      * @var Map $internal_map
@@ -14,32 +15,27 @@ final class StateTransitionMap implements IteratorAggregate
     private $internal_map;
 
     /**
-     * @param TransitionInterface[] $states
+     * @param StateInterface[] $states
      */
-    public function __construct(array $transitions = [])
+    public function __construct(array $states = [])
     {
         $this->internal_map = new Map;
-        (function (TransitionInterface ...$transitions) {
-            foreach ($transitions as $transition) {
-                $state_transitions = $this->internal_map->get($transition->getFrom(), new TransitionSet);
-                $this->internal_map->put($transition->getFrom(), $state_transitions->add($transition));
+        (function (StateInterface ...$states) {
+            foreach ($states as $state) {
+                 $this->internal_map->put($state->getName(), $state);
             }
-        })(...$transitions);
+        })(...$states);
     }
 
     /**
-     * @param TransitionInterface $transition
+     * @param StateInterface
      *
      * @return self
      */
-    public function put(TransitionInterface $transition): self
+    public function put(StateInterface $state): self
     {
         $cloned_map = clone $this;
-        $cloned_map->internal_map->put(
-            $transition->getFrom(),
-            $cloned_map->get($transition->getFrom())
-                ->add($transition)
-        );
+        $cloned_map->internal_map->put($state->getName(), $state);
 
         return $cloned_map;
     }
@@ -57,11 +53,11 @@ final class StateTransitionMap implements IteratorAggregate
     /**
      * @param string $state_name
      *
-     * @return TransitionSet
+     * @return StateInterface
      */
-    public function get(string $state_name): TransitionSet
+    public function get(string $state_name): StateInterface
     {
-        return $this->internal_map->get($state_name, new TransitionSet);
+        return $this->internal_map->get($state_name);
     }
 
     /**

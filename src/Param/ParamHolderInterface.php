@@ -1,8 +1,8 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\Param;
 
-interface ParamBagInterface
+interface ParamHolderInterface
 {
     /**
      * @param string $param_name
@@ -23,30 +23,30 @@ interface ParamBagInterface
      * @param mixed $param_value
      * @param bool $treat_name_as_path
      *
-     * @return ParamBagInterface
+     * @return self
      */
-    public function withParam(string $param_name, $param_value, bool $treat_name_as_path = true): ParamBagInterface;
+    public function withParam(string $param_name, $param_value, bool $treat_name_as_path = true): self;
 
     /**
      * @param mixed[] $params
      *
-     * @return ParamBagInterface
+     * @return self
      */
-    public function withParams(array $params): ParamBagInterface;
+    public function withParams(array $params): self;
 
     /**
      * @param string $param_name
      *
-     * @return ParamBagInterface
+     * @return ParamHolderInterface
      */
-    public function withoutParam(string $param_name): ParamBagInterface;
+    public function withoutParam(string $param_name): ParamHolderInterface;
 
     /**
      * @param string[] $param_names
      *
-     * @return ParamBagInterface
+     * @return ParamHolderInterface
      */
-    public function withoutParams(array $param_names): ParamBagInterface;
+    public function withoutParams(array $param_names): ParamHolderInterface;
 
     /**
      * @return mixed[]

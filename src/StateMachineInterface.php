@@ -2,6 +2,13 @@
 
 namespace Workflux;
 
+use Workflux\Param\InputInterface;
+use Workflux\Param\OutputInterface;
+use Workflux\State\StateInterface;
+use Workflux\State\StateMap;
+use Workflux\Transition\StateTransitions;
+use Workflux\Transition\TransitionSet;
+
 interface StateMachineInterface
 {
     /**
@@ -11,11 +18,6 @@ interface StateMachineInterface
      * @return OutputInterface
      */
     public function execute(InputInterface $input, string $start_state): OutputInterface;
-
-        /**
-     * @return StateMap
-     */
-    public function getStates(): StateMap;
 
     /**
      * @return StateInterface
@@ -35,6 +37,11 @@ interface StateMachineInterface
     public function getState(string $state_name): StateInterface;
 
     /**
+     * @return StateMap
+     */
+    public function getStates(): StateMap;
+
+    /**
      * @param string $state_name
      *
      * @return TransitionSet
@@ -42,7 +49,7 @@ interface StateMachineInterface
     public function getStateTransitions(string $state_name): TransitionSet;
 
     /**
-     * @return StateTransitionMap
+     * @return StateTransitions
      */
-    public function getTransitions(): StateTransitionMap;
+    public function getTransitions(): StateTransitions;
 }

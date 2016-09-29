@@ -1,6 +1,11 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\State;
+
+use Workflux\Param\InputInterface;
+use Workflux\Param\OutputInterface;
+use Workflux\State\State;
+use Workflux\State\StateInterface;
 
 final class Breakpoint implements StateInterface
 {

@@ -2,15 +2,14 @@
 
 namespace Workflux\Tests;
 
-use Workflux\Breakpoint;
-use Workflux\FinalState;
-use Workflux\InitialState;
-use Workflux\Input;
-use Workflux\State;
+use Workflux\Param\Input;
 use Workflux\StateMachine;
-use Workflux\StateSet;
-use Workflux\Transition;
-use Workflux\TransitionSet;
+use Workflux\State\Breakpoint;
+use Workflux\State\FinalState;
+use Workflux\State\InitialState;
+use Workflux\State\StateSet;
+use Workflux\Transition\Transition;
+use Workflux\Transition\TransitionSet;
 
 class StateMachineTest extends TestCase
 {

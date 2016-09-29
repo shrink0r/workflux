@@ -1,10 +1,14 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\Param;
+
+use Workflux\Param\InputInterface;
+use Workflux\Param\OutputInterface;
+use Workflux\Param\ParamHolderTrait;
 
 final class Output implements OutputInterface
 {
-    use ParamBagTrait;
+    use ParamHolderTrait;
 
     /**
      * @param string $current_state

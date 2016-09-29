@@ -1,8 +1,11 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\Param;
 
-interface InputInterface extends ParamBagInterface
+use Workflux\Param\InputInterface;
+use Workflux\Param\OutputInterface;
+
+interface InputInterface extends ParamHolderInterface
 {
     /**
      * @param OutputInterface $output

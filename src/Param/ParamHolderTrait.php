@@ -1,8 +1,10 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\Param;
 
-trait ParamBagTrait
+use Workflux\Param\ParamHolderInterface;
+
+trait ParamHolderTrait
 {
     /**
      * @param mixed[] $params
@@ -50,12 +52,12 @@ trait ParamBagTrait
      *
      * @return self
      */
-    public function withParam(string $param_name, $param_value, bool $treat_name_as_path = true): ParamBagInterface
+    public function withParam(string $param_name, $param_value, bool $treat_name_as_path = true): ParamHolderInterface
     {
-        $param_bag = clone $this;
+        $param_holder = clone $this;
         if ($treat_name_as_path) {
             $name_parts = array_reverse(explode('.', $param_name));
-            $cur_val = &$param_bag->params;
+            $cur_val = &$param_holder->params;
             while (count($name_parts) > 1 && $cur_name = array_pop($name_parts)) {
                 if (!isset($cur_val[$cur_name])) {
                     $cur_val[$cur_name] = [];
@@ -64,11 +66,11 @@ trait ParamBagTrait
             }
             $cur_val[$name_parts[0]] = $param_value;
 
-            return $param_bag;
+            return $param_holder;
         }
-        $param_bag->params[$param_name] = $param_value;
+        $param_holder->params[$param_name] = $param_value;
 
-        return $param_bag;
+        return $param_holder;
     }
 
     /**
@@ -76,12 +78,12 @@ trait ParamBagTrait
      *
      * @return self
      */
-    public function withParams(array $params): ParamBagInterface
+    public function withParams(array $params): ParamHolderInterface
     {
-        $param_bag = clone $this;
-        $param_bag->params = array_merge($param_bag->params, $params);
+        $param_holder = clone $this;
+        $param_holder->params = array_merge($param_holder->params, $params);
 
-        return $param_bag;
+        return $param_holder;
     }
 
     /**
@@ -89,15 +91,15 @@ trait ParamBagTrait
      *
      * @return self
      */
-    public function withoutParam(string $param_name): ParamBagInterface
+    public function withoutParam(string $param_name): ParamHolderInterface
     {
         if (!$this->has($param_name)) {
             return $this;
         }
-        $param_bag = clone $this;
-        unset($param_bag->params[$param_name]);
+        $param_holder = clone $this;
+        unset($param_holder->params[$param_name]);
 
-        return $param_bag;
+        return $param_holder;
     }
 
     /**
@@ -105,12 +107,12 @@ trait ParamBagTrait
      *
      * @return self
      */
-    public function withoutParams(array $param_names): ParamBagInterface
+    public function withoutParams(array $param_names): ParamHolderInterface
     {
         return array_reduce(
             $param_names,
-            function (ParamBagInterface $param_bag, $param_name) {
-                return $param_bag->withoutParam($param_name);
+            function (ParamHolderInterface $param_holder, $param_name) {
+                return $param_holder->withoutParam($param_name);
             },
             $this
         );

@@ -1,6 +1,9 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\State;
+
+use Workflux\Param\InputInterface;
+use Workflux\Param\OutputInterface;
 
 interface StateInterface
 {

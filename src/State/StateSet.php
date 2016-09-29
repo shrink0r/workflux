@@ -1,10 +1,11 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\State;
 
 use Ds\Set;
-use Traversable;
 use IteratorAggregate;
+use Traversable;
+use Workflux\State\StateInterface;
 
 final class StateSet implements IteratorAggregate
 {
@@ -28,9 +29,9 @@ final class StateSet implements IteratorAggregate
     /**
      * @param StateInterface
      *
-     * @return StateSet
+     * @return self
      */
-    public function add(StateInterface $state): StateSet
+    public function add(StateInterface $state): self
     {
         $cloned_set = clone $this;
         $cloned_set->internal_set->add($state);

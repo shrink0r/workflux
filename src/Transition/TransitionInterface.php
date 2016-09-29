@@ -1,6 +1,9 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\Transition;
+
+use Workflux\Param\InputInterface;
+use Workflux\Param\OutputInterface;
 
 interface TransitionInterface
 {

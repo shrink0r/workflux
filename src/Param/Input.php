@@ -1,10 +1,14 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\Param;
+
+use Workflux\Param\InputInterface;
+use Workflux\Param\OutputInterface;
+use Workflux\Param\ParamHolderTrait;
 
 final class Input implements InputInterface
 {
-    use ParamBagTrait;
+    use ParamHolderTrait;
 
     /**
      * @param mixed[] $params

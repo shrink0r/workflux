@@ -1,11 +1,12 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\Transition;
 
 use Countable;
 use Ds\Set;
 use IteratorAggregate;
 use Traversable;
+use Workflux\Transition\TransitionInterface;
 
 final class TransitionSet implements IteratorAggregate, Countable
 {
@@ -29,9 +30,9 @@ final class TransitionSet implements IteratorAggregate, Countable
     /**
      * @param TransitionInterface $transition
      *
-     * @return TransitionSet
+     * @return self
      */
-    public function add(TransitionInterface $transition): TransitionSet
+    public function add(TransitionInterface $transition): self
     {
         $transitions = $this->internal_set->toArray();
         $transitions[] = $transition;

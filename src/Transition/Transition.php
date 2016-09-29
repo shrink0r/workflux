@@ -1,6 +1,10 @@
 <?php
 
-namespace Workflux;
+namespace Workflux\Transition;
+
+use Workflux\Param\InputInterface;
+use Workflux\Param\OutputInterface;
+use Workflux\Transition\TransitionInterface;
 
 final class Transition implements TransitionInterface
 {
@@ -32,6 +36,9 @@ final class Transition implements TransitionInterface
         return $this->from;
     }
 
+    /**
+     * @return string
+     */
     public function getTo(): string
     {
         return $this->to;

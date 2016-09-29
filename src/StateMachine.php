@@ -2,6 +2,19 @@
 
 namespace Workflux;
 
+use Workflux\Error\CorruptExecutionFlow;
+use Workflux\Error\InvalidWorkflowStructure;
+use Workflux\Param\Input;
+use Workflux\Param\InputInterface;
+use Workflux\Param\OutputInterface;
+use Workflux\StateMachineInterface;
+use Workflux\State\StateInterface;
+use Workflux\State\StateMap;
+use Workflux\State\StateSet;
+use Workflux\Transition\StateTransitions;
+use Workflux\Transition\TransitionInterface;
+use Workflux\Transition\TransitionSet;
+
 final class StateMachine implements StateMachineInterface
 {
     /**
@@ -10,7 +23,7 @@ final class StateMachine implements StateMachineInterface
     private $states;
 
     /**
-     * @var StateTransitionMap $transitions
+     * @var StateTransitions $transitions
      */
     private $transitions;
 
@@ -35,7 +48,7 @@ final class StateMachine implements StateMachineInterface
         foreach ($states as $state) {
             if ($state->isInitial()) {
                 if ($this->initial_state !== null) {
-                    throw new Error('Trying to add more than one initial state.');
+                    throw new InvalidWorkflowStructure('Trying to add more than one initial state.');
                 }
                 $this->initial_state = $state;
             } elseif ($state->isFinal()) {
@@ -44,28 +57,28 @@ final class StateMachine implements StateMachineInterface
             $this->states = $this->states->put($state);
         }
         if (!$this->initial_state) {
-            throw new Error('Trying to create statemachine without an initial state.');
+            throw new InvalidWorkflowStructure('Trying to create statemachine without an initial state.');
         }
         if ($this->getFinalStates()->count() === 0) {
-            throw new Error('Trying to create statemachine without at least one final state.');
+            throw new InvalidWorkflowStructure('Trying to create statemachine without at least one final state.');
         }
 
-        $this->transitions = new StateTransitionMap;
+        $this->transitions = new StateTransitions;
         foreach ($transitions as $transition) {
             $from_state = $transition->getFrom();
             $to_state = $transition->getTo();
             if (!$this->states->has($from_state)) {
-                throw new Error('Trying to add transition start from unknown state: '.$from_state);
+                throw new InvalidWorkflowStructure('Trying to add transition start from unknown state: '.$from_state);
             }
             if (!$this->states->has($to_state)) {
-                throw new Error('Trying to add transition to unknown state: '.$to_state);
+                throw new InvalidWorkflowStructure('Trying to add transition to unknown state: '.$to_state);
             }
             $this->transitions = $this->transitions->put($transition);
         }
 
         $reachable_states = $this->depthFirstScan($this->initial_state, new StateSet);
         if ($reachable_states->count() !== $this->states->count()) {
-            throw new Error('Not all states are properly connected.');
+            throw new InvalidWorkflowStructure('Not all states are properly connected.');
         }
     }
 
@@ -79,18 +92,19 @@ final class StateMachine implements StateMachineInterface
     {
         $current_state = $this->getState($start_state);
         if ($current_state->isFinal()) {
-            throw new Error("Trying to execute already finished statemachine at final state: ".$start_state);
+            throw new CorruptExecutionFlow("Trying to (re)execute statemachine at final state: ".$start_state);
         }
+
         do {
             $output = $current_state->execute($input);
             $current_state = null;
             foreach ($this->getStateTransitions($output->getCurrentState()) as $transition) {
                 if ($transition->isActivatedBy($input, $output)) {
                     if ($current_state !== null) {
-                        throw new Error(
+                        throw new CorruptExecutionFlow(
                             'Trying to activate more than one transition at a time. Transition: '.
-                            $output->getCurrentState().' -> '.$current_state->getName().' was activated first.'.
-                            ' Now '.$transition->getFrom().' -> '.$transition->getTo().' is being activated too.'
+                            $output->getCurrentState().' -> '.$current_state->getName().' was activated first. '.
+                            'Now '.$transition->getFrom().' -> '.$transition->getTo().' is being activated too.'
                         );
                     }
                     $current_state = $this->getState($transition->getTo());
@@ -100,7 +114,7 @@ final class StateMachine implements StateMachineInterface
         } while ($current_state !== null && !$current_state->isBreakpoint());
 
         if ($current_state && !($current_state->isFinal() || $current_state->isBreakpoint())) {
-            throw new Error(
+            throw new CorruptExecutionFlow(
                 'Trying to halt statemachine on an unexpected state: '.$current_state->getName().
                 '. Pausing execution is only allowed on FinalStates and Breakpoints.'
             );
@@ -143,7 +157,7 @@ final class StateMachine implements StateMachineInterface
     public function getState(string $state_name): StateInterface
     {
         if (!$this->states->has($state_name)) {
-            throw new Error('Trying to obtain unknown state: '.$state_name);
+            throw new UnsupportedState('Trying to obtain unknown state: '.$state_name);
         }
         return $this->states->get($state_name);
     }
@@ -156,16 +170,16 @@ final class StateMachine implements StateMachineInterface
     public function getStateTransitions(string $state_name): TransitionSet
     {
         if (!$this->states->has($state_name)) {
-            throw new Error('Trying to obtain transitions for unknown state: '.$state_name);
+            throw new UnsupportedState('Trying to obtain transitions for unknown state: '.$state_name);
         }
 
         return $this->transitions->get($state_name, new TransitionSet);
     }
 
     /**
-     * @return StateTransitionMap
+     * @return StateTransitions
      */
-    public function getTransitions(): StateTransitionMap
+    public function getTransitions(): StateTransitions
     {
         return $this->transitions;
     }

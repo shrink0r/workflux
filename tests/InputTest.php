@@ -2,8 +2,8 @@
 
 namespace Workflux\Tests;
 
-use Workflux\Input;
-use Workflux\InputInterface;
+use Workflux\Param\Input;
+use Workflux\Param\InputInterface;
 
 class InputTest extends TestCase
 {

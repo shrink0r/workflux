@@ -2,9 +2,9 @@
 
 namespace Workflux\Tests;
 
-use Workflux\Input;
-use Workflux\Output;
-use Workflux\OutputInterface;
+use Workflux\Param\Input;
+use Workflux\Param\Output;
+use Workflux\Param\OutputInterface;
 
 class OutputTest extends TestCase
 {

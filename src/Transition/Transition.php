@@ -48,7 +48,7 @@ final class Transition implements TransitionInterface
      * @param  InputInterface $input
      * @param  OutputInterface $output
      *
-     * @return boolean
+     * @return bool
      */
     public function isActivatedBy(InputInterface $input, OutputInterface $output): bool
     {

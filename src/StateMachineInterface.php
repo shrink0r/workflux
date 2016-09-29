@@ -39,5 +39,5 @@ interface StateMachineInterface
      *
      * @return StateTransitions
      */
-     public function getStateTransitions(): StateTransitions;
+    public function getStateTransitions(): StateTransitions;
 }

@@ -4,6 +4,7 @@ namespace Workflux;
 
 use Workflux\Error\CorruptExecutionFlow;
 use Workflux\Error\InvalidWorkflowStructure;
+use Workflux\Error\UnsupportedState;
 use Workflux\Param\Input;
 use Workflux\Param\InputInterface;
 use Workflux\Param\OutputInterface;

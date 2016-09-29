@@ -2,12 +2,13 @@
 
 namespace Workflux\State;
 
+use Countable;
 use Ds\Set;
 use IteratorAggregate;
 use Traversable;
 use Workflux\State\StateInterface;
 
-final class StateSet implements IteratorAggregate
+final class StateSet implements IteratorAggregate, Countable
 {
     /**
      * @var Set $internal_set

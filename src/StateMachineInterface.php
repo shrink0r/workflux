@@ -30,13 +30,6 @@ interface StateMachineInterface
     public function getFinalStates(): StateMap;
 
     /**
-     * @param string $state_name
-     *
-     * @return StateInterface
-     */
-    public function getState(string $state_name): StateInterface;
-
-    /**
      * @return StateMap
      */
     public function getStates(): StateMap;
@@ -44,12 +37,7 @@ interface StateMachineInterface
     /**
      * @param string $state_name
      *
-     * @return TransitionSet
-     */
-    public function getStateTransitions(string $state_name): TransitionSet;
-
-    /**
      * @return StateTransitions
      */
-    public function getTransitions(): StateTransitions;
+     public function getStateTransitions(): StateTransitions;
 }

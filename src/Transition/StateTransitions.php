@@ -2,13 +2,14 @@
 
 namespace Workflux\Transition;
 
+use Countable;
 use Ds\Map;
 use IteratorAggregate;
 use Traversable;
 use Workflux\Transition\TransitionInterface;
 use Workflux\Transition\TransitionSet;
 
-final class StateTransitions implements IteratorAggregate
+final class StateTransitions implements IteratorAggregate, Countable
 {
     /**
      * @var Map $internal_map

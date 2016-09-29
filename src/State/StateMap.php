@@ -2,12 +2,13 @@
 
 namespace Workflux\State;
 
+use Countable;
 use Ds\Map;
 use IteratorAggregate;
 use Traversable;
 use Workflux\State\StateInterface;
 
-final class StateMap implements IteratorAggregate
+final class StateMap implements IteratorAggregate, Countable
 {
     /**
      * @var Map $internal_map

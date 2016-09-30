@@ -2,7 +2,6 @@
 
 namespace Workflux;
 
-use Ds\Map;
 use Ds\Vector;
 use Workflux\Error\CorruptExecutionFlow;
 use Workflux\Error\InvalidWorkflowStructure;
@@ -115,7 +114,6 @@ final class StateMachine implements StateMachineInterface
      */
     public function execute(InputInterface $input, string $state_name): OutputInterface
     {
-        // @todo this needs to be configurable somehow; maybe a good ol' "define" or an "env var" might do?
         static $max_execution_cycles = 100;
 
         $bread_crumbs = new Vector;
@@ -126,13 +124,9 @@ final class StateMachine implements StateMachineInterface
             $output = $next_state->execute($input);
             $next_state = $this->activateTransition($input, $output);
             $input = Input::fromOutput($output);
-            // @todo this needs a better runtime-cycle detetection than just counting max executions.
-            // maybe somehow use the bread-crumbs to find reoccuring path patterns?
         } while ($next_state && !$next_state->isBreakpoint() && count($bread_crumbs) < $max_execution_cycles);
 
         if (count($bread_crumbs) === $max_execution_cycles) {
-            // @todo would be nice to collapse recursive paths in the output
-            // in order to prevent the ridiculous length of the exception while still providing some insight.
             throw new CorruptExecutionFlow(
                 "Trying to execute more than the allowed number of $max_execution_cycles workflow steps.\n".
                 "It is likely that an intentional cycle inside the workflow isn't properly exiting. ".

@@ -7,7 +7,6 @@ use Workflux\Param\OutputInterface;
 use Workflux\State\StateInterface;
 use Workflux\State\StateMap;
 use Workflux\Transition\StateTransitions;
-use Workflux\Transition\TransitionSet;
 
 interface StateMachineInterface
 {

@@ -2,6 +2,8 @@
 
 namespace Workflux;
 
+use Ds\Map;
+use Ds\Vector;
 use Workflux\Error\CorruptExecutionFlow;
 use Workflux\Error\InvalidWorkflowStructure;
 use Workflux\Error\UnsupportedState;
@@ -18,6 +20,11 @@ use Workflux\Transition\TransitionSet;
 
 final class StateMachine implements StateMachineInterface
 {
+    /**
+     * @var string $name
+     */
+    private $name;
+
     /**
      * @var StateMap $states
      */
@@ -39,10 +46,11 @@ final class StateMachine implements StateMachineInterface
     private $final_states;
 
     /**
+     * @param string $name
      * @param StateSet $states
      * @param TransitionSet $transitions
      */
-    public function __construct(StateSet $states, TransitionSet $transitions)
+    public function __construct(string $name, StateSet $states, TransitionSet $transitions)
     {
         list($initial_state, $all_states, $final_states) = $this->adoptStates($states);
         $state_transitions = $this->adoptStateTransitions($all_states, $transitions);
@@ -52,6 +60,7 @@ final class StateMachine implements StateMachineInterface
             throw new InvalidWorkflowStructure('Not all states are properly connected.');
         }
 
+        $this->name = $name;
         $this->initial_state = $initial_state;
         $this->states = $all_states;
         $this->final_states = $final_states;
@@ -59,39 +68,11 @@ final class StateMachine implements StateMachineInterface
     }
 
     /**
-     * @param InputInterface $input
-     * @param string $state_name
-     *
-     * @return OutputInterface
+     * @return string
      */
-    public function execute(InputInterface $input, string $state_name): OutputInterface
+    public function getName(): string
     {
-        // @todo this needs to be configurable somehow; maybe a good ol' "define" or an "env var" might do?
-        static $max_allowed_executions = 100;
-
-        $bread_crumbs = [];
-        $next_state = $this->getStartStateByName($state_name);
-
-        do {
-            $bread_crumbs[] = $next_state->getName();
-            $output = $next_state->execute($input);
-            $next_state = $this->activateTransition($input, $output);
-            $input = Input::fromOutput($output);
-            // @todo this needs a better runtime-cycle detetection than just counting max executions.
-            // maybe somehow use the bread-crumbs to find reoccuring path patterns?
-        } while ($next_state && !$next_state->isBreakpoint() && count($bread_crumbs) < $max_allowed_executions);
-
-        if (count($bread_crumbs) === $max_allowed_executions) {
-            // @todo would be nice to collapse recursive paths in the output
-            // in order to prevent the ridiculous length of the exception while still providing some insight.
-            throw new CorruptExecutionFlow(
-                "Trying to execute more than the allowed number of max: $max_allowed_executions workflow steps.\n".
-                "It is likely that an intentional cycle inside the workflow isn't properly exiting. ".
-                "The executed states where:\n".implode(' -> ', $bread_crumbs)
-            );
-        }
-
-        return $next_state ? $output->withCurrentState($next_state->getName()) : $output;
+        return $this->name;
     }
 
     /**
@@ -124,6 +105,42 @@ final class StateMachine implements StateMachineInterface
     public function getStateTransitions(): StateTransitions
     {
         return $this->state_transitions;
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param string $state_name
+     *
+     * @return OutputInterface
+     */
+    public function execute(InputInterface $input, string $state_name): OutputInterface
+    {
+        // @todo this needs to be configurable somehow; maybe a good ol' "define" or an "env var" might do?
+        static $max_execition_cycles = 100;
+
+        $bread_crumbs = new Vector;
+        $next_state = $this->getStartStateByName($state_name);
+
+        do {
+            $bread_crumbs->push($next_state->getName());
+            $output = $next_state->execute($input);
+            $next_state = $this->activateTransition($input, $output);
+            $input = Input::fromOutput($output);
+            // @todo this needs a better runtime-cycle detetection than just counting max executions.
+            // maybe somehow use the bread-crumbs to find reoccuring path patterns?
+        } while ($next_state && !$next_state->isBreakpoint() && count($bread_crumbs) < $max_execition_cycles);
+
+        if (count($bread_crumbs) === $max_execition_cycles) {
+            // @todo would be nice to collapse recursive paths in the output
+            // in order to prevent the ridiculous length of the exception while still providing some insight.
+            throw new CorruptExecutionFlow(
+                "Trying to execute more than the allowed number of $max_execition_cycles workflow steps.\n".
+                "It is likely that an intentional cycle inside the workflow isn't properly exiting. ".
+                "The executed states where:\n".implode(' -> ', $bread_crumbs->toArray())
+            );
+        }
+
+        return $next_state ? $output->withCurrentState($next_state->getName()) : $output;
     }
 
     /**

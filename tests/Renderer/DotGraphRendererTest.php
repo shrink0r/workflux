@@ -1,8 +1,8 @@
 <?php
 
-namespace Workflux\Tests;
+namespace Workflux\Tests\Renderer;
 
-use Workflux\Param\Input;
+use Workflux\Renderer\DotGraphRenderer;
 use Workflux\StateMachine;
 use Workflux\State\Breakpoint;
 use Workflux\State\FinalState;
@@ -13,9 +13,9 @@ use Workflux\Tests\TestCase;
 use Workflux\Transition\Transition;
 use Workflux\Transition\TransitionSet;
 
-class StateMachineTest extends TestCase
+class DotGraphRendererTest extends TestCase
 {
-    public function testConstruct()
+    public function testRenderer()
     {
         $states = new StateSet([
             new InitialState('initial'),
@@ -29,10 +29,10 @@ class StateMachineTest extends TestCase
             ->add(new Transition('foobar', 'bar'))
             ->add(new Transition('bar', 'final'));
 
-        $statemachine = new StateMachine('test-machine', $states, $transitions);
-        $output = $statemachine->execute(new Input, 'initial');
-        $output = $statemachine->execute(Input::fromOutput($output), $output->getCurrentState());
+        $state_machine = new StateMachine('test-machine', $states, $transitions);
+        $expected_graph = file_get_contents(__DIR__ . '/Fixture/testcase_1.dot');
 
-        $this->assertEquals('final', $output->getCurrentState());
+        $renderer = new DotGraphRenderer;
+        $this->assertEquals($expected_graph, $renderer->render($state_machine));
     }
 }

@@ -1,10 +1,11 @@
 <?php
 
-namespace Workflux\Tests;
+namespace Workflux\Tests\Param;
 
 use Workflux\Param\Input;
 use Workflux\Param\Output;
 use Workflux\Param\OutputInterface;
+use Workflux\Tests\TestCase;
 
 class OutputTest extends TestCase
 {

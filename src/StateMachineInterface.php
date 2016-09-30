@@ -12,12 +12,9 @@ use Workflux\Transition\TransitionSet;
 interface StateMachineInterface
 {
     /**
-     * @param InputInterface $input
-     * @param string $start_state
-     *
-     * @return OutputInterface
+     * @return string
      */
-    public function execute(InputInterface $input, string $start_state): OutputInterface;
+    public function getName(): string;
 
     /**
      * @return StateInterface
@@ -40,4 +37,12 @@ interface StateMachineInterface
      * @return StateTransitions
      */
     public function getStateTransitions(): StateTransitions;
+
+    /**
+     * @param InputInterface $input
+     * @param string $start_state
+     *
+     * @return OutputInterface
+     */
+    public function execute(InputInterface $input, string $start_state): OutputInterface;
 }

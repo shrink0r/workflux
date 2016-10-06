@@ -31,11 +31,14 @@
         }
     },
     "scripts": {
-        "test": [
-            "vendor/bin/phpunit --colors tests"
+        "build": [
+            "@test",
+            "@code-sniffer"
         ],
-        "code-sniffer": [
-            "vendor/bin/phpcs --extensions=php --standard=psr2 ./src ./tests"
-        ]
+        "test": [
+            "phpunit --colors tests"
+        ],
+        "code-sniffer": "phpcs -p -s --extensions=php --standard='PSR1,PSR2' src/ tests/",
+        "code-sniffer-autofix": "phpcbf --standard=PSR2 -d tabWidth=4 src/ tests/"
     }
 }

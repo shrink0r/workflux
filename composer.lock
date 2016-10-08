@@ -4,13 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-<<<<<<< 734f3bb826e4d5eb3547b4d43f5083739619c9e1
-    "hash": "b2733750c1d182321031bd27492fa63f",
-    "content-hash": "b8e8475a56f35a6ced3695918590c1e2",
-=======
-    "hash": "598f387002b6dac554e0f2f752e2118f",
+    "hash": "7b6a74459f3da49fb2fc3b11003cad01",
     "content-hash": "1c147a83e9aa6cc646f0eee357ccbadf",
->>>>>>> detecting exec-loops for better err-messages
     "packages": [
         {
             "name": "php-ds/php-ds",
@@ -808,18 +803,6 @@
         },
         {
             "name": "phpunit/phpunit",
-<<<<<<< 734f3bb826e4d5eb3547b4d43f5083739619c9e1
-            "version": "5.5.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3f67cee782c9abfaee5e32fd2f57cdd54bc257ba"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3f67cee782c9abfaee5e32fd2f57cdd54bc257ba",
-                "reference": "3f67cee782c9abfaee5e32fd2f57cdd54bc257ba",
-=======
             "version": "5.6.1",
             "source": {
                 "type": "git",
@@ -830,7 +813,6 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/60c32c5b5e79c2248001efa2560f831da11cc2d7",
                 "reference": "60c32c5b5e79c2248001efa2560f831da11cc2d7",
->>>>>>> detecting exec-loops for better err-messages
                 "shasum": ""
             },
             "require": {
@@ -899,11 +881,7 @@
                 "testing",
                 "xunit"
             ],
-<<<<<<< 734f3bb826e4d5eb3547b4d43f5083739619c9e1
-            "time": "2016-10-03 13:04:15"
-=======
             "time": "2016-10-07 13:03:26"
->>>>>>> detecting exec-loops for better err-messages
         },
         {
             "name": "phpunit/phpunit-mock-objects",

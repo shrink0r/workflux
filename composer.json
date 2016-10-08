@@ -17,7 +17,8 @@
     },
     "require": {
         "php": "^7.0",
-        "php-ds/php-ds": "^1.1"
+        "php-ds/php-ds": "^1.1",
+        "shrink0r/suffix-tree": "master@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.5",

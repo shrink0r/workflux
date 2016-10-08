@@ -2,6 +2,7 @@
 
 namespace Workflux\Tests;
 
+use Workflux\Error\CorruptExecutionFlow;
 use Workflux\Param\Input;
 use Workflux\StateMachine;
 use Workflux\State\Breakpoint;
@@ -34,5 +35,32 @@ class StateMachineTest extends TestCase
         $output = $statemachine->execute(Input::fromOutput($output), $output->getCurrentState());
 
         $this->assertEquals('final', $output->getCurrentState());
+    }
+
+    public function testInfiniteExecutionLoop()
+    {
+        $this->expectException(CorruptExecutionFlow::CLASS);
+        $this->expectExceptionMessage('Trying to execute more than the allowed number of 20 workflow steps.
+Looks like there is a loop between: approval -> published -> archive');
+
+        $states = new StateSet([
+            new InitialState('initial'),
+            new State('edit'),
+            new State('approval'),
+            new State('published'),
+            new State('archive'),
+            new FinalState('final')
+        ]);
+
+        $transitions = (new TransitionSet)
+            ->add(new Transition('initial', 'edit'))
+            ->add(new Transition('edit', 'approval'))
+            ->add(new Transition('approval', 'published'))
+            ->add(new Transition('published', 'archive'))
+            ->add(new Transition('archive', 'approval'))
+            ->add(new InactiveTransition('archive', 'final'));
+
+        $statemachine = new StateMachine('test-machine', $states, $transitions);
+        $statemachine->execute(new Input, 'initial');
     }
 }

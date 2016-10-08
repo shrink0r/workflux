@@ -4,8 +4,13 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
+<<<<<<< 734f3bb826e4d5eb3547b4d43f5083739619c9e1
     "hash": "b2733750c1d182321031bd27492fa63f",
     "content-hash": "b8e8475a56f35a6ced3695918590c1e2",
+=======
+    "hash": "598f387002b6dac554e0f2f752e2118f",
+    "content-hash": "1c147a83e9aa6cc646f0eee357ccbadf",
+>>>>>>> detecting exec-loops for better err-messages
     "packages": [
         {
             "name": "php-ds/php-ds",
@@ -53,6 +58,32 @@
                 "polyfill"
             ],
             "time": "2016-08-08 13:04:16"
+        },
+        {
+            "name": "shrink0r/suffix-tree",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shrink0r/suffix-tree.git",
+                "reference": "83d61aa1f8ea2302e9858218014cdbb6d49faad8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shrink0r/suffix-tree/zipball/83d61aa1f8ea2302e9858218014cdbb6d49faad8",
+                "reference": "83d61aa1f8ea2302e9858218014cdbb6d49faad8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Shrink0r\\SuffixTree\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "time": "2016-10-08 20:47:08"
         }
     ],
     "packages-dev": [
@@ -112,16 +143,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.2.1",
+            "version": "6.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "3f808fba627f2c5b69e2501217bf31af349c1427"
+                "reference": "ebf29dee597f02f09f4d5bbecc68230ea9b08f60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/3f808fba627f2c5b69e2501217bf31af349c1427",
-                "reference": "3f808fba627f2c5b69e2501217bf31af349c1427",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/ebf29dee597f02f09f4d5bbecc68230ea9b08f60",
+                "reference": "ebf29dee597f02f09f4d5bbecc68230ea9b08f60",
                 "shasum": ""
             },
             "require": {
@@ -170,7 +201,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2016-07-15 17:22:37"
+            "time": "2016-10-08 15:01:37"
         },
         {
             "name": "guzzlehttp/promises",
@@ -777,6 +808,7 @@
         },
         {
             "name": "phpunit/phpunit",
+<<<<<<< 734f3bb826e4d5eb3547b4d43f5083739619c9e1
             "version": "5.5.7",
             "source": {
                 "type": "git",
@@ -787,6 +819,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3f67cee782c9abfaee5e32fd2f57cdd54bc257ba",
                 "reference": "3f67cee782c9abfaee5e32fd2f57cdd54bc257ba",
+=======
+            "version": "5.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/phpunit.git",
+                "reference": "60c32c5b5e79c2248001efa2560f831da11cc2d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/60c32c5b5e79c2248001efa2560f831da11cc2d7",
+                "reference": "60c32c5b5e79c2248001efa2560f831da11cc2d7",
+>>>>>>> detecting exec-loops for better err-messages
                 "shasum": ""
             },
             "require": {
@@ -820,7 +864,6 @@
                 "ext-pdo": "*"
             },
             "suggest": {
-                "ext-tidy": "*",
                 "ext-xdebug": "*",
                 "phpunit/php-invoker": "~1.1"
             },
@@ -830,7 +873,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "5.5.x-dev"
+                    "dev-master": "5.6.x-dev"
                 }
             },
             "autoload": {
@@ -856,7 +899,11 @@
                 "testing",
                 "xunit"
             ],
+<<<<<<< 734f3bb826e4d5eb3547b4d43f5083739619c9e1
             "time": "2016-10-03 13:04:15"
+=======
+            "time": "2016-10-07 13:03:26"
+>>>>>>> detecting exec-loops for better err-messages
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -2099,6 +2146,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "shrink0r/suffix-tree": 20,
         "satooshi/php-coveralls": 20
     },
     "prefer-stable": true,

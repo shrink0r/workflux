@@ -2,7 +2,9 @@
 
 namespace Workflux;
 
+use Ds\Map;
 use Ds\Vector;
+use Shrink0r\SuffixTree\Builder\SuffixTreeBuilder;
 use Workflux\Error\CorruptExecutionFlow;
 use Workflux\Error\InvalidWorkflowStructure;
 use Workflux\Error\UnsupportedState;
@@ -19,6 +21,8 @@ use Workflux\Transition\TransitionSet;
 
 final class StateMachine implements StateMachineInterface
 {
+    const MAX_CYCLES = 20;
+
     /**
      * @var string $name
      */
@@ -114,24 +118,25 @@ final class StateMachine implements StateMachineInterface
      */
     public function execute(InputInterface $input, string $state_name): OutputInterface
     {
-        static $max_execution_cycles = 100;
-
         $bread_crumbs = new Vector;
+        $execution_cnt_map = new Map;
+        foreach ($this->getStates() as $state) {
+            $execution_cnt_map[$state->getName()] = 0;
+        }
         $next_state = $this->getStartStateByName($state_name);
 
         do {
             $bread_crumbs->push($next_state->getName());
+            $execution_cnt_map[$next_state->getName()]++;
             $output = $next_state->execute($input);
             $next_state = $this->activateTransition($input, $output);
             $input = Input::fromOutput($output);
-        } while ($next_state && !$next_state->isBreakpoint() && count($bread_crumbs) < $max_execution_cycles);
+        } while ($next_state && !$next_state->isBreakpoint()
+            && $execution_cnt_map[$next_state->getName()] < self::MAX_CYCLES
+        );
 
-        if (count($bread_crumbs) === $max_execution_cycles) {
-            throw new CorruptExecutionFlow(
-                "Trying to execute more than the allowed number of $max_execution_cycles workflow steps.\n".
-                "It is likely that an intentional cycle inside the workflow isn't properly exiting. ".
-                "The executed states where:\n".implode(' -> ', $bread_crumbs->toArray())
-            );
+        if ($next_state && $execution_cnt_map[$next_state->getName()] === self::MAX_CYCLES) {
+            $this->raiseCorruptExecutionFlow($bread_crumbs);
         }
 
         return $next_state ? $output->withCurrentState($next_state->getName()) : $output;
@@ -287,5 +292,46 @@ final class StateMachine implements StateMachineInterface
         }
 
         return $next_state;
+    }
+
+    /**
+     * @param Vector $bread_crumbs
+     */
+    private function raiseCorruptExecutionFlow(Vector $bread_crumbs)
+    {
+        $message = sprintf("Trying to execute more than the allowed number of %d workflow steps.\n", self::MAX_CYCLES);
+        $bread_crumbs = $this->detectExecutionLoop($bread_crumbs);
+
+        if (count($bread_crumbs) === $bread_crumbs) {
+            $message .= "It is likely that an intentional cycle inside the workflow isn't properly exiting.\n" .
+                "The executed states where:\n";
+        } else {
+            $message .= "Looks like there is a loop between: ";
+        }
+        $message .= implode(' -> ', $bread_crumbs->toArray());
+
+        throw new CorruptExecutionFlow($message);
+    }
+
+    /**
+     * @param Vector $bread_crumbs
+     *
+     * @return Vector
+     */
+    private function detectExecutionLoop(Vector $bread_crumbs): Vector
+    {
+        $execution_path = implode(' ', $bread_crumbs->toArray());
+        $tree_builder = new SuffixTreeBuilder;
+        $loop_path = $execution_path;
+        do {
+            $possible_loop_path = $loop_path;
+            $suffix_tree = $tree_builder->build($loop_path.'$');
+            $loop_path = trim($suffix_tree->findLongestRepetition());
+        } while (strlen($loop_path) > 2);
+
+        if ($possible_loop_path !== $execution_path) {
+            return new Vector(explode(' ', $possible_loop_path));
+        }
+        return $bread_crumbs;
     }
 }

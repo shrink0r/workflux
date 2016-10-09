@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7b6a74459f3da49fb2fc3b11003cad01",
-    "content-hash": "1c147a83e9aa6cc646f0eee357ccbadf",
+    "hash": "bd7bfb1138ab664e2306d4bdd1051b34",
+    "content-hash": "3493f80b63cf771b0098b4bfca90ee34",
     "packages": [
         {
             "name": "php-ds/php-ds",
@@ -56,20 +56,34 @@
         },
         {
             "name": "shrink0r/suffix-tree",
-            "version": "dev-master",
+            "version": "0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shrink0r/suffix-tree.git",
-                "reference": "83d61aa1f8ea2302e9858218014cdbb6d49faad8"
+                "reference": "b8afe186743e06ca9601f73eeaf8a9c9dbd0783e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shrink0r/suffix-tree/zipball/83d61aa1f8ea2302e9858218014cdbb6d49faad8",
-                "reference": "83d61aa1f8ea2302e9858218014cdbb6d49faad8",
+                "url": "https://api.github.com/repos/shrink0r/suffix-tree/zipball/b8afe186743e06ca9601f73eeaf8a9c9dbd0783e",
+                "reference": "b8afe186743e06ca9601f73eeaf8a9c9dbd0783e",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.0"
+            },
+            "require-dev": {
+                "jakub-onderka/php-console-highlighter": "^0.3",
+                "jakub-onderka/php-parallel-lint": "^0.9",
+                "phploc/phploc": "^3.0",
+                "phpmd/phpmd": "^2.4",
+                "phpunit/phpunit": "^5.5",
+                "sami/sami": "^3.3.0",
+                "satooshi/php-coveralls": "master@dev",
+                "sebastian/phpcpd": "^2.0",
+                "squizlabs/php_codesniffer": "^2.6"
+            },
+            "suggest": {
+                "ext-fileinfo": "to handle mimetype guessing locally"
             },
             "type": "library",
             "autoload": {
@@ -78,7 +92,23 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2016-10-08 20:47:08"
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thorsten Schmitt-Rink",
+                    "email": "schmittrink@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Suffix-tree (Ukkonen) for PHP.",
+            "homepage": "https://github.com/shrink0r/suffix-tree",
+            "keywords": [
+                "suffix-tree",
+                "ukkonen"
+            ],
+            "time": "2016-10-09 00:56:19"
         }
     ],
     "packages-dev": [
@@ -2124,7 +2154,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "shrink0r/suffix-tree": 20,
         "satooshi/php-coveralls": 20
     },
     "prefer-stable": true,

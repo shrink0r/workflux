@@ -190,28 +190,23 @@ final class StateMachine implements StateMachineInterface
     private function adoptStateTransitions(StateMap $states, TransitionSet $transitions)
     {
         $state_transitions = new StateTransitions;
-
         foreach ($transitions as $transition) {
             $from_state = $transition->getFrom();
             $to_state = $transition->getTo();
-
             if (!$states->has($from_state)) {
                 throw new InvalidWorkflowStructure('Trying to transition from unknown state: '.$from_state);
             }
             if ($states->get($from_state)->isFinal()) {
                 throw new InvalidWorkflowStructure('Trying to transition from final-state: '.$from_state);
             }
-
             if (!$states->has($to_state)) {
                 throw new InvalidWorkflowStructure('Trying to transition to unknown state: '.$to_state);
             }
             if ($states->get($to_state)->isInitial()) {
                 throw new InvalidWorkflowStructure('Trying to transition to initial-state: '.$to_state);
             }
-
             $state_transitions = $state_transitions->put($transition);
         }
-
         return $state_transitions;
     }
 
@@ -240,7 +235,6 @@ final class StateMachine implements StateMachineInterface
             },
             $state_transitions->get($state->getName())->toArray()
         );
-
         foreach ($child_states as $child_state) {
             $visited_states = $this->depthFirstScan($all_states, $state_transitions, $child_state, $visited_states);
         }
@@ -256,15 +250,12 @@ final class StateMachine implements StateMachineInterface
     private function getStartStateByName(string $state_name)
     {
         $start_state = $this->states->get($state_name);
-
         if (!$start_state) {
             throw new UnsupportedState("Trying to start statemachine execution at unknown state: ".$state_name);
         }
-
         if ($start_state->isFinal()) {
             throw new CorruptExecutionFlow("Trying to (re)execute statemachine at final state: ".$state_name);
         }
-
         return $start_state;
     }
 
@@ -277,7 +268,6 @@ final class StateMachine implements StateMachineInterface
     private function activateTransition(InputInterface $input, OutputInterface $output)
     {
         $next_state = null;
-
         foreach ($this->state_transitions->get($output->getCurrentState()) as $transition) {
             if ($transition->isActivatedBy($input, $output)) {
                 if ($next_state !== null) {
@@ -290,7 +280,6 @@ final class StateMachine implements StateMachineInterface
                 $next_state = $this->states->get($transition->getTo());
             }
         }
-
         return $next_state;
     }
 
@@ -301,7 +290,6 @@ final class StateMachine implements StateMachineInterface
     {
         $message = sprintf("Trying to execute more than the allowed number of %d workflow steps.\n", self::MAX_CYCLES);
         $bread_crumbs = $this->detectExecutionLoop($bread_crumbs);
-
         if (count($bread_crumbs) === $bread_crumbs) {
             $message .= "It is likely that an intentional cycle inside the workflow isn't properly exiting.\n" .
                 "The executed states where:\n";

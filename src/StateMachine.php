@@ -187,7 +187,7 @@ final class StateMachine implements StateMachineInterface
      *
      * @return StateTransitions
      */
-    private function adoptStateTransitions(StateMap $states, TransitionSet $transitions)
+    private function adoptStateTransitions(StateMap $states, TransitionSet $transitions): StateTransitions
     {
         $state_transitions = new StateTransitions;
         foreach ($transitions as $transition) {
@@ -247,7 +247,7 @@ final class StateMachine implements StateMachineInterface
      *
      * @return StateInterface
      */
-    private function getStartStateByName(string $state_name)
+    private function getStartStateByName(string $state_name): StateInterface
     {
         $start_state = $this->states->get($state_name);
         if (!$start_state) {

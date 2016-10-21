@@ -1,0 +1,23 @@
+name: video-transcoding
+states:
+  new:
+    initial: true
+    transitions:
+      ready: ~
+      transcoding:
+        when: input.transcoding_required === true
+
+  transcoding:
+    transitions:
+      ready: ~
+      error: output.transcode_success === false and output.retry_limit_reached === true
+      rejected:
+        label: yeah right
+        more_stuff: true
+        when:
+          - output.retry_limit_reached === false
+          - output.transcode_success === false
+
+  error: ~
+  rejected: ~
+  ready: ~

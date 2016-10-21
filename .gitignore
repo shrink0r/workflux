@@ -4,4 +4,37 @@
 
 # composer related stuff
 /vendor/
+/composer.lock
 composer.phar
+
+# other dependency tools
+node_modules
+components
+bower_components
+
+# general os and editors related stuff
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+.bundle/
+*~
+*.tmp
+*.bak
+*.swp
+*~.nib
+.class
+.classpath
+.settings/
+.loadpath
+.project
+.metadata
+*.launch
+.buildpath
+.cproject
+.externalToolBuilders/
+.plugins/
+*.pydevproject
+nbproject/
+*.tmproj
+

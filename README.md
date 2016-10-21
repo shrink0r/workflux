@@ -23,6 +23,26 @@ Below is an example of a state machine instance rendered by the library's DotGra
 
 ![Screenshot of a rendered example state machine](https://raw.githubusercontent.com/shrink0r/workflux/master/docs/state_machine.png)
 
+## Requirements and installation
+
+- PHP 7.0+
+
+Install the library via [Composer](http://getcomposer.org/):
+
+```./composer.phar require shrink0r/worklfux [optional version]```
+
+Adding it manually as a vendor library requirement to the `composer.json` file of your project works as well:
+
+```json
+{
+    "require": {
+        "shrink0r/worklfux": "^1.0"
+    }
+}
+```
+
+Alternatively, you can download a release archive from the [available releases](https://github.com/shrink0r/worklfux/releases) page.
+
 ## Documentation
 
 tbd.

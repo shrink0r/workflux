@@ -3,7 +3,7 @@
 namespace Workflux\Builder;
 
 use Ds\Map;
-use Ds\Vector;
+use Workflux\Error\UnsupportedState;
 use Workflux\StateMachine;
 use Workflux\StateMachineInterface;
 use Workflux\State\StateInterface;

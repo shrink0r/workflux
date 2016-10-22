@@ -24,4 +24,9 @@ interface TransitionInterface
      * @return string
      */
     public function getTo(): string;
+
+    /**
+     * @return string
+     */
+    public function getLabel(): string;
 }

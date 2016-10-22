@@ -4,6 +4,8 @@ namespace Workflux\Builder;
 
 use Shrink0r\Monatic\Maybe;
 use Shrink0r\PhpSchema\Error;
+use Shrink0r\PhpSchema\Factory;
+use Shrink0r\PhpSchema\Schema;
 use Symfony\Component\Yaml\Parser;
 use Workflux\Error\WorkfluxError;
 use Workflux\StateMachineInterface;
@@ -22,6 +24,8 @@ final class YamlStateMachineBuilder
 
     private $internal_builder;
 
+    private $schema;
+
     public function __construct(string $yaml_filepath)
     {
         $this->parser = new Parser;
@@ -30,6 +34,7 @@ final class YamlStateMachineBuilder
         }
         $this->yaml_filepath = $yaml_filepath;
         $this->internal_builder = new StateMachineBuilder;
+        $this->schema = new StateMachineSchema;
     }
 
     /**
@@ -42,11 +47,10 @@ final class YamlStateMachineBuilder
         $data = $this->parser->parse(file_get_contents($this->yaml_filepath));
         $transitions = [];
         $states = [];
-        /* $php_schema = $this->getConfigSchema();
-        $result = $php_schema->validate($data);
+        $result = $this->schema->validate($data);
         if ($result instanceof Error) {
-            throw new WorkfluxError('Invalid statemachin configuration given.');
-        } */
+            throw new WorkfluxError('Invalid statemachin configuration given: ' . print_r($result->unwrap(), true));
+        }
         foreach ($data['states'] as $name => $state) {
             $states[] = $this->createState($name, $state);
             if (!is_array($state)) {
@@ -70,12 +74,12 @@ final class YamlStateMachineBuilder
     private function createState(string $name, $state): StateInterface
     {
         $s = Maybe::unit($state);
-        $state_implmentor = $s->class->get() ?: $this->getDefaultStateClass($s);
-        if (!class_exists($state_implmentor)) {
-            throw new WorkfluxError("Trying to create state from non-existant class $state_implmentor");
+        $state_implementor = $s->class->get() ?: $this->getDefaultStateClass($s);
+        if (!class_exists($state_implementor)) {
+            throw new WorkfluxError("Trying to create state from non-existant class $state_implementor");
         }
 
-        return new $state_implmentor($name);
+        return new $state_implementor($name);
     }
 
     private function getDefaultStateClass(Maybe $state): string
@@ -95,20 +99,12 @@ final class YamlStateMachineBuilder
         if (is_string($t->when->get())) {
             $transition['when'] = [ $t->when->get() ];
         }
-        $implmentor = $t->class->get() ?: Transition::CLASS;
-        if (!class_exists($implmentor)) {
-            throw new WorkfluxError("Trying to create transition from non-existant class $state_implmentor");
+        $implementor = $t->class->get() ?: Transition::CLASS;
+        if (!class_exists($implementor)) {
+            throw new WorkfluxError("Trying to create transition from non-existant class $state_implementor");
         }
+        $constraints = Maybe::unit($transition)->when->get() ?: [];
 
-        foreach (Maybe::unit($transition)->when->get() ?: [] as $constraint) {
-            // @todo add support for constraints
-        }
-
-        return new $implmentor($from, $to);
-    }
-
-    private function getConfigSchema()
-    {
-        // @todo build php-schema to validate statemachine config structure
+        return new $implementor($from, $to, $constraints, $t->label->get() ?: '');
     }
 }

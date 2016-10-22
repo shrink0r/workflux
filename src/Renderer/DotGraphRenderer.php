@@ -65,8 +65,8 @@ final class DotGraphRenderer implements RendererInterface
             foreach ($state_transitions as $transition) {
                 $from_node = $node_id_map->get($transition->getFrom());
                 $to_node = $node_id_map->get($transition->getTo());
-                $transition_label = ''; // transition::__toString
-                $attributes = sprintf('label="%s"', trim(addslashes($transition_label)));
+                $transition_label = (string)$transition;
+                $attributes = sprintf('label="%s" ', trim(addslashes($transition_label)));
                 $attributes .= 'fontname="Arial" fontsize="12" fontcolor="#7f8c8d" color="#2ecc71"';
                 $edges[] = sprintf('%s -> %s [%s];', $from_node, $to_node, $attributes);
             }

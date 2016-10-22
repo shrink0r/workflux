@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ba759a7ded85247f54104d8fa320e5bc",
-    "content-hash": "fbec862847fead1fec12102638a4f654",
+    "hash": "98d8a76f3541af198145b9bf32b94e2c",
+    "content-hash": "9fd925908ea351e7fde568584aa4ae11",
     "packages": [
         {
             "name": "php-ds/php-ds",
@@ -99,16 +99,16 @@
         },
         {
             "name": "shrink0r/php-schema",
-            "version": "0.1.0",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shrink0r/php-schema.git",
-                "reference": "c3d88dcc5afeef0e8c03f97d2e70355daeba88ce"
+                "reference": "16497d5fa80141ba7f08abf208fcb79de71513a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shrink0r/php-schema/zipball/c3d88dcc5afeef0e8c03f97d2e70355daeba88ce",
-                "reference": "c3d88dcc5afeef0e8c03f97d2e70355daeba88ce",
+                "url": "https://api.github.com/repos/shrink0r/php-schema/zipball/16497d5fa80141ba7f08abf208fcb79de71513a4",
+                "reference": "16497d5fa80141ba7f08abf208fcb79de71513a4",
                 "shasum": ""
             },
             "require": {
@@ -140,7 +140,7 @@
                 "schema",
                 "validation"
             ],
-            "time": "2016-10-21 23:10:55"
+            "time": "2016-10-22 21:55:31"
         },
         {
             "name": "shrink0r/suffix-tree",

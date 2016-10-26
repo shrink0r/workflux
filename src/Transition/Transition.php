@@ -73,6 +73,11 @@ final class Transition implements TransitionInterface
      */
     public function isActivatedBy(InputInterface $input, OutputInterface $output): bool
     {
+        foreach ($this->constraints as $constraint) {
+            if (!$constraint->accepts($input, $output)) {
+                return false;
+            }
+        }
         return true;
     }
 

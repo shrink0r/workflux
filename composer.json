@@ -20,7 +20,8 @@
         "php-ds/php-ds": "^1.1",
         "shrink0r/suffix-tree": "^0.1",
         "shrink0r/monatic": "^0.1",
-        "shrink0r/php-schema": "^0.3"
+        "shrink0r/php-schema": "^0.3",
+        "symfony/expression-language": "^3.1"
     },
     "require-dev": {
         "sami/sami": "^3.3.0",

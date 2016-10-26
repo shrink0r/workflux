@@ -4,6 +4,7 @@ namespace Workflux\Builder;
 
 use Shrink0r\Monatic\Maybe;
 use Shrink0r\PhpSchema\Error;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Yaml\Parser;
 use Workflux\Error\WorkfluxError;
 use Workflux\Param\Settings;
@@ -12,6 +13,7 @@ use Workflux\State\FinalState;
 use Workflux\State\InitialState;
 use Workflux\State\State;
 use Workflux\State\StateInterface;
+use Workflux\Transition\ExpressionConstraint;
 use Workflux\Transition\Transition;
 use Workflux\Transition\TransitionInterface;
 
@@ -25,15 +27,17 @@ final class YamlStateMachineBuilder
 
     private $schema;
 
-    public function __construct(string $yaml_filepath)
+    private $expression_engine;
+
+    public function __construct(string $yaml_filepath, $expression_engine = null)
     {
         $this->parser = new Parser;
         if (!is_readable($yaml_filepath)) {
             throw new WorkfluxError("Trying to load non-existant statemachine definition at $yaml_filepath");
         }
         $this->yaml_filepath = $yaml_filepath;
-        $this->internal_builder = new StateMachineBuilder;
         $this->schema = new StateMachineSchema;
+        $this->expression_engine = $expression_engine ?: new ExpressionLanguage;
     }
 
     /**
@@ -43,6 +47,7 @@ final class YamlStateMachineBuilder
      */
     public function build(): StateMachineInterface
     {
+        $this->internal_builder = new StateMachineBuilder;
         $data = $this->parser->parse(file_get_contents($this->yaml_filepath));
         $transitions = [];
         $states = [];
@@ -102,9 +107,15 @@ final class YamlStateMachineBuilder
         if (!class_exists($implementor)) {
             throw new WorkfluxError("Trying to create transition from non-existant class $state_implementor");
         }
-        $constraints = Maybe::unit($transition)->when->get() ?: [];
-        $transition_settings = Maybe::unit($transition)->settings->get() ?: [];
+        $constraints = [];
+        foreach (Maybe::unit($transition)->when->get() ?: [] as $expression) {
+            if (!is_string($expression)) {
+                continue;
+            }
+            $constraints[] = new ExpressionConstraint($expression, $this->expression_engine);
+        }
+        $settings = new Settings(Maybe::unit($transition)->settings->get() ?: []);
 
-        return new $implementor($from, $to, new Settings($transition_settings));
+        return new $implementor($from, $to, $settings, $constraints);
     }
 }

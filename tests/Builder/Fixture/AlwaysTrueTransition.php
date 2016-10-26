@@ -67,4 +67,12 @@ class AlwaysTrueTransition implements TransitionInterface
     {
         return [];
     }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return "always active";
+    }
 }

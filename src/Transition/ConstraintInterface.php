@@ -14,4 +14,9 @@ interface ConstraintInterface
      * @return bool
      */
     public function accepts(InputInterface $input, OutputInterface $output): bool;
+
+    /**
+     * @return string
+     */
+    public function __toString(): string;
 }

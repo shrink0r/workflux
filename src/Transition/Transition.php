@@ -86,7 +86,7 @@ final class Transition implements TransitionInterface
      */
     public function __toString()
     {
-        $label = implode(' and ', $this->constraints);
+        $label = implode("\nand ", $this->constraints);
 
         return empty($label) ? $this->getLabel() : $label;
     }

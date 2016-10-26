@@ -34,4 +34,12 @@ final class ExpressionConstraint implements ConstraintInterface
     {
         return (bool)$this->engine->evaluate($this->expression, [ 'input' => $input, 'output' => $output ]);
     }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return str_replace('and', "\nand", $this->expression);
+    }
 }

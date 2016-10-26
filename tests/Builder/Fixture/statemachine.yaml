@@ -6,10 +6,10 @@ states:
       foo: bar
     transitions:
       ready: ~
-      start:
+      prepare:
         when: input.get("transcoding_required") == true
 
-  start:
+  prepare:
     transitions:
       transcoding:
         class: Workflux\Tests\Builder\Fixture\AlwaysTrueTransition

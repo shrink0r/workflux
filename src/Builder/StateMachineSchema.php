@@ -19,6 +19,7 @@ final class StateMachineSchema implements SchemaInterface
             'type' => 'assoc',
             'properties' => [
                 "name" => [ "type" => "string" ],
+                "class" => [ "type" => "fqcn", "required" => false ],
                 "states" => [
                     "type" => "assoc",
                     "properties" => [ ":any_name:" => $this->getStateSchema() ]
@@ -101,6 +102,7 @@ final class StateMachineSchema implements SchemaInterface
             "type" => "assoc" ,
             "required" => false,
             "properties" => [
+                "class" => [ "type" => "fqcn", "required" => false ],
                 "initial" => [
                     "type" => "bool",
                     "required" => false
@@ -141,6 +143,7 @@ final class StateMachineSchema implements SchemaInterface
         return [
             "type" => "assoc",
             "properties" => [
+                "class" => [ "type" => "fqcn", "required" => false ],
                 "settings" =>  [
                     "type" => "assoc",
                     "required" => false,

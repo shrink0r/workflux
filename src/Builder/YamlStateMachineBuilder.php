@@ -79,9 +79,6 @@ final class YamlStateMachineBuilder
     {
         $s = Maybe::unit($state);
         $state_implementor = $s->class->get() ?: $this->getDefaultStateClass($s);
-        if (!class_exists($state_implementor)) {
-            throw new WorkfluxError("Trying to create state from non-existant class $state_implementor");
-        }
         $state_settings = isset($state['settings']) ? $state['settings'] : [];
         return new $state_implementor($name, new Settings($state_settings));
     }
@@ -104,9 +101,6 @@ final class YamlStateMachineBuilder
             $transition['when'] = [ $t->when->get() ];
         }
         $implementor = $t->class->get() ?: Transition::CLASS;
-        if (!class_exists($implementor)) {
-            throw new WorkfluxError("Trying to create transition from non-existant class $state_implementor");
-        }
         $constraints = [];
         foreach (Maybe::unit($transition)->when->get() ?: [] as $expression) {
             if (!is_string($expression)) {

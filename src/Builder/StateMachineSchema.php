@@ -107,9 +107,11 @@ final class StateMachineSchema implements SchemaInterface
                     "required" => false
                 ],
                 "settings" =>  [
-                    "type" => "sequence",
-                    "one_of" => [ "any" ],
-                    "required" => false
+                    "type" => "assoc",
+                    "required" => false,
+                    "properties" => [
+                        ":any_name:" => [ "type" => "any" ]
+                    ],
                 ],
                 "transitions" =>  [
                     "type" => "assoc",
@@ -137,9 +139,11 @@ final class StateMachineSchema implements SchemaInterface
             "type" => "assoc",
             "properties" => [
                 "settings" =>  [
-                    "type" => "sequence",
-                    "one_of" => [ "any" ],
-                    "required" => false
+                    "type" => "assoc",
+                    "required" => false,
+                    "properties" => [
+                        ":any_name:" => [ "type" => "any" ]
+                    ],
                 ],
                 "when" => [
                     "type" => "any",

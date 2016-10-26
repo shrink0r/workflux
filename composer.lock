@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "98d8a76f3541af198145b9bf32b94e2c",
-    "content-hash": "9fd925908ea351e7fde568584aa4ae11",
+    "hash": "0f434e0d1ce73050561b90aa56ae81b6",
+    "content-hash": "394ef691612a20eda154c87ef84793fa",
     "packages": [
         {
             "name": "php-ds/php-ds",
@@ -99,16 +99,16 @@
         },
         {
             "name": "shrink0r/php-schema",
-            "version": "0.2.0",
+            "version": "0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shrink0r/php-schema.git",
-                "reference": "16497d5fa80141ba7f08abf208fcb79de71513a4"
+                "reference": "d9061636109570e992f4ad54fbe101e065d9ff34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shrink0r/php-schema/zipball/16497d5fa80141ba7f08abf208fcb79de71513a4",
-                "reference": "16497d5fa80141ba7f08abf208fcb79de71513a4",
+                "url": "https://api.github.com/repos/shrink0r/php-schema/zipball/d9061636109570e992f4ad54fbe101e065d9ff34",
+                "reference": "d9061636109570e992f4ad54fbe101e065d9ff34",
                 "shasum": ""
             },
             "require": {
@@ -140,7 +140,7 @@
                 "schema",
                 "validation"
             ],
-            "time": "2016-10-22 21:55:31"
+            "time": "2016-10-26 22:04:22"
         },
         {
             "name": "shrink0r/suffix-tree",
@@ -1385,16 +1385,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.6.1",
+            "version": "5.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "60c32c5b5e79c2248001efa2560f831da11cc2d7"
+                "reference": "cd13b23ac5a519a4708e00736c26ee0bb28b2e01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/60c32c5b5e79c2248001efa2560f831da11cc2d7",
-                "reference": "60c32c5b5e79c2248001efa2560f831da11cc2d7",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/cd13b23ac5a519a4708e00736c26ee0bb28b2e01",
+                "reference": "cd13b23ac5a519a4708e00736c26ee0bb28b2e01",
                 "shasum": ""
             },
             "require": {
@@ -1463,7 +1463,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-10-07 13:03:26"
+            "time": "2016-10-25 07:40:25"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -3092,16 +3092,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.26.1",
+            "version": "v1.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "a09d8ee17ac1cfea29ed60c83960ad685c6a898d"
+                "reference": "3c6c0033fd3b5679c6e1cb60f4f9766c2b424d97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/a09d8ee17ac1cfea29ed60c83960ad685c6a898d",
-                "reference": "a09d8ee17ac1cfea29ed60c83960ad685c6a898d",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/3c6c0033fd3b5679c6e1cb60f4f9766c2b424d97",
+                "reference": "3c6c0033fd3b5679c6e1cb60f4f9766c2b424d97",
                 "shasum": ""
             },
             "require": {
@@ -3114,7 +3114,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.26-dev"
+                    "dev-master": "1.27-dev"
                 }
             },
             "autoload": {
@@ -3149,7 +3149,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2016-10-05 18:57:41"
+            "time": "2016-10-25 19:17:17"
         }
     ],
     "aliases": [],

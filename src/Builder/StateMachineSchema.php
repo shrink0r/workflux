@@ -18,28 +18,10 @@ final class StateMachineSchema implements SchemaInterface
                 "name" => [ "type" => "string" ],
                 "states" => [
                     "type" => "assoc",
-                    "properties" => [
-                        ":any_name:" => [
-                            "type" => "assoc" ,
-                            "required" => false,
-                            "properties" => [
-                                "initial" => [
-                                    "type" => "bool",
-                                    "required" => false
-                                ],
-                                "final" => [
-                                    "type" => "bool",
-                                    "required" => false
-                                ],
-                                "transitions" =>  [
-                                    "type" => "any",
-                                    "required" => true
-                                ]
-                            ]
-                        ]
-                    ]
+                    "properties" => [ ":any_name:" => $this->getStateSchema() ]
                 ]
-            ]
+            ],
+            "customTypes" => [ "transition" => $this->getTrantitionSchema() ]
         ], new Factory);
     }
 
@@ -103,5 +85,67 @@ final class StateMachineSchema implements SchemaInterface
     public function getFactory()
     {
         return $this->internal_schema->getFactory();
+    }
+
+    /**
+     * Return php-schema definition that reflects the structural expectations towards state (yaml)data.
+     *
+     * @return string
+     */
+    private function getStateSchema()
+    {
+        return [
+            "type" => "assoc" ,
+            "required" => false,
+            "properties" => [
+                "initial" => [
+                    "type" => "bool",
+                    "required" => false
+                ],
+                "final" => [
+                    "type" => "bool",
+                    "required" => false
+                ],
+                "settings" =>  [
+                    "type" => "sequence",
+                    "one_of" => [ "any" ],
+                    "required" => false
+                ],
+                "transitions" =>  [
+                    "type" => "assoc",
+                    "required" => true,
+                    "properties" => [
+                        ":any_name:" => [
+                            "type" => "enum" ,
+                            "required" => false,
+                            "one_of" => [ "string", "&transition" ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Return php-schema definition that reflects the structural expectations towards transition (yaml)data.
+     *
+     * @return string
+     */
+    private function getTrantitionSchema()
+    {
+        return [
+            "type" => "assoc",
+            "properties" => [
+                "settings" =>  [
+                    "type" => "sequence",
+                    "one_of" => [ "any" ],
+                    "required" => false
+                ],
+                "when" => [
+                    "type" => "any",
+                    "required" => false
+                ]
+            ]
+        ];
     }
 }

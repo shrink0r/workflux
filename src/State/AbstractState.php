@@ -5,6 +5,7 @@ namespace Workflux\State;
 use Workflux\Param\InputInterface;
 use Workflux\Param\Output;
 use Workflux\Param\OutputInterface;
+use Workflux\Param\ParamHolderInterface;
 use Workflux\State\StateInterface;
 
 abstract class AbstractState implements StateInterface
@@ -15,11 +16,18 @@ abstract class AbstractState implements StateInterface
     private $name;
 
     /**
-     * @param string $name
+     * @var ParamHolderInterface $settings
      */
-    public function __construct(string $name)
+    private $settings;
+
+    /**
+     * @param string $name
+     * @param ParamHolderInterface $settings
+     */
+    public function __construct(string $name, ParamHolderInterface $settings)
     {
         $this->name = $name;
+        $this->settings = $settings;
     }
 
     /**
@@ -62,5 +70,34 @@ abstract class AbstractState implements StateInterface
     public function isBreakpoint(): bool
     {
         return false;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    public function getSetting(string $name, $default = null)
+    {
+        return $this->settings->get($name) ?: $default;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasSetting(string $name): bool
+    {
+        return $this->settings->has($name);
+    }
+
+    /**
+     * @return ParamHolderInterface
+     */
+    public function getSettings()
+    {
+        return $this->settings;
     }
 }

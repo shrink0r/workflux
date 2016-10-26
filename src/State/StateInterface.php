@@ -33,4 +33,24 @@ interface StateInterface
      * @return bool
      */
     public function isBreakpoint(): bool;
+
+    /**
+     * @param string $name
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    public function getSetting(string $name, $default = null);
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasSetting(string $name): bool;
+
+    /**
+     * @return ParamHolderInterface
+     */
+    public function getSettings();
 }

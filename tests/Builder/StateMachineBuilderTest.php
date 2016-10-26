@@ -3,6 +3,7 @@
 namespace Workflux\Tests\Builder;
 
 use Workflux\Builder\StateMachineBuilder;
+use Workflux\Param\Settings;
 use Workflux\StateMachineInterface;
 use Workflux\State\Breakpoint;
 use Workflux\State\FinalState;
@@ -17,11 +18,11 @@ class StateMachineBuilderTest extends TestCase
     {
         $state_machine = (new StateMachineBuilder)
             ->addStateMachineName('video-transcoding')
-            ->addState(new InitialState('initial'))
+            ->addState(new InitialState('initial', new Settings))
             ->addStates([
-                new Breakpoint('foobar'),
-                new State('bar'),
-                new FinalState('final')
+                new Breakpoint('foobar', new Settings),
+                new State('bar', new Settings),
+                new FinalState('final', new Settings)
             ])
             ->addTransition(new Transition('initial', 'foobar'))
             ->addTransitions([

@@ -4,10 +4,9 @@ namespace Workflux\Builder;
 
 use Shrink0r\Monatic\Maybe;
 use Shrink0r\PhpSchema\Error;
-use Shrink0r\PhpSchema\Factory;
-use Shrink0r\PhpSchema\Schema;
 use Symfony\Component\Yaml\Parser;
 use Workflux\Error\WorkfluxError;
+use Workflux\Param\Settings;
 use Workflux\StateMachineInterface;
 use Workflux\State\FinalState;
 use Workflux\State\InitialState;
@@ -78,8 +77,8 @@ final class YamlStateMachineBuilder
         if (!class_exists($state_implementor)) {
             throw new WorkfluxError("Trying to create state from non-existant class $state_implementor");
         }
-
-        return new $state_implementor($name);
+        $state_settings = isset($state['settings']) ? $state['settings'] : [];
+        return new $state_implementor($name, new Settings($state_settings));
     }
 
     private function getDefaultStateClass(Maybe $state): string

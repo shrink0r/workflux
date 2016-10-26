@@ -4,6 +4,7 @@ namespace Workflux\Tests;
 
 use Workflux\Error\CorruptExecutionFlow;
 use Workflux\Param\Input;
+use Workflux\Param\Settings;
 use Workflux\StateMachine;
 use Workflux\State\Breakpoint;
 use Workflux\State\FinalState;
@@ -19,10 +20,10 @@ class StateMachineTest extends TestCase
     public function testConstruct()
     {
         $states = new StateSet([
-            new InitialState('initial'),
-            new Breakpoint('foobar'),
-            new State('bar'),
-            new FinalState('final')
+            new InitialState('initial', new Settings),
+            new Breakpoint('foobar', new Settings),
+            new State('bar', new Settings),
+            new FinalState('final', new Settings)
         ]);
 
         $transitions = (new TransitionSet)
@@ -44,12 +45,12 @@ class StateMachineTest extends TestCase
 Looks like there is a loop between: approval -> published -> archive');
 
         $states = new StateSet([
-            new InitialState('initial'),
-            new State('edit'),
-            new State('approval'),
-            new State('published'),
-            new State('archive'),
-            new FinalState('final')
+            new InitialState('initial', new Settings),
+            new State('edit', new Settings),
+            new State('approval', new Settings),
+            new State('published', new Settings),
+            new State('archive', new Settings),
+            new FinalState('final', new Settings)
         ]);
 
         $transitions = (new TransitionSet)

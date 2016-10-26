@@ -7,7 +7,7 @@ states:
     transitions:
       ready: ~
       start:
-        when: input.transcoding_required === true
+        when: input.get("transcoding_required") == true
 
   start:
     transitions:
@@ -17,14 +17,14 @@ states:
   transcoding:
     transitions:
       ready: ~
-      error: output.transcode_success === false and output.retry_limit_reached === true
+      error: output.get("transcode_success") == false and output.get("retry_limit_reached") == true
       rejected:
         settings:
           label: yeah right
           more_stuff: true
         when:
-          - output.retry_limit_reached === false
-          - output.transcode_success === false
+          - output.get("retry_limit_reached") == false
+          - output.get("transcode_success") == false
 
   error: ~
   rejected: ~

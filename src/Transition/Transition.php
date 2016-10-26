@@ -4,6 +4,7 @@ namespace Workflux\Transition;
 
 use Workflux\Param\InputInterface;
 use Workflux\Param\OutputInterface;
+use Workflux\Param\ParamHolderInterface;
 use Workflux\Transition\TransitionInterface;
 
 final class Transition implements TransitionInterface
@@ -19,21 +20,16 @@ final class Transition implements TransitionInterface
     private $to;
 
     /**
-     * @var string
-     */
-    private $label;
-
-    /**
      * @param string $from
      * @param string $to
      * @param string $label
-     * @param string $constraints
+     * @param array $constraints
      */
-    public function __construct(string $from, string $to, array $constraints = [], string $label = '')
+    public function __construct(string $from, string $to, ParamHolderInterface $settings, array $constraints = [])
     {
         $this->from = $from;
         $this->to = $to;
-        $this->label = $label;
+        $this->settings = $settings;
         $this->constraints = $constraints;
     }
 
@@ -58,7 +54,15 @@ final class Transition implements TransitionInterface
      */
     public function getLabel(): string
     {
-        return $this->label;
+        return $this->settings->get('label') ?: '';
+    }
+
+    /**
+     * @return array
+     */
+    public function getConstraints(): array
+    {
+        return $this->constraints;
     }
 
     /**
@@ -72,10 +76,42 @@ final class Transition implements TransitionInterface
         return true;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         $label = implode(' and ', $this->constraints);
 
         return empty($label) ? $this->getLabel() : $label;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    public function getSetting(string $name, $default = null)
+    {
+        return $this->settings->get($name) ?: $default;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasSetting(string $name): bool
+    {
+        return $this->settings->has($name);
+    }
+
+    /**
+     * @return ParamHolderInterface
+     */
+    public function getSettings()
+    {
+        return $this->settings;
     }
 }

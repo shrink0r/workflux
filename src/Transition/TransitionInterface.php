@@ -29,4 +29,9 @@ interface TransitionInterface
      * @return string
      */
     public function getLabel(): string;
+
+    /**
+     * @return array
+     */
+    public function getConstraints(): array;
 }

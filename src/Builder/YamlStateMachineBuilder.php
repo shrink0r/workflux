@@ -103,7 +103,8 @@ final class YamlStateMachineBuilder
             throw new WorkfluxError("Trying to create transition from non-existant class $state_implementor");
         }
         $constraints = Maybe::unit($transition)->when->get() ?: [];
+        $transition_settings = Maybe::unit($transition)->settings->get() ?: [];
 
-        return new $implementor($from, $to, $constraints, $t->label->get() ?: '');
+        return new $implementor($from, $to, new Settings($transition_settings));
     }
 }

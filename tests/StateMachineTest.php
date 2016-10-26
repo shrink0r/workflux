@@ -27,9 +27,9 @@ class StateMachineTest extends TestCase
         ]);
 
         $transitions = (new TransitionSet)
-            ->add(new Transition('initial', 'foobar'))
-            ->add(new Transition('foobar', 'bar'))
-            ->add(new Transition('bar', 'final'));
+            ->add(new Transition('initial', 'foobar', new Settings))
+            ->add(new Transition('foobar', 'bar', new Settings))
+            ->add(new Transition('bar', 'final', new Settings));
 
         $statemachine = new StateMachine('test-machine', $states, $transitions);
         $output = $statemachine->execute(new Input, 'initial');
@@ -54,12 +54,12 @@ Looks like there is a loop between: approval -> published -> archive');
         ]);
 
         $transitions = (new TransitionSet)
-            ->add(new Transition('initial', 'edit'))
-            ->add(new Transition('edit', 'approval'))
-            ->add(new Transition('approval', 'published'))
-            ->add(new Transition('published', 'archive'))
-            ->add(new Transition('archive', 'approval'))
-            ->add(new InactiveTransition('archive', 'final'));
+            ->add(new Transition('initial', 'edit', new Settings))
+            ->add(new Transition('edit', 'approval', new Settings))
+            ->add(new Transition('approval', 'published', new Settings))
+            ->add(new Transition('published', 'archive', new Settings))
+            ->add(new Transition('archive', 'approval', new Settings))
+            ->add(new InactiveTransition('archive', 'final', new Settings));
 
         $statemachine = new StateMachine('test-machine', $states, $transitions);
         $statemachine->execute(new Input, 'initial');

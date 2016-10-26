@@ -24,10 +24,10 @@ class StateMachineBuilderTest extends TestCase
                 new State('bar', new Settings),
                 new FinalState('final', new Settings)
             ])
-            ->addTransition(new Transition('initial', 'foobar'))
+            ->addTransition(new Transition('initial', 'foobar', new Settings))
             ->addTransitions([
-                new Transition('foobar', 'bar'),
-                new Transition('bar', 'final')
+                new Transition('foobar', 'bar', new Settings),
+                new Transition('bar', 'final', new Settings)
             ])
             ->build();
 

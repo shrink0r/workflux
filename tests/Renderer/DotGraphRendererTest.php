@@ -26,9 +26,9 @@ class DotGraphRendererTest extends TestCase
         ]);
 
         $transitions = (new TransitionSet)
-            ->add(new Transition('initial', 'foobar'))
-            ->add(new Transition('foobar', 'bar'))
-            ->add(new Transition('bar', 'final'));
+            ->add(new Transition('initial', 'foobar', new Settings))
+            ->add(new Transition('foobar', 'bar', new Settings))
+            ->add(new Transition('bar', 'final', new Settings));
 
         $state_machine = new StateMachine('test-machine', $states, $transitions);
         $expected_graph = file_get_contents(__DIR__ . '/Fixture/testcase_1.dot');

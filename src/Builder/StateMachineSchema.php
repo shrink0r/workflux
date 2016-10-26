@@ -8,6 +8,9 @@ use Shrink0r\PhpSchema\SchemaInterface;
 
 final class StateMachineSchema implements SchemaInterface
 {
+    /**
+     * @var SchemaInterface $internal_schema
+     */
     private $internal_schema;
 
     public function __construct()

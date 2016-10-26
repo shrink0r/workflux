@@ -51,6 +51,19 @@ final class TransitionSet implements IteratorAggregate, Countable
     }
 
     /**
+     * @param callable $callback
+     *
+     * @return self
+     */
+    public function filter(callable $callback): self
+    {
+        $set = clone $this;
+        $set->internal_set = $this->internal_set->filter($callback);
+
+        return $set;
+    }
+
+    /**
      * @return Traversable
      */
     public function getIterator(): Traversable
@@ -64,6 +77,14 @@ final class TransitionSet implements IteratorAggregate, Countable
     public function count(): int
     {
         return $this->internal_set->count();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function first()
+    {
+        return $this->internal_set->first();
     }
 
     /**

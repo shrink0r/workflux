@@ -1,4 +1,4 @@
-digraph video_transcoding {
+digraph "video_transcoding" {
 node1 [label="new" fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b"]
 node2 [label="transcoding" fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b" shape="parallelogram"]
 node3 [label="error" fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b"]

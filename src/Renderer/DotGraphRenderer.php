@@ -19,7 +19,7 @@ class DotGraphRenderer extends AbstractRenderer
      * @var string DOT_TEMPLATE
      */
     const DOT_TEMPLATE = <<<DOT
-digraph %s {
+digraph "%s" {
 %s
 
 %s

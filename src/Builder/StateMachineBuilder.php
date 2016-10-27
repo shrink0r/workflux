@@ -4,6 +4,7 @@ namespace Workflux\Builder;
 
 use Ds\Map;
 use Workflux\Error\UnsupportedState;
+use Workflux\Error\WorkfluxError;
 use Workflux\StateMachine;
 use Workflux\StateMachineInterface;
 use Workflux\State\StateInterface;
@@ -133,11 +134,15 @@ final class StateMachineBuilder
     /**
      * @return self
      */
-    public function build(): StateMachineInterface
+    public function build(string $class): StateMachineInterface
     {
         $states = new StateSet($this->states->values()->toArray());
         $transitions = new TransitionSet($this->transitions->values()->toArray());
-
+        if (!in_array(StateMachineInterface::CLASS, class_implements($class))) {
+            throw new WorkfluxError(
+                'Trying to build statemachine that does not implement ' . StateMachineInterface::CLASS
+            );
+        }
         return new StateMachine($this->state_machine_name, $states, $transitions);
     }
 }

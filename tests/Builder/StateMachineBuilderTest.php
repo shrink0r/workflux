@@ -4,6 +4,7 @@ namespace Workflux\Tests\Builder;
 
 use Workflux\Builder\StateMachineBuilder;
 use Workflux\Param\Settings;
+use Workflux\StateMachine;
 use Workflux\StateMachineInterface;
 use Workflux\State\Breakpoint;
 use Workflux\State\FinalState;
@@ -29,7 +30,7 @@ class StateMachineBuilderTest extends TestCase
                 new Transition('foobar', 'bar', new Settings),
                 new Transition('bar', 'final', new Settings)
             ])
-            ->build();
+            ->build(StateMachine::CLASS);
 
         $this->assertInstanceOf(StateMachineInterface::CLASS, $state_machine);
     }

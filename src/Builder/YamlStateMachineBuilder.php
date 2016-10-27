@@ -8,6 +8,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Yaml\Parser;
 use Workflux\Error\WorkfluxError;
 use Workflux\Param\Settings;
+use Workflux\StateMachine;
 use Workflux\StateMachineInterface;
 use Workflux\State\FinalState;
 use Workflux\State\InitialState;
@@ -72,7 +73,7 @@ final class YamlStateMachineBuilder
             ->addStateMachineName($data['name'])
             ->addStates($states)
             ->addTransitions($transitions)
-            ->build();
+            ->build(Maybe::unit($data)->class->get() ?: StateMachine::CLASS);
     }
 
     private function createState(string $name, $state): StateInterface

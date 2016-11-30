@@ -4,6 +4,8 @@ namespace Workflux\Builder;
 
 use Shrink0r\Monatic\Maybe;
 use Shrink0r\PhpSchema\Error;
+use Shrink0r\PhpSchema\Factory;
+use Shrink0r\PhpSchema\Schema;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Yaml\Parser;
 use Workflux\Error\WorkfluxError;
@@ -20,6 +22,10 @@ use Workflux\Transition\TransitionInterface;
 
 final class YamlStateMachineBuilder
 {
+    const SUFFIX_IN = '-input_schema';
+
+    const SUFFIX_OUT = '-output_schema';
+
     private $parser;
 
     private $yaml_filepath;
@@ -68,7 +74,6 @@ final class YamlStateMachineBuilder
                 $transitions[] = $this->createTransition($name, $key, $transition);
             }
         }
-
         return $this->internal_builder
             ->addStateMachineName($data['name'])
             ->addStates($states)
@@ -78,10 +83,19 @@ final class YamlStateMachineBuilder
 
     private function createState(string $name, $state): StateInterface
     {
-        $s = Maybe::unit($state);
-        $state_implementor = $s->class->get() ?: $this->getDefaultStateClass($s);
-        $state_settings = isset($state['settings']) ? $state['settings'] : [];
-        return new $state_implementor($name, new Settings($state_settings));
+        $state = Maybe::unit($state);
+        $state_implementor = $state->class->get() ?: $this->getDefaultStateClass($state);
+        return new $state_implementor(
+            $name,
+            new Settings($state->settings->get() ?: []),
+            $this->createSchema($name.self::SUFFIX_IN, $state->input_schema->get() ?: []),
+            $this->createSchema($name.self::SUFFIX_OUT, $state->output_schema->get() ?: [])
+        );
+    }
+
+    private function createSchema($name, array $schema_definition)
+    {
+        return new Schema($name, [ 'type' => 'assoc', 'properties' => $schema_definition ], new Factory);
     }
 
     private function getDefaultStateClass(Maybe $state): string
@@ -91,7 +105,6 @@ final class YamlStateMachineBuilder
         } elseif ($state->final->get() === true || $state->get() === null) {
             return FinalState::CLASS;
         }
-
         return State::CLASS;
     }
 
@@ -110,7 +123,6 @@ final class YamlStateMachineBuilder
             $constraints[] = new ExpressionConstraint($expression, $this->expression_engine);
         }
         $settings = new Settings(Maybe::unit($transition)->settings->get() ?: []);
-
         return new $implementor($from, $to, $settings, $constraints);
     }
 }

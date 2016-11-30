@@ -6,6 +6,8 @@ use Countable;
 use Ds\Map;
 use IteratorAggregate;
 use Traversable;
+use Workflux\Error\InvalidWorkflowStructure;
+use Workflux\State\StateMap;
 use Workflux\Transition\TransitionInterface;
 use Workflux\Transition\TransitionSet;
 
@@ -15,6 +17,29 @@ final class StateTransitions implements IteratorAggregate, Countable
      * @var Map $internal_map
      */
     private $internal_map;
+
+    public static function create(StateMap $states, TransitionSet $transitions): self
+    {
+        $state_transitions = new self;
+        foreach ($transitions as $transition) {
+            $from_state = $transition->getFrom();
+            $to_state = $transition->getTo();
+            if (!$states->has($from_state)) {
+                throw new InvalidWorkflowStructure('Trying to transition from unknown state: '.$from_state);
+            }
+            if ($states->get($from_state)->isFinal()) {
+                throw new InvalidWorkflowStructure('Trying to transition from final-state: '.$from_state);
+            }
+            if (!$states->has($to_state)) {
+                throw new InvalidWorkflowStructure('Trying to transition to unknown state: '.$to_state);
+            }
+            if ($states->get($to_state)->isInitial()) {
+                throw new InvalidWorkflowStructure('Trying to transition to initial-state: '.$to_state);
+            }
+            $state_transitions = $state_transitions->put($transition);
+        }
+        return $state_transitions;
+    }
 
     /**
      * @param TransitionInterface[] $states

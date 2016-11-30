@@ -2,6 +2,7 @@
 
 namespace Workflux\State;
 
+use Shrink0r\PhpSchema\SchemaInterface;
 use Workflux\Param\InputInterface;
 use Workflux\Param\OutputInterface;
 
@@ -32,7 +33,17 @@ interface StateInterface
     /**
      * @return bool
      */
-    public function isBreakpoint(): bool;
+    public function isInteractive(): bool;
+
+    /**
+     * @return SchemaInterface
+     */
+    public function getInputSchema(): SchemaInterface;
+
+    /**
+     * @return SchemaInterface
+     */
+    public function getOutputSchema(): SchemaInterface;
 
     /**
      * @param string $name

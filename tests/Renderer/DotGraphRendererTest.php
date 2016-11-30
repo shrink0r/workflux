@@ -5,7 +5,7 @@ namespace Workflux\Tests\Renderer;
 use Workflux\Param\Settings;
 use Workflux\Renderer\DotGraphRenderer;
 use Workflux\StateMachine;
-use Workflux\State\Breakpoint;
+use Workflux\State\InteractiveState;
 use Workflux\State\FinalState;
 use Workflux\State\InitialState;
 use Workflux\State\State;
@@ -19,10 +19,10 @@ class DotGraphRendererTest extends TestCase
     public function testRenderer()
     {
         $states = new StateSet([
-            new InitialState('initial', new Settings),
-            new Breakpoint('foobar', new Settings),
-            new State('bar', new Settings),
-            new FinalState('final', new Settings)
+            $this->createState('initial', InitialState::CLASS),
+            $this->createState('foobar'),
+            $this->createState('bar'),
+            $this->createState('final', FinalState::CLASS)
         ]);
 
         $transitions = (new TransitionSet)

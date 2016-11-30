@@ -2,14 +2,16 @@
 
 namespace Workflux\Tests;
 
+use Shrink0r\PhpSchema\Factory;
+use Shrink0r\PhpSchema\Schema;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Workflux\Error\CorruptExecutionFlow;
 use Workflux\Param\Input;
 use Workflux\Param\Settings;
 use Workflux\StateMachine;
-use Workflux\State\Breakpoint;
 use Workflux\State\FinalState;
 use Workflux\State\InitialState;
+use Workflux\State\InteractiveState;
 use Workflux\State\State;
 use Workflux\State\StateSet;
 use Workflux\Tests\TestCase;
@@ -21,21 +23,27 @@ class StateMachineTest extends TestCase
 {
     public function testConstruct()
     {
+        $schema = new Schema(
+            'default_schema',
+            [ 'type' => 'assoc', 'properties' => [ 'is_ready' => [ 'type' => 'bool' ] ] ],
+            new Factory
+        );
+
         $states = new StateSet([
-            new InitialState('initial', new Settings),
-            new Breakpoint('foobar', new Settings),
-            new State('bar', new Settings),
-            new FinalState('final', new Settings)
+            $this->createState('initial', InitialState::CLASS, null, $schema),
+            $this->createState('foobar', State::CLASS, null),
+            $this->createState('bar', InteractiveState::CLASS, null),
+            $this->createState('final', FinalState::CLASS, null)
         ]);
 
         $transitions = (new TransitionSet)
-            ->add(new Transition('initial', 'foobar', new Settings))
             ->add(new Transition(
+                'initial',
                 'foobar',
-                'bar',
                 new Settings,
                 [ new ExpressionConstraint('input.get("is_ready") == true', new ExpressionLanguage) ]
             ))
+            ->add(new Transition('foobar','bar', new Settings))
             ->add(new Transition('bar', 'final', new Settings));
 
         $statemachine = new StateMachine('test-machine', $states, $transitions);
@@ -52,12 +60,12 @@ class StateMachineTest extends TestCase
 Looks like there is a loop between: approval -> published -> archive');
 
         $states = new StateSet([
-            new InitialState('initial', new Settings),
-            new State('edit', new Settings),
-            new State('approval', new Settings),
-            new State('published', new Settings),
-            new State('archive', new Settings),
-            new FinalState('final', new Settings)
+            $this->createState('initial', InitialState::CLASS),
+            $this->createState('edit'),
+            $this->createState('approval'),
+            $this->createState('published'),
+            $this->createState('archive'),
+            $this->createState('final', FinalState::CLASS)
         ]);
 
         $transitions = (new TransitionSet)

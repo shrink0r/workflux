@@ -2,6 +2,9 @@ name: video-transcoding
 states:
   new:
     initial: true
+    input_schema:
+      transcoding_required:
+        type: bool
     settings:
       foo: bar
     transitions:

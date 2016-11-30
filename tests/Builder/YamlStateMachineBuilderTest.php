@@ -13,12 +13,10 @@ class YamlStateMachineBuilderTest extends TestCase
     {
         $state_machine = (new YamlStateMachineBuilder(__DIR__.'/Fixture/statemachine.yaml'))
             ->build();
-
         $rejected_transition = $state_machine->getStateTransitions()->get('transcoding')
             ->filter(function ($transition) {
                 return $transition->getTo() === 'rejected';
             })->first();
-
         $this->assertInstanceOf(StateMachineInterface::CLASS, $state_machine);
         $this->assertEquals('bar', $state_machine->getStates()->get('new')->getSetting('foo'));
         $this->assertTrue($rejected_transition->getSetting('more_stuff'));

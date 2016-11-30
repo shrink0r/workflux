@@ -2,9 +2,10 @@
 
 namespace Workflux\State;
 
-use Workflux\State\AbstractState;
+use Workflux\State\StateInterface;
+use Workflux\State\StateTrait;
 
-final class State extends AbstractState
+final class State implements StateInterface
 {
-
+    use StateTrait;
 }

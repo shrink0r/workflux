@@ -6,7 +6,7 @@ use Workflux\Builder\StateMachineBuilder;
 use Workflux\Param\Settings;
 use Workflux\StateMachine;
 use Workflux\StateMachineInterface;
-use Workflux\State\Breakpoint;
+use Workflux\State\InteractiveState;
 use Workflux\State\FinalState;
 use Workflux\State\InitialState;
 use Workflux\State\State;
@@ -19,11 +19,11 @@ class StateMachineBuilderTest extends TestCase
     {
         $state_machine = (new StateMachineBuilder)
             ->addStateMachineName('video-transcoding')
-            ->addState(new InitialState('initial', new Settings))
+            ->addState($this->createState('initial', InitialState::CLASS))
             ->addStates([
-                new Breakpoint('foobar', new Settings),
-                new State('bar', new Settings),
-                new FinalState('final', new Settings)
+                $this->createState('foobar', InteractiveState::CLASS),
+                $this->createState('bar'),
+                $this->createState('final', FinalState::CLASS)
             ])
             ->addTransition(new Transition('initial', 'foobar', new Settings))
             ->addTransitions([

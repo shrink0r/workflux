@@ -16,6 +16,7 @@ final class Output implements OutputInterface
     private $current_state;
 
     /**
+     * @param string $current_state
      * @param mixed[] $params
      */
     public function __construct(string $current_state, array $params = [])
@@ -32,6 +33,11 @@ final class Output implements OutputInterface
         return $this->current_state;
     }
 
+    /**
+     * @param  string $current_state
+     *
+     * @return OutputInterface
+     */
     public function withCurrentState(string $current_state): OutputInterface
     {
         $output = clone $this;
@@ -51,6 +57,9 @@ final class Output implements OutputInterface
         return new static($current_state, $input->toArray());
     }
 
+    /**
+     * @return mixed[]
+     */
     public function toArray(): array
     {
         return [ 'params' => $this->params, 'current_state' => $this->current_state ];

@@ -36,7 +36,7 @@ final class YamlStateMachineBuilder
 
     private $expression_engine;
 
-    public function __construct(string $yaml_filepath, $expression_engine = null)
+    public function __construct(string $yaml_filepath, ExpressionLanguage $expression_engine = null)
     {
         $this->parser = new Parser;
         if (!is_readable($yaml_filepath)) {

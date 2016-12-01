@@ -4,7 +4,7 @@ namespace Workflux\Error;
 
 use Workflux\Error\WorkfluxError;
 
-class InvalidWorkflowStructure extends WorkfluxError
+class InvalidStructure extends WorkfluxError
 {
 
 }

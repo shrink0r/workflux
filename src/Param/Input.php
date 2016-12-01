@@ -25,8 +25,6 @@ final class Input implements InputInterface
      */
     public static function fromOutput(OutputInterface $output): InputInterface
     {
-        $output_arr = $output->toArray();
-
-        return new static($output_arr['params']);
+        return new static($output->toArray()['params']);
     }
 }

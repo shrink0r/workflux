@@ -6,7 +6,7 @@ use Countable;
 use Ds\Set;
 use IteratorAggregate;
 use Traversable;
-use Workflux\Error\InvalidWorkflowStructure;
+use Workflux\Error\InvalidStructure;
 use Workflux\State\StateInterface;
 use Workflux\State\StateMap;
 
@@ -29,7 +29,10 @@ final class StateSet implements IteratorAggregate, Countable
         );
     }
 
-    public function splat()
+    /**
+     * @return []
+     */
+    public function splat(): array
     {
         $initial_state = null;
         $all_states = new StateMap;
@@ -37,23 +40,23 @@ final class StateSet implements IteratorAggregate, Countable
         foreach ($this->internal_set as $state) {
             if ($state->isInitial()) {
                 if ($initial_state !== null) {
-                    throw new InvalidWorkflowStructure('Trying to add more than one initial state.');
+                    throw new InvalidStructure('Trying to add more than one initial state.');
                 }
                 $initial_state = $state;
             }
             if ($state->isFinal()) {
                 if ($state->isInitial()) {
-                    throw new InvalidWorkflowStructure('Trying to add state as initial and final at the same time.');
+                    throw new InvalidStructure('Trying to add state as initial and final at the same time.');
                 }
                 $final_states = $final_states->put($state);
             }
             $all_states = $all_states->put($state);
         }
         if (!$initial_state) {
-            throw new InvalidWorkflowStructure('Trying to create statemachine without an initial state.');
+            throw new InvalidStructure('Trying to create statemachine without an initial state.');
         }
         if ($final_states->count() === 0) {
-            throw new InvalidWorkflowStructure('Trying to create statemachine without at least one final state.');
+            throw new InvalidStructure('Trying to create statemachine without at least one final state.');
         }
         return [ $initial_state, $all_states, $final_states ];
     }
@@ -100,7 +103,7 @@ final class StateSet implements IteratorAggregate, Countable
     /**
      * @return StateInterface[]
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->internal_set->toArray();
     }

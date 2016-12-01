@@ -6,7 +6,7 @@ use Ds\Map;
 use Ds\Vector;
 use Shrink0r\SuffixTree\Builder\SuffixTreeBuilder;
 use Workflux\Error\CorruptExecutionFlow;
-use Workflux\Error\InvalidWorkflowStructure;
+use Workflux\Error\InvalidStructure;
 use Workflux\Error\LogicError;
 use Workflux\Error\UnsupportedState;
 use Workflux\Param\Input;
@@ -60,7 +60,7 @@ final class StateMachine implements StateMachineInterface
         $state_transitions = StateTransitions::create($all_states, $transitions);
         $reachable_states = $this->depthFirstScan($all_states, $state_transitions, $initial_state, new StateSet);
         if (count($reachable_states) !== count($all_states)) {
-            throw new InvalidWorkflowStructure('Not all states are properly connected.');
+            throw new InvalidStructure('Not all states are properly connected.');
         }
         $this->name = $name;
         $this->initial_state = $initial_state;

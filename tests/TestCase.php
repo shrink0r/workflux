@@ -12,7 +12,8 @@ use Workflux\State\StateInterface;
 class TestCase extends PHPUnit_Framework_TestCase
 {
     public function createState(
-        $name, $implementor = State::ClASS,
+        $name,
+        $implementor = State::ClASS,
         $settings = null,
         $input_schema = null,
         $output_schema = null

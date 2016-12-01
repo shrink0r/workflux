@@ -8,9 +8,15 @@ use Workflux\Error\WorkfluxError;
 
 class CorruptExecutionFlow extends WorkfluxError
 {
+    /**
+     * @param Vector $bread_crumbs
+     * @param int $max_depth
+     *
+     * @return self
+     */
     public static function raiseLoopDetected(Vector $bread_crumbs, int $max_depth): self
     {
-        throw new self(self::buildMessage($bread_crumbs, $max_depth));
+        return new self(self::buildMessage($bread_crumbs, $max_depth));
     }
 
     /**

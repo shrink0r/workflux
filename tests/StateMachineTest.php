@@ -43,7 +43,7 @@ class StateMachineTest extends TestCase
                 new Settings,
                 [ new ExpressionConstraint('input.get("is_ready") == true', new ExpressionLanguage) ]
             ))
-            ->add(new Transition('foobar','bar', new Settings))
+            ->add(new Transition('foobar', 'bar', new Settings))
             ->add(new Transition('bar', 'final', new Settings));
 
         $statemachine = new StateMachine('test-machine', $states, $transitions);

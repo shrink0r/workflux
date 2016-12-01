@@ -6,8 +6,15 @@ use Workflux\Error\WorkfluxError;
 
 class OutputError extends WorkfluxError
 {
+    /**
+     * @var string[] $validation_errors
+     */
     private $validation_errors;
 
+    /**
+     * @param string[] $validation_errors
+     * @param string $msg
+     */
     public function __construct(array $validation_errors, $msg = '')
     {
         $this->validation_errors = $validation_errors;
@@ -15,12 +22,18 @@ class OutputError extends WorkfluxError
         parent::__construct($msg);
     }
 
+    /**
+     * @return string[]
+     */
     public function getValidationErrors()
     {
         return $this->validation_errors;
     }
 
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function __toString(): string
     {
         $errors = [ $this->getMessage() ];
         foreach ($this->validation_errors as $prop_name => $errors) {

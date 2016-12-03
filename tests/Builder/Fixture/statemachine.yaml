@@ -15,9 +15,8 @@ states:
       transcoding: ~
 
   transcoding:
-    settings:
-      out:
-        transcode_success: true
+    export:
+      transcode_success: true
     transitions:
       ready: output.get("transcode_success")
       error:

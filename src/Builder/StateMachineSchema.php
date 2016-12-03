@@ -113,6 +113,13 @@ final class StateMachineSchema implements SchemaInterface
                     "type" => "bool",
                     "required" => false
                 ],
+                "export" => [
+                    "type" => "assoc",
+                    "required" => false,
+                    "properties" => [
+                        ":any_name:" => [ "type" => "any" ]
+                    ]
+                ],
                 "input_schema" =>  [
                     "type" => "assoc",
                     "required" => false,

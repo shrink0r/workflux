@@ -109,9 +109,11 @@ final class YamlStateMachineBuilder
     {
         $state = Maybe::unit($state);
         $state_implementor = $state->class->get() ?: $this->getDefaultStateClass($state);
+        $settings = $state->settings->get() ?: [];
+        $settings['export'] = array_merge($state->settings->export->get() ?: [], $state->export->get() ?: []);
         return new $state_implementor(
             $name,
-            new Settings($state->settings->get() ?: []),
+            new Settings($settings),
             $this->createSchema(
                 $name.self::SUFFIX_IN,
                 $state->input_schema->get()

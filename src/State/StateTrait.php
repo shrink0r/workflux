@@ -170,7 +170,7 @@ trait StateTrait
     private function generateOutput(InputInterface $input): OutputInterface
     {
         $params = [];
-        foreach ($this->getSetting('out', []) as $key => $value) {
+        foreach ($this->getSetting('export', []) as $key => $value) {
             $params[$key] = $value;
         }
         return new Output($this->name, $params);

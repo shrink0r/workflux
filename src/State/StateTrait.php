@@ -175,7 +175,7 @@ trait StateTrait
     private function generateOutput(InputInterface $input): OutputInterface
     {
         $params = [];
-        foreach ($this->getSetting('export', []) as $key => $value) {
+        foreach ($this->getSetting('output', []) as $key => $value) {
             if (is_string($value) && preg_match('/\$\{(.+)\}/', $value, $matches)) {
                 $value = $input->get($matches[1]);
             }

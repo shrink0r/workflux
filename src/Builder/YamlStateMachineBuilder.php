@@ -110,7 +110,7 @@ final class YamlStateMachineBuilder
         $state = Maybe::unit($state);
         $state_implementor = $state->class->get() ?: $this->getDefaultStateClass($state);
         $settings = $state->settings->get() ?: [];
-        $settings['export'] = array_merge($state->settings->export->get() ?: [], $state->export->get() ?: []);
+        $settings['output'] = array_merge($state->settings->output->get() ?: [], $state->output->get() ?: []);
         return new $state_implementor(
             $name,
             new Settings($settings),

@@ -10,13 +10,13 @@ states:
       prepare: input.get("transcoding_required")
 
   prepare:
-    export:
+    output:
       fake_success: true
     transitions:
       transcoding: ~
 
   transcoding:
-    export:
+    output:
       transcode_success: ${fake_success}
     transitions:
       ready: output.get("transcode_success")

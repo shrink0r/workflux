@@ -112,8 +112,16 @@ final class YamlStateMachineBuilder
         return new $state_implementor(
             $name,
             new Settings($state->settings->get() ?: []),
-            $this->createSchema($name.self::SUFFIX_IN, $state->input_schema->get() ?: []),
-            $this->createSchema($name.self::SUFFIX_OUT, $state->output_schema->get() ?: [])
+            $this->createSchema(
+                $name.self::SUFFIX_IN,
+                $state->input_schema->get()
+                ?: [ ':any_name:' => [ 'type' => 'any' ] ]
+            ),
+            $this->createSchema(
+                $name.self::SUFFIX_OUT,
+                $state->output_schema->get()
+                ?: [ ':any_name:' => [ 'type' => 'any' ] ]
+            )
         );
     }
 

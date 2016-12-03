@@ -71,10 +71,9 @@ trait StateTrait
                 sprintf("Trying to execute state '%s' with invalid input.", $this->getName())
             );
         }
-        $output = new Output($this->name);
+        $output = $this->generateOutput($input);
         $result = $this->output_schema->validate($output->toArray()['params']);
         if ($result instanceof Error) {
-            var_dump($result->unwrap());
             throw new OutputError(
                 $result->unwrap(),
                 sprintf("Trying to return invalid output from state: '%s'", $this->getName())
@@ -166,5 +165,14 @@ trait StateTrait
     private function getRequiredSettings(): array
     {
         return [];
+    }
+
+    private function generateOutput(InputInterface $input): OutputInterface
+    {
+        $params = [];
+        foreach ($this->getSetting('out', []) as $key => $value) {
+            $params[$key] = $value;
+        }
+        return new Output($this->name, $params);
     }
 }

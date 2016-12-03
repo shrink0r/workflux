@@ -18,10 +18,9 @@ class YamlStateMachineBuilderTest extends TestCase
                 return $transition->getTo() === 'rejected';
             })->first();
         $this->assertInstanceOf(StateMachineInterface::CLASS, $state_machine);
-        $this->assertEquals('bar', $state_machine->getStates()->get('new')->getSetting('foo'));
         $this->assertTrue($rejected_transition->getSetting('more_stuff'));
         $this->assertEquals(
-            'rejected',
+            'ready',
             $state_machine->execute(
                 new Input([ 'transcoding_required' => true ]),
                 'new'

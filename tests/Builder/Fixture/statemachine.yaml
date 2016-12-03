@@ -7,26 +7,26 @@ states:
         type: bool
     transitions:
       ready: not input.get("transcoding_required")
-      prepare:
-        when: input.get("transcoding_required")
+      prepare: input.get("transcoding_required")
 
   prepare:
+    export:
+      fake_success: true
     transitions:
       transcoding: ~
 
   transcoding:
     export:
-      transcode_success: true
+      transcode_success: ${fake_success}
     transitions:
       ready: output.get("transcode_success")
       error:
         when:
-          - not output.get("transcode_success")
-          - output.get("retry_limit_reached")
+          - not output.get("transcode_success") and output.get("retry_limit_reached")
       rejected:
         when:
-          - not output.get("retry_limit_reached")
           - not output.get("transcode_success")
+          - not output.get("retry_limit_reached")
         settings:
           label: yeah right
           more_stuff: true

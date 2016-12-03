@@ -167,10 +167,18 @@ trait StateTrait
         return [];
     }
 
+    /**
+     * @param InputInterface $input
+     *
+     * @return OutputInterface
+     */
     private function generateOutput(InputInterface $input): OutputInterface
     {
         $params = [];
         foreach ($this->getSetting('export', []) as $key => $value) {
+            if (is_string($value) && preg_match('/\$\{(.+)\}/', $value, $matches)) {
+                $value = $input->get($matches[1]);
+            }
             $params[$key] = $value;
         }
         return new Output($this->name, $params);

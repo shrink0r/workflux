@@ -66,6 +66,14 @@ final class Transition implements TransitionInterface
     }
 
     /**
+     * @return bool
+     */
+    public function hasConstraints(): bool
+    {
+        return !empty($this->constraints);
+    }
+
+    /**
      * @param  InputInterface $input
      * @param  OutputInterface $output
      *
@@ -87,7 +95,6 @@ final class Transition implements TransitionInterface
     public function __toString()
     {
         $label = implode("\nand ", $this->constraints);
-
         return empty($label) ? $this->getLabel() : $label;
     }
 

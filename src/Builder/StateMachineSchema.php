@@ -3,6 +3,8 @@
 namespace Workflux\Builder;
 
 use Shrink0r\PhpSchema\Factory;
+use Shrink0r\PhpSchema\FactoryInterface;
+use Shrink0r\PhpSchema\ResultInterface;
 use Shrink0r\PhpSchema\Schema;
 use Shrink0r\PhpSchema\SchemaInterface;
 
@@ -36,7 +38,7 @@ final class StateMachineSchema implements SchemaInterface
      *
      * @return ResultInterface Returns Ok on success; otherwise Error.
      */
-    public function validate(array $data)
+    public function validate(array $data): ResultInterface
     {
         return $this->internal_schema->validate($data);
     }
@@ -46,7 +48,7 @@ final class StateMachineSchema implements SchemaInterface
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->internal_schema->getName();
     }
@@ -56,7 +58,7 @@ final class StateMachineSchema implements SchemaInterface
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->internal_schema->getType();
     }
@@ -66,7 +68,7 @@ final class StateMachineSchema implements SchemaInterface
      *
      * @return SchemaInterface[]
      */
-    public function getCustomTypes()
+    public function getCustomTypes(): array
     {
         return $this->internal_schema->getCustomTypes();
     }
@@ -76,7 +78,7 @@ final class StateMachineSchema implements SchemaInterface
      *
      * @return Property\PropertyInterface[]
      */
-    public function getProperties()
+    public function getProperties(): array
     {
         return $this->internal_schema->getProperties();
     }
@@ -86,7 +88,7 @@ final class StateMachineSchema implements SchemaInterface
      *
      * @return FactoryInterface
      */
-    public function getFactory()
+    public function getFactory(): FactoryInterface
     {
         return $this->internal_schema->getFactory();
     }
@@ -94,9 +96,9 @@ final class StateMachineSchema implements SchemaInterface
     /**
      * Return php-schema definition that reflects the structural expectations towards state (yaml)data.
      *
-     * @return string
+     * @return mixed[]
      */
-    private function getStateSchema()
+    private function getStateSchema(): array
     {
         return [
             "type" => "assoc" ,
@@ -150,9 +152,9 @@ final class StateMachineSchema implements SchemaInterface
     /**
      * Return php-schema definition that reflects the structural expectations towards transition (yaml)data.
      *
-     * @return string
+     * @return mixed[]
      */
-    private function getTrantitionSchema()
+    private function getTrantitionSchema(): array
     {
         return [
             "type" => "assoc",

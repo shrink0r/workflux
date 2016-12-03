@@ -132,7 +132,9 @@ final class StateMachineBuilder
     }
 
     /**
-     * @return self
+     * @param string $class
+     *
+     * @return StateMachineInterface
      */
     public function build(string $class): StateMachineInterface
     {

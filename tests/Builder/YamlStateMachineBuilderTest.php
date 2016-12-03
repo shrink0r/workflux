@@ -21,9 +21,9 @@ class YamlStateMachineBuilderTest extends TestCase
         $this->assertEquals('bar', $state_machine->getStates()->get('new')->getSetting('foo'));
         $this->assertTrue($rejected_transition->getSetting('more_stuff'));
         $this->assertEquals(
-            'ready',
+            'rejected',
             $state_machine->execute(
-                new Input([ 'transcoding_required' => false ]),
+                new Input([ 'transcoding_required' => true ]),
                 'new'
             )->getCurrentState()
         );

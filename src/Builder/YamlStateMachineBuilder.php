@@ -6,6 +6,7 @@ use Shrink0r\Monatic\Maybe;
 use Shrink0r\PhpSchema\Error;
 use Shrink0r\PhpSchema\Factory;
 use Shrink0r\PhpSchema\Schema;
+use Shrink0r\PhpSchema\SchemaInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Yaml\Parser;
 use Workflux\Error\WorkfluxError;
@@ -26,16 +27,35 @@ final class YamlStateMachineBuilder
 
     const SUFFIX_OUT = '-output_schema';
 
+    /**
+     * @var Parser $parser
+     */
     private $parser;
 
+    /**
+     * @var string $yaml_filepath
+     */
     private $yaml_filepath;
 
+    /**
+     * @var StateMachineBuilder $internal_builder
+     */
     private $internal_builder;
 
+    /**
+     * @var SchemaInterface $schema
+     */
     private $schema;
 
+    /**
+     * @var ExpressionLanguage $expression_engine
+     */
     private $expression_engine;
 
+    /**
+     * @param string $yaml_filepath
+     * @param ExpressionLanguage|null $expression_engine
+     */
     public function __construct(string $yaml_filepath, ExpressionLanguage $expression_engine = null)
     {
         $this->parser = new Parser;
@@ -48,8 +68,6 @@ final class YamlStateMachineBuilder
     }
 
     /**
-     * @param string $state_machine_name
-     *
      * @return StateMachineInterface
      */
     public function build(): StateMachineInterface
@@ -81,7 +99,13 @@ final class YamlStateMachineBuilder
             ->build(Maybe::unit($data)->class->get() ?: StateMachine::CLASS);
     }
 
-    private function createState(string $name, $state): StateInterface
+    /**
+     * @param string $name
+     * @param mixed[]|null $state
+     *
+     * @return StateInterface
+     */
+    private function createState(string $name, array $state = null): StateInterface
     {
         $state = Maybe::unit($state);
         $state_implementor = $state->class->get() ?: $this->getDefaultStateClass($state);
@@ -93,11 +117,22 @@ final class YamlStateMachineBuilder
         );
     }
 
-    private function createSchema($name, array $schema_definition)
+    /**
+     * @param string $name
+     * @param array $schema_definition
+     *
+     * @return SchemaInterface
+     */
+    private function createSchema(string $name, array $schema_definition): SchemaInterface
     {
         return new Schema($name, [ 'type' => 'assoc', 'properties' => $schema_definition ], new Factory);
     }
 
+    /**
+     * @param Maybe $state
+     *
+     * @return string
+     */
     private function getDefaultStateClass(Maybe $state): string
     {
         if ($state->initial->get() === true) {
@@ -108,7 +143,14 @@ final class YamlStateMachineBuilder
         return State::CLASS;
     }
 
-    private function createTransition(string $from, string $to, $transition): TransitionInterface
+    /**
+     * @param string $from
+     * @param string $to
+     * @param  mixed[]|null $transition
+     *
+     * @return TransitionInterface
+     */
+    private function createTransition(string $from, string $to, array $transition = null): TransitionInterface
     {
         $t = Maybe::unit($transition);
         if (is_string($t->when->get())) {

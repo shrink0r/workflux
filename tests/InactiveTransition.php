@@ -67,4 +67,9 @@ final class InactiveTransition implements TransitionInterface
     {
         return [];
     }
+
+    public function hasConstraints(): bool
+    {
+        return false;
+    }
 }

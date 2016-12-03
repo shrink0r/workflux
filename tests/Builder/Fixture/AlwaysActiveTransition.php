@@ -6,7 +6,7 @@ use Workflux\Param\InputInterface;
 use Workflux\Param\OutputInterface;
 use Workflux\Transition\TransitionInterface;
 
-class AlwaysTrueTransition implements TransitionInterface
+class AlwaysActiveTransition implements TransitionInterface
 {
     /**
      * @var string
@@ -66,6 +66,11 @@ class AlwaysTrueTransition implements TransitionInterface
     public function getConstraints(): array
     {
         return [];
+    }
+
+    public function hasConstraints(): bool
+    {
+        return false;
     }
 
     /**

@@ -80,7 +80,7 @@ final class StateMap implements IteratorAggregate, Countable
     /**
      * @return StateInterface[]
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->internal_map->toArray();
     }

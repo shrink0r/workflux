@@ -16,7 +16,7 @@
         "vendor-dir": "vendor"
     },
     "require": {
-        "php": "^7.1",
+        "php": "^7.0",
         "php-ds/php-ds": "^1.1",
         "shrink0r/suffix-tree": "^0.1",
         "shrink0r/monatic": "^0.1",

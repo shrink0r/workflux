@@ -34,4 +34,9 @@ interface TransitionInterface
      * @return array
      */
     public function getConstraints(): array;
+
+    /**
+     * @return bool
+     */
+    public function hasConstraints(): bool;
 }

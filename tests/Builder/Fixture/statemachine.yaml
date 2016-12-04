@@ -17,7 +17,7 @@ states:
 
   transcoding:
     output:
-      transcode_success: ${fake_success}
+      transcode_success: input.get("fake_success")
     transitions:
       ready: output.get("transcode_success")
       error:

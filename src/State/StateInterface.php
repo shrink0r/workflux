@@ -5,6 +5,7 @@ namespace Workflux\State;
 use Shrink0r\PhpSchema\SchemaInterface;
 use Workflux\Param\InputInterface;
 use Workflux\Param\OutputInterface;
+use Workflux\State\ValidatorInterface;
 
 interface StateInterface
 {
@@ -36,14 +37,9 @@ interface StateInterface
     public function isInteractive(): bool;
 
     /**
-     * @return SchemaInterface
+     * @return ValidatorInterface
      */
-    public function getInputSchema(): SchemaInterface;
-
-    /**
-     * @return SchemaInterface
-     */
-    public function getOutputSchema(): SchemaInterface;
+    public function getValidator(): ValidatorInterface;
 
     /**
      * @param string $name
@@ -52,13 +48,6 @@ interface StateInterface
      * @return mixed
      */
     public function getSetting(string $name, $default = null);
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function hasSetting(string $name): bool;
 
     /**
      * @return ParamHolderInterface

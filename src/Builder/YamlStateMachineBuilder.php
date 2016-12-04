@@ -15,6 +15,7 @@ use Workflux\StateMachine;
 use Workflux\StateMachineInterface;
 use Workflux\State\FinalState;
 use Workflux\State\InitialState;
+use Workflux\State\Validator;
 use Workflux\State\State;
 use Workflux\State\StateInterface;
 use Workflux\Transition\ExpressionConstraint;
@@ -114,16 +115,18 @@ final class YamlStateMachineBuilder
         return new $state_implementor(
             $name,
             new Settings($settings),
-            $this->createSchema(
-                $name.self::SUFFIX_IN,
-                $state->input_schema->get()
-                ?: [ ':any_name:' => [ 'type' => 'any' ] ]
+            new Validator($this->createSchema(
+                    $name.self::SUFFIX_IN,
+                    $state->input_schema->get()
+                    ?: [ ':any_name:' => [ 'type' => 'any' ] ]
+                ),
+                $this->createSchema(
+                    $name.self::SUFFIX_OUT,
+                    $state->output_schema->get()
+                    ?: [ ':any_name:' => [ 'type' => 'any' ] ]
+                )
             ),
-            $this->createSchema(
-                $name.self::SUFFIX_OUT,
-                $state->output_schema->get()
-                ?: [ ':any_name:' => [ 'type' => 'any' ] ]
-            )
+            $this->expression_engine
         );
     }
 

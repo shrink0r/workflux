@@ -5,7 +5,9 @@ namespace Workflux\Tests;
 use PHPUnit_Framework_TestCase;
 use Shrink0r\PhpSchema\Factory;
 use Shrink0r\PhpSchema\Schema;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Workflux\Param\Settings;
+use Workflux\State\Validator;
 use Workflux\State\State;
 use Workflux\State\StateInterface;
 
@@ -25,8 +27,11 @@ class TestCase extends PHPUnit_Framework_TestCase
     {
         return [
             $settings ?: new Settings,
-            $input_schema ?: new Schema('input_schema', [ 'type' => 'assoc', 'properties' => [] ], new Factory),
-            $output_schema ?: new Schema('output_schema', [ 'type' => 'assoc', 'properties' => [] ], new Factory)
+            new Validator(
+                $input_schema ?: new Schema('input_schema', [ 'type' => 'assoc', 'properties' => [] ], new Factory),
+                $output_schema ?: new Schema('output_schema', [ 'type' => 'assoc', 'properties' => [] ], new Factory)
+            ),
+            new ExpressionLanguage
         ];
     }
 }

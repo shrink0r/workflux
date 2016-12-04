@@ -6,6 +6,7 @@ use Shrink0r\PhpSchema\Error;
 use Shrink0r\PhpSchema\Factory;
 use Shrink0r\PhpSchema\Schema;
 use Shrink0r\PhpSchema\SchemaInterface;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Workflux\Error\InputError;
 use Workflux\Error\OutputError;
 use Workflux\Error\WorkfluxError;
@@ -13,6 +14,7 @@ use Workflux\Param\InputInterface;
 use Workflux\Param\Output;
 use Workflux\Param\OutputInterface;
 use Workflux\Param\ParamHolderInterface;
+use Workflux\State\ValidatorInterface;
 
 trait StateTrait
 {
@@ -27,29 +29,31 @@ trait StateTrait
     private $settings;
 
     /**
-     * @var SchemaInterface $input_schema
+     * @var ValidatorInterface $schemas
      */
-    private $input_schema;
+    private $validator;
 
     /**
-     * @var SchemaInterface $output_schema
+     * @var ExpressionLanguage $expression_engine
      */
-    private $output_schema;
+    private $expression_engine;
 
     /**
      * @param string $name
      * @param ParamHolderInterface $settings
+     * @param ValidatorInterface $validator
+     * @param ExpressionLanguage $expression_engine
      */
     public function __construct(
         string $name,
         ParamHolderInterface $settings,
-        SchemaInterface $input_schema,
-        SchemaInterface $output_schema
+        ValidatorInterface $validator,
+        ExpressionLanguage $expression_engine
     ) {
         $this->name = $name;
         $this->settings = $settings;
-        $this->input_schema = $input_schema;
-        $this->output_schema = $output_schema;
+        $this->validator = $validator;
+        $this->expression_engine = $expression_engine;
         foreach ($this->getRequiredSettings() as $setting_name) {
             if (!$this->settings->has($setting_name)) {
                 throw new WorkfluxError("Trying to configure state '$name' without required setting '$setting_name'.");
@@ -64,21 +68,9 @@ trait StateTrait
      */
     public function execute(InputInterface $input): OutputInterface
     {
-        $result = $this->input_schema->validate($input->toArray());
-        if ($result instanceof Error) {
-            throw new InputError(
-                $result->unwrap(),
-                sprintf("Trying to execute state '%s' with invalid input.", $this->getName())
-            );
-        }
+        $this->validator->validateInput($this, $input);
         $output = $this->generateOutput($input);
-        $result = $this->output_schema->validate($output->toArray()['params']);
-        if ($result instanceof Error) {
-            throw new OutputError(
-                $result->unwrap(),
-                sprintf("Trying to return invalid output from state: '%s'", $this->getName())
-            );
-        }
+        $this->validator->validateOutput($this, $output);
         return $output;
     }
 
@@ -114,20 +106,12 @@ trait StateTrait
         return false;
     }
 
-    /**
-     * @return SchemaInterface
+     /**
+     * @return ValidatorInterface
      */
-    public function getInputSchema(): SchemaInterface
+    public function getValidator(): ValidatorInterface
     {
-        return $this->input_schema;
-    }
-
-    /**
-     * @return SchemaInterface
-     */
-    public function getOutputSchema(): SchemaInterface
-    {
-        return $this->output_schema;
+        return $this->validator;
     }
 
     /**
@@ -139,16 +123,6 @@ trait StateTrait
     public function getSetting(string $name, $default = null)
     {
         return $this->settings->get($name) ?: $default;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function hasSetting(string $name): bool
-    {
-        return $this->settings->has($name);
     }
 
     /**
@@ -176,10 +150,7 @@ trait StateTrait
     {
         $params = [];
         foreach ($this->getSetting('output', []) as $key => $value) {
-            if (is_string($value) && preg_match('/\$\{(.+)\}/', $value, $matches)) {
-                $value = $input->get($matches[1]);
-            }
-            $params[$key] = $value;
+            $params[$key] = $this->expression_engine->evaluate($value, [ 'input' => $input ]);
         }
         return new Output($this->name, $params);
     }

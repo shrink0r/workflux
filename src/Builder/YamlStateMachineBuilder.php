@@ -115,7 +115,8 @@ final class YamlStateMachineBuilder
         return new $state_implementor(
             $name,
             new Settings($settings),
-            new Validator($this->createSchema(
+            new Validator(
+                $this->createSchema(
                     $name.self::SUFFIX_IN,
                     $state->input_schema->get()
                     ?: [ ':any_name:' => [ 'type' => 'any' ] ]

@@ -2,7 +2,6 @@
 
 namespace Workflux\State;
 
-use Shrink0r\PhpSchema\SchemaInterface;
 use Workflux\Param\InputInterface;
 use Workflux\Param\OutputInterface;
 use Workflux\State\ValidatorInterface;

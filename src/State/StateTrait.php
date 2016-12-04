@@ -2,13 +2,7 @@
 
 namespace Workflux\State;
 
-use Shrink0r\PhpSchema\Error;
-use Shrink0r\PhpSchema\Factory;
-use Shrink0r\PhpSchema\Schema;
-use Shrink0r\PhpSchema\SchemaInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Workflux\Error\InputError;
-use Workflux\Error\OutputError;
 use Workflux\Error\WorkfluxError;
 use Workflux\Param\InputInterface;
 use Workflux\Param\Output;

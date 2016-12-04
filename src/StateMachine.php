@@ -4,7 +4,6 @@ namespace Workflux;
 
 use Ds\Map;
 use Ds\Vector;
-use Shrink0r\SuffixTree\Builder\SuffixTreeBuilder;
 use Workflux\Error\CorruptExecutionFlow;
 use Workflux\Error\InvalidStructure;
 use Workflux\Error\LogicError;

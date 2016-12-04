@@ -3,6 +3,7 @@
 namespace Workflux\Builder;
 
 use Ds\Map;
+use Workflux\Error\InvalidStructure;
 use Workflux\Error\UnsupportedState;
 use Workflux\Error\WorkfluxError;
 use Workflux\StateMachine;
@@ -91,7 +92,7 @@ final class StateMachineBuilder
         }
         $transition_key = $transition->getFrom().$transition->getTo();
         if ($this->transitions->hasKey($transition_key)) {
-            throw new InvalidWorkflow(
+            throw new InvalidStructure(
                 sprintf('Trying to add same transition twice: %s -> %s', $transition->getFrom(), $transition->getTo())
             );
         }

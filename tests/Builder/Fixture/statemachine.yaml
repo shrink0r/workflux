@@ -16,7 +16,7 @@ states:
       transcoding: ~
 
   transcoding:
-    class: Workflux\State\InteractiveState
+    interactive: true
     output:
       transcode_success: input.get("fake_success")
     transitions:

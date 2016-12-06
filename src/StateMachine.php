@@ -83,7 +83,7 @@ final class StateMachine implements StateMachineInterface
         if ($next_state && $cur_cycle === self::MAX_CYCLES) {
             throw CorruptExecutionFlow::fromExecutionTracker($execution_tracker, self::MAX_CYCLES);
         }
-        return $next_state ? $output->withCurrentState($next_state->getName()) : $output;
+        return $output;
     }
 
     /**

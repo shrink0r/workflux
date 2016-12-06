@@ -36,7 +36,7 @@ final class Validator implements ValidatorInterface
      * @param  StateInterface $state
      * @param  InputInterface $input
      */
-    public function validateInput(StateInterface $state, InputInterface $input): void
+    public function validateInput(StateInterface $state, InputInterface $input)
     {
         $result = $this->input_schema->validate($input->toArray());
         if ($result instanceof Error) {

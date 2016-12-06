@@ -10,12 +10,24 @@ use Workflux\State\StateInterface;
 
 final class ExecutionTracker
 {
+    /**
+     * @var Vector $breadcrumbs
+     */
     private $breadcrumbs;
 
+    /**
+     * @var Map $execution_counts
+     */
     private $execution_counts;
 
+    /**
+     * @var StateMachineInterface $state_machine
+     */
     private $state_machine;
 
+    /**
+     * @param StateMachineInterface $state_machine
+     */
     public function __construct(StateMachineInterface $state_machine)
     {
         $this->state_machine = $state_machine;
@@ -26,6 +38,11 @@ final class ExecutionTracker
         }
     }
 
+    /**
+     * @param StateInterface $state
+     *
+     * @return int
+     */
     public function track(StateInterface $state): int
     {
         $this->breadcrumbs->push($state->getName());
@@ -33,16 +50,27 @@ final class ExecutionTracker
         return $this->execution_counts[$state->getName()];
     }
 
+    /**
+     * @param StateInterface $state
+     *
+     * @return int
+     */
     public function getExecutionCount(StateInterface $state): int
     {
         return $this->execution_counts[$state->getName()];
     }
 
+    /**
+     * @return Vector
+     */
     public function getBreadcrumbs(): Vector
     {
         return clone $this->breadcrumbs;
     }
 
+    /**
+     * @return Vector
+     */
     public function detectExecutionLoop(): Vector
     {
         $execution_path = implode(' ', $this->breadcrumbs->toArray());

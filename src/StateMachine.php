@@ -74,9 +74,12 @@ final class StateMachine implements StateMachineInterface
         do {
             $cur_cycle = $execution_tracker->track($next_state);
             $output = $next_state->execute($input);
+            if ($next_state->isInteractive()) {
+                break;
+            }
             $next_state = $this->activateTransition($input, $output);
             $input = Input::fromOutput($output);
-        } while ($next_state && !$next_state->isInteractive($input) && $cur_cycle < self::MAX_CYCLES);
+        } while ($next_state && $cur_cycle < self::MAX_CYCLES);
 
         if ($next_state && $cur_cycle === self::MAX_CYCLES) {
             throw CorruptExecutionFlow::fromExecutionTracker($execution_tracker, self::MAX_CYCLES);
@@ -138,7 +141,10 @@ final class StateMachine implements StateMachineInterface
         if ($start_state->isFinal()) {
             throw new ExecutionError("Trying to (re)execute statemachine at final state: ".$state_name);
         }
-        if ($input->hasEvent() && $start_state->isInteractive()) {
+        if ($start_state->isInteractive()) {
+            if (!$input->hasEvent()) {
+                throw new ExecutionError("Trying to resume statemachine executing without providing an event/signal.");
+            }
             return $this->activateTransition($input, Output::fromInput($start_state->getName(), $input));
         }
         return $start_state;

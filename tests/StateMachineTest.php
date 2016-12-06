@@ -47,8 +47,9 @@ class StateMachineTest extends TestCase
             ->add(new Transition('bar', 'final', new Settings));
 
         $statemachine = new StateMachine('test-machine', $states, $transitions);
-        $output = $statemachine->execute(new Input([ 'is_ready' => true ]), 'initial');
-        $output = $statemachine->execute(Input::fromOutput($output), $output->getCurrentState());
+        $intial_output = $statemachine->execute(new Input([ 'is_ready' => true ]), 'initial');
+        $input = Input::fromOutput($intial_output)->withEvent('on_signal');
+        $output = $statemachine->execute($input, $intial_output->getCurrentState());
 
         $this->assertEquals('final', $output->getCurrentState());
     }

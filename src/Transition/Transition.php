@@ -34,6 +34,22 @@ final class Transition implements TransitionInterface
     }
 
     /**
+     * @param  InputInterface $input
+     * @param  OutputInterface $output
+     *
+     * @return bool
+     */
+    public function isActivatedBy(InputInterface $input, OutputInterface $output): bool
+    {
+        foreach ($this->constraints as $constraint) {
+            if (!$constraint->accepts($input, $output)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * @return string
      */
     public function getFrom(): string
@@ -54,7 +70,7 @@ final class Transition implements TransitionInterface
      */
     public function getLabel(): string
     {
-        return $this->settings->get('label') ?: '';
+        return $this->settings->get('label') ?? '';
     }
 
     /**
@@ -71,22 +87,6 @@ final class Transition implements TransitionInterface
     public function hasConstraints(): bool
     {
         return !empty($this->constraints);
-    }
-
-    /**
-     * @param  InputInterface $input
-     * @param  OutputInterface $output
-     *
-     * @return bool
-     */
-    public function isActivatedBy(InputInterface $input, OutputInterface $output): bool
-    {
-        foreach ($this->constraints as $constraint) {
-            if (!$constraint->accepts($input, $output)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Workflux\State;
 
 use Workflux\Param\InputInterface;
 use Workflux\Param\OutputInterface;
+use Workflux\Param\ParamHolderInterface;
 use Workflux\State\ValidatorInterface;
 
 interface StateInterface
@@ -51,5 +52,5 @@ interface StateInterface
     /**
      * @return ParamHolderInterface
      */
-    public function getSettings();
+    public function getSettings(): ParamHolderInterface;
 }

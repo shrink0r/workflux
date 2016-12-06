@@ -18,6 +18,10 @@ final class ExpressionConstraint implements ConstraintInterface
      */
     private $engine;
 
+    /**
+     * @param string $expression
+     * @param ExpressionLanguage $engine
+     */
     public function __construct(string $expression, ExpressionLanguage $engine)
     {
         $this->expression = $expression;
@@ -32,7 +36,10 @@ final class ExpressionConstraint implements ConstraintInterface
      */
     public function accepts(InputInterface $input, OutputInterface $output): bool
     {
-        return (bool)$this->engine->evaluate($this->expression, [ 'input' => $input, 'output' => $output ]);
+        return (bool)$this->engine->evaluate(
+            $this->expression,
+            [ 'event' => $input->getEvent(), 'input' => $input, 'output' => $output ]
+        );
     }
 
     /**

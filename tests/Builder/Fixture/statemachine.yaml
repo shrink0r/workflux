@@ -20,14 +20,18 @@ states:
     output:
       transcode_success: input.get("fake_success")
     transitions:
-      ready: output.get("transcode_success")
+      ready:
+        when:
+          - event == 'video_transcoded'
+          - output.get("transcode_success")
       error:
         when:
+          - event === 'video_transcoded'
           - not output.get("transcode_success") and output.get("retry_limit_reached")
       rejected:
         when:
-          - not output.get("transcode_success")
-          - not output.get("retry_limit_reached")
+          - event == 'video_transcoded'
+          - not output.get("transcode_success") and not output.get("retry_limit_reached")
         settings:
           label: yeah right
           more_stuff: true

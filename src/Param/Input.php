@@ -48,7 +48,7 @@ final class Input implements InputInterface
     public function withEvent(string $event): InputInterface
     {
         $clone = clone $this;
-        $this->event = $event;
+        $clone->event = $event;
         return $clone;
     }
 

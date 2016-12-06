@@ -8,7 +8,7 @@ use Shrink0r\SuffixTree\Builder\SuffixTreeBuilder;
 use Workflux\StateMachineInterface;
 use Workflux\State\StateInterface;
 
-final class ExecTracker
+final class ExecutionTracker
 {
     private $breadcrumbs;
 

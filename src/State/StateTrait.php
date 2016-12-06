@@ -3,7 +3,7 @@
 namespace Workflux\State;
 
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Workflux\Error\ErrorInterface;
+use Workflux\Error\ConfigError;
 use Workflux\Param\InputInterface;
 use Workflux\Param\Output;
 use Workflux\Param\OutputInterface;

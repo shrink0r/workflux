@@ -8,7 +8,7 @@ use Workflux\Param\Input;
 use Workflux\Param\InputInterface;
 use Workflux\Param\OutputInterface;
 use Workflux\StateMachineInterface;
-use Workflux\State\ExecTracker;
+use Workflux\State\ExecutionTracker;
 use Workflux\State\StateInterface;
 use Workflux\State\StateMap;
 use Workflux\State\StateSet;
@@ -67,17 +67,17 @@ final class StateMachine implements StateMachineInterface
      */
     public function execute(InputInterface $input, string $state_name): OutputInterface
     {
-        $exec_tracker = new ExecTracker($this);
+        $execution_tracker = new ExecutionTracker($this);
         $next_state = $this->getStartStateByName($state_name);
         do {
-            $cur_cycle = $exec_tracker->track($next_state);
+            $cur_cycle = $execution_tracker->track($next_state);
             $output = $next_state->execute($input);
             $next_state = $this->activateTransition($input, $output);
             $input = Input::fromOutput($output);
         } while ($next_state && !$next_state->isInteractive($input) && $cur_cycle < self::MAX_CYCLES);
 
         if ($next_state && $cur_cycle === self::MAX_CYCLES) {
-            throw CorruptExecutionFlow::fromExecTracker($exec_tracker, self::MAX_CYCLES);
+            throw CorruptExecutionFlow::fromExecutionTracker($execution_tracker, self::MAX_CYCLES);
         }
         return $next_state ? $output->withCurrentState($next_state->getName()) : $output;
     }

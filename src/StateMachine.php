@@ -4,7 +4,6 @@ namespace Workflux;
 
 use Workflux\Error\CorruptExecutionFlow;
 use Workflux\Error\ExecutionError;
-use Workflux\Error\UnknownState;
 use Workflux\Param\Input;
 use Workflux\Param\InputInterface;
 use Workflux\Param\OutputInterface;
@@ -14,7 +13,6 @@ use Workflux\State\StateInterface;
 use Workflux\State\StateMap;
 use Workflux\State\StateSet;
 use Workflux\Transition\StateTransitions;
-use Workflux\Transition\TransitionInterface;
 use Workflux\Transition\TransitionSet;
 
 final class StateMachine implements StateMachineInterface

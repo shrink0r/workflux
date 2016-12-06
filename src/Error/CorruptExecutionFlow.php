@@ -2,13 +2,11 @@
 
 namespace Workflux\Error;
 
-use Ds\Vector;
 use RuntimeException;
-use Shrink0r\SuffixTree\Builder\SuffixTreeBuilder;
-use Workflux\Error\WorkfluxError;
+use Workflux\Error\ErrorInterface;
 use Workflux\State\ExecTracker;
 
-class CorruptExecutionFlow extends RuntimeException implements WorkfluxError
+class CorruptExecutionFlow extends RuntimeException implements ErrorInterface
 {
     /**
      * @param ExecTracker $exec_tracker

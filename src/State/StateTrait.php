@@ -3,7 +3,7 @@
 namespace Workflux\State;
 
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Workflux\Error\WorkfluxError;
+use Workflux\Error\ErrorInterface;
 use Workflux\Param\InputInterface;
 use Workflux\Param\Output;
 use Workflux\Param\OutputInterface;
@@ -50,7 +50,7 @@ trait StateTrait
         $this->expression_engine = $expression_engine;
         foreach ($this->getRequiredSettings() as $setting_name) {
             if (!$this->settings->has($setting_name)) {
-                throw new WorkfluxError("Trying to configure state '$name' without required setting '$setting_name'.");
+                throw new ConfigError("Trying to configure state '$name' without required setting '$setting_name'.");
             }
         }
     }

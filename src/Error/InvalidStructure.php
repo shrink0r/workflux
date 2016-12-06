@@ -3,9 +3,9 @@
 namespace Workflux\Error;
 
 use DomainException;
-use Workflux\Error\WorkfluxError;
+use Workflux\Error\ErrorInterface;
 
-class InvalidStructure extends DomainException implements WorkfluxError
+class InvalidStructure extends DomainException implements ErrorInterface
 {
 
 }

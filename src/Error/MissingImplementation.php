@@ -3,9 +3,9 @@
 namespace Workflux\Error;
 
 use RuntimeException;
-use Workflux\Error\WorkfluxError;
+use Workflux\Error\ErrorInterface;
 
-class MissingImplementation extends RuntimeException implements WorkfluxError
+class MissingImplementation extends RuntimeException implements ErrorInterface
 {
 
 }

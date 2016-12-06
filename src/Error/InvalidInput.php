@@ -3,9 +3,9 @@
 namespace Workflux\Error;
 
 use DomainException;
-use Workflux\Error\WorkfluxError;
+use Workflux\Error\ErrorInterface;
 
-class InvalidInput extends DomainException implements WorkfluxError
+class InvalidInput extends DomainException implements ErrorInterface
 {
     /**
      * @var string[] $validation_errors

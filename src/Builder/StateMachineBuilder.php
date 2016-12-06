@@ -4,10 +4,11 @@ namespace Workflux\Builder;
 
 use Ds\Map;
 use Workflux\Error\InvalidStructure;
+use Workflux\Error\MissingImplementation;
 use Workflux\Error\UnknownState;
+use Workflux\StateMachineInterface;
 use Workflux\State\StateInterface;
 use Workflux\State\StateSet;
-use Workflux\StateMachineInterface;
 use Workflux\Transition\TransitionInterface;
 use Workflux\Transition\TransitionSet;
 

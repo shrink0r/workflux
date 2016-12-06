@@ -9,14 +9,15 @@ use Shrink0r\PhpSchema\Schema;
 use Shrink0r\PhpSchema\SchemaInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Yaml\Parser;
+use Workflux\Error\ConfigError;
 use Workflux\Param\Settings;
+use Workflux\StateMachine;
+use Workflux\StateMachineInterface;
 use Workflux\State\FinalState;
 use Workflux\State\InitialState;
 use Workflux\State\State;
 use Workflux\State\StateInterface;
 use Workflux\State\Validator;
-use Workflux\StateMachine;
-use Workflux\StateMachineInterface;
 use Workflux\Transition\ExpressionConstraint;
 use Workflux\Transition\Transition;
 use Workflux\Transition\TransitionInterface;
@@ -60,7 +61,7 @@ final class YamlStateMachineBuilder
     {
         $this->parser = new Parser;
         if (!is_readable($yaml_filepath)) {
-            throw new WorkfluxError("Trying to load non-existant statemachine definition at $yaml_filepath");
+            throw new ConfigError("Trying to load non-existant statemachine definition at: $yaml_filepath");
         }
         $this->yaml_filepath = $yaml_filepath;
         $this->schema = new StateMachineSchema;
@@ -78,7 +79,7 @@ final class YamlStateMachineBuilder
         $states = [];
         $result = $this->schema->validate($data);
         if ($result instanceof Error) {
-            throw new WorkfluxError('Invalid statemachin configuration given: ' . print_r($result->unwrap(), true));
+            throw new ConfigError('Invalid statemachine configuration given: ' . print_r($result->unwrap(), true));
         }
         foreach ($data['states'] as $name => $state) {
             $states[] = $this->createState($name, $state);

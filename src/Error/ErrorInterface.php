@@ -2,7 +2,7 @@
 
 namespace Workflux\Error;
 
-interface WorkfluxError
+interface ErrorInterface
 {
 
 }

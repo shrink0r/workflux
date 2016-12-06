@@ -113,6 +113,10 @@ final class StateMachineSchema implements SchemaInterface
                     "type" => "bool",
                     "required" => false
                 ],
+                "interactive" => [
+                    "type" => "bool",
+                    "required" => false
+                ],
                 "output" => [
                     "type" => "assoc",
                     "required" => false,

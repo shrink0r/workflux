@@ -8,6 +8,7 @@ All new features, changes and fixes should be listed here. Please use tickets to
 
 * Statemachines are defined in yaml
 * ExecutionContext has been replaced by Input/Output concept
+* State execution is not separated into onEnter/onExit any more
 * Detect a broader variety of structural and logical errors 
 
 ## 0.5.1 (2014/10/25)

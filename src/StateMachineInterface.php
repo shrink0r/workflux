@@ -43,5 +43,5 @@ interface StateMachineInterface
      *
      * @return OutputInterface
      */
-    public function execute(InputInterface $input, string $start_state): OutputInterface;
+    public function execute(InputInterface $input, string $start_state = null): OutputInterface;
 }

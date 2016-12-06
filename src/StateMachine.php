@@ -6,6 +6,7 @@ use Workflux\Error\CorruptExecutionFlow;
 use Workflux\Error\ExecutionError;
 use Workflux\Param\Input;
 use Workflux\Param\InputInterface;
+use Workflux\Param\Output;
 use Workflux\Param\OutputInterface;
 use Workflux\StateMachineInterface;
 use Workflux\State\ExecutionTracker;
@@ -65,10 +66,11 @@ final class StateMachine implements StateMachineInterface
      *
      * @return OutputInterface
      */
-    public function execute(InputInterface $input, string $state_name): OutputInterface
+    public function execute(InputInterface $input, string $state_name = null): OutputInterface
     {
+        $state_name = $state_name ?? $this->getInitialState()->getName();
         $execution_tracker = new ExecutionTracker($this);
-        $next_state = $this->getStartStateByName($state_name);
+        $next_state = $this->getStartStateByName($input, $state_name);
         do {
             $cur_cycle = $execution_tracker->track($next_state);
             $output = $next_state->execute($input);
@@ -127,7 +129,7 @@ final class StateMachine implements StateMachineInterface
      *
      * @return StateInterface
      */
-    private function getStartStateByName(string $state_name): StateInterface
+    private function getStartStateByName(InputInterface $input, string $state_name): StateInterface
     {
         $start_state = $this->states->get($state_name);
         if (!$start_state) {
@@ -135,6 +137,9 @@ final class StateMachine implements StateMachineInterface
         }
         if ($start_state->isFinal()) {
             throw new ExecutionError("Trying to (re)execute statemachine at final state: ".$state_name);
+        }
+        if ($input->hasEvent() && $start_state->isInteractive()) {
+            return $this->activateTransition($input, Output::fromInput($start_state->getName(), $input));
         }
         return $start_state;
     }

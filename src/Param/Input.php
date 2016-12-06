@@ -11,11 +11,45 @@ final class Input implements InputInterface
     use ParamHolderTrait;
 
     /**
-     * @param mixed[] $params
+     * @var string $event
      */
-    public function __construct(array $params = [])
+    private $event;
+
+    /**
+     * @param mixed[] $params
+     * @param string $event
+     */
+    public function __construct(array $params = [], string $event = '')
     {
         $this->params = $params;
+        $this->event = $event;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEvent(): string
+    {
+        return $this->event;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function hasEvent(): bool
+    {
+        return !empty($this->event);
+    }
+
+    /**
+     * @param  string $event
+     * @return InputInterface
+     */
+    public function withEvent(string $event): InputInterface
+    {
+        $clone = clone $this;
+        $this->event = $event;
+        return $clone;
     }
 
     /**

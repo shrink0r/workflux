@@ -19,12 +19,13 @@ class YamlStateMachineBuilderTest extends TestCase
             })->first();
         $this->assertInstanceOf(StateMachineInterface::CLASS, $state_machine);
         $this->assertTrue($rejected_transition->getSetting('more_stuff'));
-        $this->assertEquals(
-            'ready',
-            $state_machine->execute(
-                new Input([ 'transcoding_required' => true ]),
-                'new'
-            )->getCurrentState()
-        );
+
+        $initial_input = new Input([ 'transcoding_required' => true ]);
+        $initial_output = $state_machine->execute($initial_input);
+        $current_state = $initial_output->getCurrentState();
+        $this->assertEquals('transcoding', $current_state);
+        $input = Input::fromOutput($initial_output)->withEvent('video_transcoded');
+        $final_output = $state_machine->execute($input, $current_state);
+        $this->assertEquals('ready', $final_output->getCurrentState());
     }
 }

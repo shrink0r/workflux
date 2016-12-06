@@ -10,6 +10,7 @@ use Shrink0r\PhpSchema\SchemaInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Yaml\Parser;
 use Workflux\Error\ConfigError;
+use Workflux\Error\MissingImplementation;
 use Workflux\Param\Settings;
 use Workflux\StateMachine;
 use Workflux\StateMachineInterface;
@@ -18,6 +19,7 @@ use Workflux\State\InitialState;
 use Workflux\State\State;
 use Workflux\State\StateInterface;
 use Workflux\State\Validator;
+use Workflux\State\ValidatorInterface;
 use Workflux\Transition\ExpressionConstraint;
 use Workflux\Transition\Transition;
 use Workflux\Transition\TransitionInterface;
@@ -109,37 +111,27 @@ final class YamlStateMachineBuilder
     private function createState(string $name, array $state = null): StateInterface
     {
         $state = Maybe::unit($state);
-        $state_implementor = $state->class->get() ?: $this->getDefaultStateClass($state);
+        $state_implementor = $this->resolveStateImplementor($state);
         $settings = $state->settings->get() ?: [];
         $settings['output'] = array_merge($state->settings->output->get() ?: [], $state->output->get() ?: []);
-        return new $state_implementor(
+        $state_instance = new $state_implementor(
             $name,
             new Settings($settings),
-            new Validator(
-                $this->createSchema(
-                    $name.self::SUFFIX_IN,
-                    $state->input_schema->get()
-                    ?: [ ':any_name:' => [ 'type' => 'any' ] ]
-                ),
-                $this->createSchema(
-                    $name.self::SUFFIX_OUT,
-                    $state->output_schema->get()
-                    ?: [ ':any_name:' => [ 'type' => 'any' ] ]
-                )
-            ),
+            $this->createValidator($name, $state),
             $this->expression_engine
         );
-    }
-
-    /**
-     * @param string $name
-     * @param array $schema_definition
-     *
-     * @return SchemaInterface
-     */
-    private function createSchema(string $name, array $schema_definition): SchemaInterface
-    {
-        return new Schema($name, [ 'type' => 'assoc', 'properties' => $schema_definition ], new Factory);
+        if ($state->final->get() && !$state_instance->isFinal()) {
+            throw new ConfigError("Trying to provide custom state that isn't final but marked as final in config.");
+        }
+        if ($state->initial->get() && !$state_instance->isInitial()) {
+            throw new ConfigError("Trying to provide custom state that isn't initial but marked as initial in config.");
+        }
+        if ($state->interactive->get() && !$state_instance->isInteractive()) {
+            throw new ConfigError(
+                "Trying to provide custom state that isn't interactive but marked as interactive in config."
+            );
+        }
+        return $state_instance;
     }
 
     /**
@@ -147,14 +139,28 @@ final class YamlStateMachineBuilder
      *
      * @return string
      */
-    private function getDefaultStateClass(Maybe $state): string
+    private function resolveStateImplementor(Maybe $state): string
     {
-        if ($state->initial->get() === true) {
-            return InitialState::CLASS;
-        } elseif ($state->final->get() === true || $state->get() === null) {
-            return FinalState::CLASS;
+        switch (true) {
+            case $state->initial->get():
+                $state_implementor = InitialState::CLASS;
+                break;
+            case $state->final->get() === true || $state->get() === null: // cast null to final-state by convention
+                $state_implementor = FinalState::CLASS;
+                break;
+            case $state->interactive->get():
+                $state_implementor = Interactive::CLASS;
+                break;
+            default:
+                $state_implementor = State::CLASS;
         }
-        return State::CLASS;
+        $state_implementor = $state->class->get() ?? $state_implementor;
+        if (!in_array(StateInterface::CLASS, class_implements($state_implementor))) {
+            throw new MissingImplementation(
+                'Trying to build statemachine that does not implement required ' . StateInterface::CLASS
+            );
+        }
+        return $state_implementor;
     }
 
     /**
@@ -170,7 +176,12 @@ final class YamlStateMachineBuilder
         if (is_string($t->when->get())) {
             $transition['when'] = [ $t->when->get() ];
         }
-        $implementor = $t->class->get() ?: Transition::CLASS;
+        $implementor = $t->class->get() ?? Transition::CLASS;
+        if (!in_array(TransitionInterface::CLASS, class_implements($implementor))) {
+            throw new MissingImplementation(
+                'Trying to create transition without implementing required ' . TransitionInterface::CLASS
+            );
+        }
         $constraints = [];
         foreach (Maybe::unit($transition)->when->get() ?: [] as $expression) {
             if (!is_string($expression)) {
@@ -180,5 +191,38 @@ final class YamlStateMachineBuilder
         }
         $settings = new Settings(Maybe::unit($transition)->settings->get() ?: []);
         return new $implementor($from, $to, $settings, $constraints);
+    }
+
+    /**
+     * @param string $name
+     * @param  Maybe $state
+     *
+     * @return ValidatorInterface
+     */
+    private function createValidator(string $name, Maybe $state): ValidatorInterface
+    {
+        return new Validator(
+            $this->createSchema(
+                $name.self::SUFFIX_IN,
+                $state->input_schema->get()
+                ?? [ ':any_name:' => [ 'type' => 'any' ] ]
+            ),
+            $this->createSchema(
+                $name.self::SUFFIX_OUT,
+                $state->output_schema->get()
+                ?? [ ':any_name:' => [ 'type' => 'any' ] ]
+            )
+        );
+    }
+
+    /**
+     * @param string $name
+     * @param array $schema_definition
+     *
+     * @return SchemaInterface
+     */
+    private function createSchema(string $name, array $schema_definition): SchemaInterface
+    {
+        return new Schema($name, [ 'type' => 'assoc', 'properties' => $schema_definition ], new Factory);
     }
 }

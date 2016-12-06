@@ -68,7 +68,7 @@ final class YamlStateMachineBuilder
         }
         $this->yaml_filepath = $yaml_filepath;
         $this->schema = new StateMachineSchema;
-        $this->expression_engine = $expression_engine ?: new ExpressionLanguage;
+        $this->expression_engine = $expression_engine ?? new ExpressionLanguage;
     }
 
     /**
@@ -100,7 +100,7 @@ final class YamlStateMachineBuilder
             ->addStateMachineName($data['name'])
             ->addStates($states)
             ->addTransitions($transitions)
-            ->build(Maybe::unit($data)->class->get() ?: StateMachine::CLASS);
+            ->build(Maybe::unit($data)->class->get() ?? StateMachine::CLASS);
     }
 
     /**
@@ -113,8 +113,8 @@ final class YamlStateMachineBuilder
     {
         $state = Maybe::unit($state);
         $state_implementor = $this->resolveStateImplementor($state);
-        $settings = $state->settings->get() ?: [];
-        $settings['output'] = array_merge($state->settings->output->get() ?: [], $state->output->get() ?: []);
+        $settings = $state->settings->get() ?? [];
+        $settings['output'] = array_merge($state->settings->output->get() ?? [], $state->output->get() ?? []);
         $state_instance = new $state_implementor(
             $name,
             new Settings($settings),
@@ -184,13 +184,13 @@ final class YamlStateMachineBuilder
             );
         }
         $constraints = [];
-        foreach (Maybe::unit($transition)->when->get() ?: [] as $expression) {
+        foreach (Maybe::unit($transition)->when->get() ?? [] as $expression) {
             if (!is_string($expression)) {
                 continue;
             }
             $constraints[] = new ExpressionConstraint($expression, $this->expression_engine);
         }
-        $settings = new Settings(Maybe::unit($transition)->settings->get() ?: []);
+        $settings = new Settings(Maybe::unit($transition)->settings->get() ?? []);
         return new $implementor($from, $to, $settings, $constraints);
     }
 

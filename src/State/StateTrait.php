@@ -116,7 +116,7 @@ trait StateTrait
      */
     public function getSetting(string $name, $default = null)
     {
-        return $this->settings->get($name) ?: $default;
+        return $this->settings->get($name) ?? $default;
     }
 
     /**

@@ -51,7 +51,7 @@ final class Validator implements ValidatorInterface
      * @param  StateInterface $state
      * @param  OutputInterface $output
      */
-    public function validateOutput(StateInterface $state, OutputInterface $output): void
+    public function validateOutput(StateInterface $state, OutputInterface $output)
     {
         $result = $this->output_schema->validate($output->toArray()['params']);
         if ($result instanceof Error) {

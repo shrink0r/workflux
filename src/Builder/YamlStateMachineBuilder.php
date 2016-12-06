@@ -16,6 +16,7 @@ use Workflux\StateMachine;
 use Workflux\StateMachineInterface;
 use Workflux\State\FinalState;
 use Workflux\State\InitialState;
+use Workflux\State\InteractiveState;
 use Workflux\State\State;
 use Workflux\State\StateInterface;
 use Workflux\State\Validator;
@@ -149,7 +150,7 @@ final class YamlStateMachineBuilder
                 $state_implementor = FinalState::CLASS;
                 break;
             case $state->interactive->get():
-                $state_implementor = Interactive::CLASS;
+                $state_implementor = InteractiveState::CLASS;
                 break;
             default:
                 $state_implementor = State::CLASS;

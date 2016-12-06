@@ -472,16 +472,16 @@
     "packages-dev": [
         {
             "name": "blackfire/php-sdk",
-            "version": "v1.5.19",
+            "version": "v1.5.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/blackfireio/php-sdk.git",
-                "reference": "182a6feb031e494c3ef87005c6af5f9082487d73"
+                "reference": "8e01e13168d23a7aa3aaf13b31c1fd8f155aef19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/blackfireio/php-sdk/zipball/182a6feb031e494c3ef87005c6af5f9082487d73",
-                "reference": "182a6feb031e494c3ef87005c6af5f9082487d73",
+                "url": "https://api.github.com/repos/blackfireio/php-sdk/zipball/8e01e13168d23a7aa3aaf13b31c1fd8f155aef19",
+                "reference": "8e01e13168d23a7aa3aaf13b31c1fd8f155aef19",
                 "shasum": ""
             },
             "require": {
@@ -523,7 +523,7 @@
                 "uprofiler",
                 "xhprof"
             ],
-            "time": "2016-10-28 11:57:48"
+            "time": "2016-12-05 14:36:18"
         },
         {
             "name": "composer/ca-bundle",
@@ -1596,16 +1596,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.6.7",
+            "version": "5.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "38810e97481723ef918f6e35c03cb1014a645bd5"
+                "reference": "336aff0ac52e306c98e7455bc3e8d7b0bf777a5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/38810e97481723ef918f6e35c03cb1014a645bd5",
-                "reference": "38810e97481723ef918f6e35c03cb1014a645bd5",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/336aff0ac52e306c98e7455bc3e8d7b0bf777a5e",
+                "reference": "336aff0ac52e306c98e7455bc3e8d7b0bf777a5e",
                 "shasum": ""
             },
             "require": {
@@ -1624,7 +1624,7 @@
                 "phpunit/phpunit-mock-objects": "^3.2",
                 "sebastian/comparator": "~1.2.2",
                 "sebastian/diff": "~1.2",
-                "sebastian/environment": "^1.3 || ^2.0",
+                "sebastian/environment": "^1.3.4 || ^2.0",
                 "sebastian/exporter": "~2.0",
                 "sebastian/global-state": "~1.0",
                 "sebastian/object-enumerator": "~2.0",
@@ -1648,7 +1648,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "5.6.x-dev"
+                    "dev-master": "5.7.x-dev"
                 }
             },
             "autoload": {
@@ -1674,7 +1674,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-11-28 16:04:24"
+            "time": "2016-12-03 08:33:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

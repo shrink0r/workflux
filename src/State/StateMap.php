@@ -2,6 +2,7 @@
 
 namespace Workflux\State;
 
+use Closure;
 use Countable;
 use Ds\Map;
 use IteratorAggregate;
@@ -39,6 +40,37 @@ final class StateMap implements IteratorAggregate, Countable
         $cloned_map->internal_map->put($state->getName(), $state);
 
         return $cloned_map;
+    }
+
+    /**
+     * @param Closure $query
+     *
+     * @return self
+     */
+    public function find(Closure $query): self
+    {
+        $states = [];
+        foreach ($this->internal_map as $state) {
+            if (true === $query($state)) {
+                $states[] = $state;
+            }
+        }
+        return new self($states);
+    }
+
+     /**
+     * @param Closure $query
+     *
+     * @return StateInterface|null
+     */
+    public function findOne(Closure $query)
+    {
+        foreach ($this->internal_map as $state) {
+            if (true === $query($state)) {
+                return $state;
+            }
+        }
+        return null;
     }
 
     /**

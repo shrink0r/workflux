@@ -92,7 +92,7 @@ final class Transition implements TransitionInterface
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $label = implode("\nand ", $this->constraints);
         return empty($label) ? $this->getLabel() : $label;
@@ -122,7 +122,7 @@ final class Transition implements TransitionInterface
     /**
      * @return ParamHolderInterface
      */
-    public function getSettings()
+    public function getSettings(): ParamHolderInterface
     {
         return $this->settings;
     }

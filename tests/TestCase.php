@@ -13,6 +13,8 @@ use Workflux\State\StateInterface;
 
 class TestCase extends PHPUnit_Framework_TestCase
 {
+    private static $default_schema = [ 'type' => 'assoc', 'properties' =>  [ ':any_name:' => [ 'type' => 'any' ] ] ];
+
     public function createState(
         $name,
         $implementor = State::ClASS,
@@ -28,8 +30,8 @@ class TestCase extends PHPUnit_Framework_TestCase
         return [
             $settings ?: new Settings,
             new Validator(
-                $input_schema ?: new Schema('input_schema', [ 'type' => 'assoc', 'properties' => [] ], new Factory),
-                $output_schema ?: new Schema('output_schema', [ 'type' => 'assoc', 'properties' => [] ], new Factory)
+                $input_schema ?: new Schema('input_schema', self::$default_schema, new Factory),
+                $output_schema ?: new Schema('output_schema', self::$default_schema, new Factory)
             ),
             new ExpressionLanguage
         ];

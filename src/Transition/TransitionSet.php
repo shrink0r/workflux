@@ -90,7 +90,7 @@ final class TransitionSet implements IteratorAggregate, Countable
     /**
      * @return TransitionInterface[]
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->internal_set->toArray();
     }

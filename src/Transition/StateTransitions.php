@@ -7,7 +7,9 @@ use Ds\Map;
 use IteratorAggregate;
 use Traversable;
 use Workflux\Error\InvalidStructure;
+use Workflux\State\StateInterface;
 use Workflux\State\StateMap;
+use Workflux\State\StateSet;
 use Workflux\Transition\TransitionInterface;
 use Workflux\Transition\TransitionSet;
 
@@ -21,12 +23,10 @@ final class StateTransitions implements IteratorAggregate, Countable
     /**
      * @param  StateMap $states
      * @param  TransitionSet $transitions
-     *
-     * @return self
      */
-    public static function create(StateMap $states, TransitionSet $transitions): self
+    public function __construct(StateMap $states, TransitionSet $transitions)
     {
-        $state_transitions = new self;
+        $this->internal_map = new Map;
         foreach ($transitions as $transition) {
             $from_state = $transition->getFrom();
             $to_state = $transition->getTo();
@@ -42,23 +42,16 @@ final class StateTransitions implements IteratorAggregate, Countable
             if ($states->get($to_state)->isInitial()) {
                 throw new InvalidStructure('Trying to transition to initial-state: '.$to_state);
             }
-            $state_transitions = $state_transitions->put($transition);
+            $state_transitions = $this->internal_map->get($transition->getFrom(), new TransitionSet);
+            $this->internal_map->put($transition->getFrom(), $state_transitions->add($transition));
         }
-        return $state_transitions;
-    }
-
-    /**
-     * @param TransitionInterface[] $states
-     */
-    public function __construct(array $transitions = [])
-    {
-        $this->internal_map = new Map;
-        (function (TransitionInterface ...$transitions) {
-            foreach ($transitions as $transition) {
-                $state_transitions = $this->internal_map->get($transition->getFrom(), new TransitionSet);
-                $this->internal_map->put($transition->getFrom(), $state_transitions->add($transition));
-            }
-        })(...$transitions);
+        $initial_state = $states->findOne(function (StateInterface $state) {
+            return $state->isInitial();
+        });
+        $reachable_states = $this->depthFirstScan($states, $initial_state, new StateSet);
+        if (count($reachable_states) !== count($states)) {
+            throw new InvalidStructure('Not all states are properly connected.');
+        }
     }
 
     /**
@@ -73,7 +66,6 @@ final class StateTransitions implements IteratorAggregate, Countable
             $transition->getFrom(),
             $cloned_self->get($transition->getFrom())->add($transition)
         );
-
         return $cloned_self;
     }
 
@@ -124,5 +116,34 @@ final class StateTransitions implements IteratorAggregate, Countable
     public function __clone()
     {
         $this->internal_map = clone $this->internal_map;
+    }
+
+     /**
+     * @param  StateMap $all_states
+     * @param  StateTransitions $state_transitions
+     * @param  StateInterface $state
+     * @param  StateSet $visited_states
+     *
+     * @return StateSet
+     */
+    private function depthFirstScan(
+        StateMap $states,
+        StateInterface $state,
+        StateSet $visited_states
+    ): StateSet {
+        if ($visited_states->contains($state)) {
+            return $visited_states;
+        }
+        $visited_states->add($state);
+        $child_states = array_map(
+            function (TransitionInterface $transition) use ($states): StateInterface {
+                return $states->get($transition->getTo());
+            },
+            $this->get($state->getName())->toArray()
+        );
+        foreach ($child_states as $child_state) {
+            $visited_states = $this->depthFirstScan($states, $child_state, $visited_states);
+        }
+        return $visited_states;
     }
 }

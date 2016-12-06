@@ -4,12 +4,10 @@ namespace Workflux\Builder;
 
 use Ds\Map;
 use Workflux\Error\InvalidStructure;
-use Workflux\Error\UnsupportedState;
-use Workflux\Error\WorkfluxError;
-use Workflux\StateMachine;
-use Workflux\StateMachineInterface;
+use Workflux\Error\UnknownState;
 use Workflux\State\StateInterface;
 use Workflux\State\StateSet;
+use Workflux\StateMachineInterface;
 use Workflux\Transition\TransitionInterface;
 use Workflux\Transition\TransitionSet;
 
@@ -45,7 +43,6 @@ final class StateMachineBuilder
     {
         $builder = clone $this;
         $builder->state_machine_name = $state_machine_name;
-
         return $builder;
     }
 
@@ -58,7 +55,6 @@ final class StateMachineBuilder
     {
         $builder = clone $this;
         $builder->states[$state->getName()] = $state;
-
         return $builder;
     }
 
@@ -73,7 +69,6 @@ final class StateMachineBuilder
         foreach ($states as $state) {
             $builder->states[$state->getName()] = $state;
         }
-
         return $builder;
     }
 
@@ -85,10 +80,10 @@ final class StateMachineBuilder
     public function addTransition(TransitionInterface $transition): self
     {
         if (!$this->states->hasKey($transition->getFrom())) {
-            throw new UnsupportedState('Trying to add transition from unknown state: ' . $transition->getFrom());
+            throw new UnknownState('Trying to add transition from unknown state: ' . $transition->getFrom());
         }
         if (!$this->states->hasKey($transition->getTo())) {
-            throw new UnsupportedState('Trying to add transition to unknown state: ' . $transition->getTo());
+            throw new UnknownState('Trying to add transition to unknown state: ' . $transition->getTo());
         }
         $transition_key = $transition->getFrom().$transition->getTo();
         if ($this->transitions->hasKey($transition_key)) {
@@ -98,7 +93,6 @@ final class StateMachineBuilder
         }
         $builder = clone $this;
         $builder->transitions[$transition_key] = $transition;
-
         return $builder;
     }
 
@@ -112,14 +106,14 @@ final class StateMachineBuilder
         $builder = clone $this;
         foreach ($transitions as $transition) {
             if (!$this->states->hasKey($transition->getFrom())) {
-                throw new UnsupportedState('Trying to add transition from unknown state: ' . $transition->getFrom());
+                throw new UnknownState('Trying to add transition from unknown state: ' . $transition->getFrom());
             }
             if (!$this->states->hasKey($transition->getTo())) {
-                throw new UnsupportedState('Trying to add transition to unknown state: ' . $transition->getTo());
+                throw new UnknownState('Trying to add transition to unknown state: ' . $transition->getTo());
             }
             $transition_key = $transition->getFrom().$transition->getTo();
             if ($builder->transitions->hasKey($transition_key)) {
-                throw new InvalidWorkflow(
+                throw new InvalidStructure(
                     sprintf(
                         'Trying to add same transition twice: %s -> %s',
                         $transition->getFrom(),
@@ -142,10 +136,10 @@ final class StateMachineBuilder
         $states = new StateSet($this->states->values()->toArray());
         $transitions = new TransitionSet($this->transitions->values()->toArray());
         if (!in_array(StateMachineInterface::CLASS, class_implements($class))) {
-            throw new WorkfluxError(
-                'Trying to build statemachine that does not implement ' . StateMachineInterface::CLASS
+            throw new MissingImplementation(
+                'Trying to build statemachine that does not implement required ' . StateMachineInterface::CLASS
             );
         }
-        return new StateMachine($this->state_machine_name, $states, $transitions);
+        return new $class($this->state_machine_name, $states, $transitions);
     }
 }

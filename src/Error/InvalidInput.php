@@ -2,9 +2,10 @@
 
 namespace Workflux\Error;
 
+use DomainException;
 use Workflux\Error\WorkfluxError;
 
-class OutputError extends WorkfluxError
+class InvalidInput extends DomainException implements WorkfluxError
 {
     /**
      * @var string[] $validation_errors
@@ -15,7 +16,7 @@ class OutputError extends WorkfluxError
      * @param string[] $validation_errors
      * @param string $msg
      */
-    public function __construct(array $validation_errors, $msg = '')
+    public function __construct(array $validation_errors, string $msg = '')
     {
         $this->validation_errors = $validation_errors;
 
@@ -25,7 +26,7 @@ class OutputError extends WorkfluxError
     /**
      * @return string[]
      */
-    public function getValidationErrors()
+    public function getValidationErrors(): array
     {
         return $this->validation_errors;
     }

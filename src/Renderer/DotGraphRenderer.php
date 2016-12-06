@@ -20,7 +20,6 @@ final class DotGraphRenderer implements RendererInterface
         foreach ($state_machine->getStates() as $state) {
             $node_id_map->put($state->getName(), sprintf('node%d', ++$node_id));
         }
-
         return sprintf(
             "digraph \"%s\" {\n    %s\n\n    %s\n}",
             $state_machine->getName(),
@@ -38,7 +37,6 @@ final class DotGraphRenderer implements RendererInterface
     private function renderStateNodes(StateMachineInterface $state_machine, Map $node_id_map): array
     {
         $state_nodes = [];
-
         foreach ($state_machine->getStates() as $state_name => $state) {
             $attributes = sprintf('label="%s"', $state_name);
             $attributes .= ' fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b"';
@@ -47,7 +45,6 @@ final class DotGraphRenderer implements RendererInterface
             }
             $state_nodes[] = sprintf('%s [%s];', $node_id_map->get($state_name), $attributes);
         }
-
         return $state_nodes;
     }
 
@@ -60,7 +57,6 @@ final class DotGraphRenderer implements RendererInterface
     private function renderTransitionEdges(StateMachineInterface $state_machine, Map $node_id_map): array
     {
         $edges = [];
-
         foreach ($state_machine->getStateTransitions() as $state_name => $state_transitions) {
             foreach ($state_transitions as $transition) {
                 $from_node = $node_id_map->get($transition->getFrom());
@@ -71,7 +67,6 @@ final class DotGraphRenderer implements RendererInterface
                 $edges[] = sprintf('%s -> %s [%s];', $from_node, $to_node, $attributes);
             }
         }
-
         return $edges;
     }
 }

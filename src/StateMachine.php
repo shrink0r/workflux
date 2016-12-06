@@ -2,16 +2,14 @@
 
 namespace Workflux;
 
-use Ds\Map;
-use Ds\Vector;
 use Workflux\Error\CorruptExecutionFlow;
-use Workflux\Error\InvalidStructure;
-use Workflux\Error\LogicError;
-use Workflux\Error\UnsupportedState;
+use Workflux\Error\ExecutionError;
+use Workflux\Error\UnknownState;
 use Workflux\Param\Input;
 use Workflux\Param\InputInterface;
 use Workflux\Param\OutputInterface;
 use Workflux\StateMachineInterface;
+use Workflux\State\ExecTracker;
 use Workflux\State\StateInterface;
 use Workflux\State\StateMap;
 use Workflux\State\StateSet;
@@ -50,22 +48,40 @@ final class StateMachine implements StateMachineInterface
 
     /**
      * @param string $name
-     * @param StateSet $states
-     * @param TransitionSet $transitions
+     * @param StateSet $state_set
+     * @param TransitionSet $transition_set
      */
-    public function __construct(string $name, StateSet $states, TransitionSet $transitions)
+    public function __construct(string $name, StateSet $state_set, TransitionSet $transition_set)
     {
-        list($initial_state, $all_states, $final_states) = $states->splat();
-        $state_transitions = StateTransitions::create($all_states, $transitions);
-        $reachable_states = $this->depthFirstScan($all_states, $state_transitions, $initial_state, new StateSet);
-        if (count($reachable_states) !== count($all_states)) {
-            throw new InvalidStructure('Not all states are properly connected.');
-        }
+        list($initial_state, $states, $final_states) = $state_set->splat();
         $this->name = $name;
-        $this->initial_state = $initial_state;
-        $this->states = $all_states;
+        $this->states = $states;
         $this->final_states = $final_states;
-        $this->state_transitions = $state_transitions;
+        $this->initial_state = $initial_state;
+        $this->state_transitions = new StateTransitions($states, $transition_set);
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param string $state_name
+     *
+     * @return OutputInterface
+     */
+    public function execute(InputInterface $input, string $state_name): OutputInterface
+    {
+        $exec_tracker = new ExecTracker($this);
+        $next_state = $this->getStartStateByName($state_name);
+        do {
+            $cur_cycle = $exec_tracker->track($next_state);
+            $output = $next_state->execute($input);
+            $next_state = $this->activateTransition($input, $output);
+            $input = Input::fromOutput($output);
+        } while ($next_state && !$next_state->isInteractive($input) && $cur_cycle < self::MAX_CYCLES);
+
+        if ($next_state && $cur_cycle === self::MAX_CYCLES) {
+            throw CorruptExecutionFlow::fromExecTracker($exec_tracker, self::MAX_CYCLES);
+        }
+        return $next_state ? $output->withCurrentState($next_state->getName()) : $output;
     }
 
     /**
@@ -109,66 +125,6 @@ final class StateMachine implements StateMachineInterface
     }
 
     /**
-     * @param InputInterface $input
-     * @param string $state_name
-     *
-     * @return OutputInterface
-     */
-    public function execute(InputInterface $input, string $state_name): OutputInterface
-    {
-        $bread_crumbs = new Vector;
-        $execution_cnt_map = new Map;
-        foreach ($this->getStates() as $state) {
-            $execution_cnt_map[$state->getName()] = 0;
-        }
-        $next_state = $this->getStartStateByName($state_name);
-        do {
-            $bread_crumbs->push($next_state->getName());
-            $execution_cnt_map[$next_state->getName()]++;
-            $output = $next_state->execute($input);
-            $next_state = $this->activateTransition($input, $output);
-            $input = Input::fromOutput($output);
-        } while ($next_state
-            && !$next_state->isInteractive($input)
-            && $execution_cnt_map[$next_state->getName()] < self::MAX_CYCLES
-        );
-        if ($next_state && $execution_cnt_map[$next_state->getName()] === self::MAX_CYCLES) {
-            throw CorruptExecutionFlow::raiseLoopDetected($bread_crumbs, self::MAX_CYCLES);
-        }
-        return $next_state ? $output->withCurrentState($next_state->getName()) : $output;
-    }
-
-    /**
-     * @param  StateMap $all_states
-     * @param  StateTransitions $state_transitions
-     * @param  StateInterface $state
-     * @param  StateSet $visited_states
-     *
-     * @return StateSet
-     */
-    private function depthFirstScan(
-        StateMap $states,
-        StateTransitions $transitions,
-        StateInterface $state,
-        StateSet $visited_states
-    ): StateSet {
-        if ($visited_states->contains($state)) {
-            return $visited_states;
-        }
-        $visited_states->add($state);
-        $child_states = array_map(
-            function (TransitionInterface $transition) use ($states): StateInterface {
-                return $states->get($transition->getTo());
-            },
-            $transitions->get($state->getName())->toArray()
-        );
-        foreach ($child_states as $child_state) {
-            $visited_states = $this->depthFirstScan($states, $transitions, $child_state, $visited_states);
-        }
-        return $visited_states;
-    }
-
-    /**
      * @param  string $state_name
      *
      * @return StateInterface
@@ -177,10 +133,10 @@ final class StateMachine implements StateMachineInterface
     {
         $start_state = $this->states->get($state_name);
         if (!$start_state) {
-            throw new UnsupportedState("Trying to start statemachine execution at unknown state: ".$state_name);
+            throw new ExecutionError("Trying to start statemachine execution at unknown state: ".$state_name);
         }
         if ($start_state->isFinal()) {
-            throw new LogicError("Trying to (re)execute statemachine at final state: ".$state_name);
+            throw new ExecutionError("Trying to (re)execute statemachine at final state: ".$state_name);
         }
         return $start_state;
     }
@@ -197,7 +153,7 @@ final class StateMachine implements StateMachineInterface
         foreach ($this->state_transitions->get($output->getCurrentState()) as $transition) {
             if ($transition->isActivatedBy($input, $output)) {
                 if ($next_state !== null) {
-                    throw new LogicError(
+                    throw new ExecutionError(
                         'Trying to activate more than one transition at a time. Transition: '.
                         $output->getCurrentState().' -> '.$next_state->getName().' was activated first. '.
                         'Now '.$transition->getFrom().' -> '.$transition->getTo().' is being activated too.'

@@ -62,7 +62,7 @@ final class StateMachine implements StateMachineInterface
 
     /**
      * @param InputInterface $input
-     * @param string $state_name
+     * @param string $start_state
      *
      * @return OutputInterface
      */

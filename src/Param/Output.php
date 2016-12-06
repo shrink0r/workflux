@@ -42,7 +42,6 @@ final class Output implements OutputInterface
     {
         $output = clone $this;
         $output->current_state = $current_state;
-
         return $output;
     }
 

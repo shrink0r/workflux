@@ -66,11 +66,10 @@ final class StateMachine implements StateMachineInterface
      *
      * @return OutputInterface
      */
-    public function execute(InputInterface $input, string $state_name = null): OutputInterface
+    public function execute(InputInterface $input, string $start_state = null): OutputInterface
     {
-        $state_name = $state_name ?? $this->getInitialState()->getName();
         $execution_tracker = new ExecutionTracker($this);
-        $next_state = $this->getStartStateByName($input, $state_name);
+        $next_state = $this->determineStartState($input, $start_state);
         do {
             $cur_cycle = $execution_tracker->track($next_state);
             $output = $next_state->execute($input);
@@ -128,13 +127,14 @@ final class StateMachine implements StateMachineInterface
     }
 
     /**
-     * @param  string $state_name
+     * @param InputInterface $input
+     * @param string $state_name
      *
      * @return StateInterface
      */
-    private function getStartStateByName(InputInterface $input, string $state_name): StateInterface
+    private function determineStartState(InputInterface $input, string $state_name = null): StateInterface
     {
-        $start_state = $this->states->get($state_name);
+        $start_state = $state_name ? $this->states->get($state_name) : $this->getInitialState();
         if (!$start_state) {
             throw new ExecutionError("Trying to start statemachine execution at unknown state: ".$state_name);
         }

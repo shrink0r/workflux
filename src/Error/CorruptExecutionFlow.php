@@ -9,7 +9,7 @@ use Workflux\State\ExecutionTracker;
 class CorruptExecutionFlow extends RuntimeException implements ErrorInterface
 {
     /**
-     * @param ExecutionTracker $exec_tracker
+     * @param ExecutionTracker $execution_tracker
      * @param int $max_cycles
      *
      * @return self

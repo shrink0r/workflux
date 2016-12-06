@@ -126,11 +126,8 @@ final class StateTransitions implements IteratorAggregate, Countable
      *
      * @return StateSet
      */
-    private function depthFirstScan(
-        StateMap $states,
-        StateInterface $state,
-        StateSet $visited_states
-    ): StateSet {
+    private function depthFirstScan(StateMap $states, StateInterface $state, StateSet $visited_states): StateSet
+    {
         if ($visited_states->contains($state)) {
             return $visited_states;
         }

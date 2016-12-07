@@ -19,7 +19,7 @@ use Workflux\Transition\ExpressionConstraint;
 use Workflux\Transition\Transition;
 use Workflux\Transition\TransitionSet;
 
-class StateMachineTest extends TestCase
+final class StateMachineTest extends TestCase
 {
     public function testExecute()
     {

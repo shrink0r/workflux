@@ -86,7 +86,7 @@ class StateMachineTest extends TestCase
     public function testMultipleActivatedTransitions()
     {
         $this->expectExceptionMessage('Trying to activate more than one transition at a time. '.
-'Transition: approval -> published was activated first. Now approval -> archive is being activated too.');
+            'Transition: approval -> published was activated first. Now approval -> archive is being activated too.');
 
         $states = new StateSet([
             $this->createState('initial', InitialState::CLASS),

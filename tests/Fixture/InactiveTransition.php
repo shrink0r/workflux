@@ -1,11 +1,14 @@
 <?php
 
-namespace Workflux\Tests;
+namespace Workflux\Tests\Fixture;
 
 use Workflux\Param\InputInterface;
 use Workflux\Param\OutputInterface;
 use Workflux\Transition\TransitionInterface;
 
+/**
+ * @codeCoverageIgnore
+ */
 final class InactiveTransition implements TransitionInterface
 {
     /**

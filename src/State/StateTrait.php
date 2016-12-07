@@ -128,14 +128,6 @@ trait StateTrait
     }
 
     /**
-     * @return string[]
-     */
-    private function getRequiredSettings(): array
-    {
-        return [];
-    }
-
-    /**
      * @param InputInterface $input
      *
      * @return OutputInterface
@@ -171,6 +163,14 @@ trait StateTrait
      * @return mixed[]
      */
     private function generateOutputParams(InputInterface $input): array
+    {
+        return [];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getRequiredSettings(): array
     {
         return [];
     }

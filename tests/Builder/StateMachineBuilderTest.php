@@ -42,7 +42,7 @@ final class StateMachineBuilderTest extends TestCase
     public function testMissingInterface()
     {
         new StateMachineBuilder(EmptyClass::CLASS);
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\MissingImplementation
@@ -50,7 +50,7 @@ final class StateMachineBuilderTest extends TestCase
     public function testNonExistantClass()
     {
         new StateMachineBuilder('FooBarMachine');
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\UnknownState
@@ -63,7 +63,7 @@ final class StateMachineBuilderTest extends TestCase
             ->addState($this->createState('state1'))
             ->addState($this->createState('final', FinalState::CLASS))
             ->addTransition(new Transition('start', 'state1'));
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\UnknownState
@@ -76,7 +76,7 @@ final class StateMachineBuilderTest extends TestCase
             ->addState($this->createState('state1'))
             ->addState($this->createState('final', FinalState::CLASS))
             ->addTransition(new Transition('state1', 'state2'));
-    }
+    } //@codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\InvalidStructure
@@ -90,5 +90,5 @@ final class StateMachineBuilderTest extends TestCase
             ->addState($this->createState('final', FinalState::CLASS))
             ->addTransition(new Transition('initial', 'state1'))
             ->addTransition(new Transition('initial', 'state1'));
-    }
+    } //@codeCoverageIgnore
 }

@@ -38,17 +38,17 @@ final class StateSet implements IteratorAggregate, Countable
         $all_states = new StateMap;
         $final_states = new StateMap;
         foreach ($this->internal_set as $state) {
-            if ($state->isInitial()) {
-                if ($initial_state !== null) {
-                    throw new InvalidStructure('Trying to add more than one initial state.');
-                }
-                $initial_state = $state;
-            }
             if ($state->isFinal()) {
                 if ($state->isInitial()) {
                     throw new InvalidStructure('Trying to add state as initial and final at the same time.');
                 }
                 $final_states = $final_states->put($state);
+            }
+            if ($state->isInitial()) {
+                if ($initial_state !== null) {
+                    throw new InvalidStructure('Trying to add more than one initial state.');
+                }
+                $initial_state = $state;
             }
             $all_states = $all_states->put($state);
         }

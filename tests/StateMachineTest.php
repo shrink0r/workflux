@@ -14,6 +14,7 @@ use Workflux\State\InitialState;
 use Workflux\State\InteractiveState;
 use Workflux\State\State;
 use Workflux\State\StateSet;
+use Workflux\Tests\Fixture\InactiveTransition;
 use Workflux\Tests\TestCase;
 use Workflux\Transition\ExpressionConstraint;
 use Workflux\Transition\Transition;
@@ -31,9 +32,9 @@ class StateMachineTest extends TestCase
 
         $states = new StateSet([
             $this->createState('initial', InitialState::CLASS, null, $schema),
-            $this->createState('foobar', State::CLASS, null),
-            $this->createState('bar', InteractiveState::CLASS, null),
-            $this->createState('final', FinalState::CLASS, null)
+            $this->createState('foobar'),
+            $this->createState('bar', InteractiveState::CLASS),
+            $this->createState('final', FinalState::CLASS)
         ]);
 
         $transitions = (new TransitionSet)
@@ -43,8 +44,8 @@ class StateMachineTest extends TestCase
                 new Settings,
                 [ new ExpressionConstraint('input.get("is_ready") == true', new ExpressionLanguage) ]
             ))
-            ->add(new Transition('foobar', 'bar', new Settings))
-            ->add(new Transition('bar', 'final', new Settings));
+            ->add(new Transition('foobar', 'bar'))
+            ->add(new Transition('bar', 'final'));
 
         $statemachine = new StateMachine('test-machine', $states, $transitions);
         $intial_output = $statemachine->execute(new Input([ 'is_ready' => true ]), 'initial');
@@ -70,12 +71,12 @@ Looks like there is a loop between: approval -> published -> archive');
         ]);
 
         $transitions = (new TransitionSet)
-            ->add(new Transition('initial', 'edit', new Settings))
-            ->add(new Transition('edit', 'approval', new Settings))
-            ->add(new Transition('approval', 'published', new Settings))
-            ->add(new Transition('published', 'archive', new Settings))
-            ->add(new Transition('archive', 'approval', new Settings))
-            ->add(new InactiveTransition('archive', 'final', new Settings));
+            ->add(new Transition('initial', 'edit'))
+            ->add(new Transition('edit', 'approval'))
+            ->add(new Transition('approval', 'published'))
+            ->add(new Transition('published', 'archive'))
+            ->add(new Transition('archive', 'approval'))
+            ->add(new InactiveTransition('archive', 'final'));
 
         $statemachine = new StateMachine('test-machine', $states, $transitions);
         $statemachine->execute(new Input, 'initial');

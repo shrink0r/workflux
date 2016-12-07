@@ -14,7 +14,7 @@ use Workflux\Tests\TestCase;
 use Workflux\Transition\Transition;
 use Workflux\Transition\TransitionSet;
 
-class DotGraphRendererTest extends TestCase
+final class DotGraphRendererTest extends TestCase
 {
     public function testRenderer()
     {

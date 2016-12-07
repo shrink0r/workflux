@@ -1,0 +1,14 @@
+name: video-transcoding
+states:
+  initial:
+    initial: true
+    transitions:
+      done: ~
+
+  state1:
+    interactive: true
+    class: Workflux\Tests\Builder\Fixture\InconsistentInteractive
+    transitions:
+      done: event == "something_happened"
+
+  done: ~

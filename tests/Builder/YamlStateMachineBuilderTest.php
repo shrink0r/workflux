@@ -4,21 +4,13 @@ namespace Workflux\Tests\Builder;
 
 use Workflux\Builder\YamlStateMachineBuilder;
 use Workflux\Param\Input;
-use Workflux\StateMachineInterface;
 use Workflux\Tests\TestCase;
 
-class YamlStateMachineBuilderTest extends TestCase
+final class YamlStateMachineBuilderTest extends TestCase
 {
     public function testBuild()
     {
-        $state_machine = (new YamlStateMachineBuilder(__DIR__.'/Fixture/statemachine.yaml'))
-            ->build();
-        $rejected_transition = $state_machine->getStateTransitions()->get('transcoding')
-            ->filter(function ($transition) {
-                return $transition->getTo() === 'rejected';
-            })->first();
-        $this->assertInstanceOf(StateMachineInterface::CLASS, $state_machine);
-        $this->assertTrue($rejected_transition->getSetting('more_stuff'));
+        $state_machine = (new YamlStateMachineBuilder($this->fixture('statemachine')))->build();
 
         $initial_input = new Input([ 'transcoding_required' => true ]);
         $initial_output = $state_machine->execute($initial_input);
@@ -27,5 +19,82 @@ class YamlStateMachineBuilderTest extends TestCase
         $input = Input::fromOutput($initial_output)->withEvent('video_transcoded');
         $final_output = $state_machine->execute($input, $current_state);
         $this->assertEquals('ready', $final_output->getCurrentState());
+    }
+
+    public function testNonStringConstraint()
+    {
+        (new YamlStateMachineBuilder($this->fixture('non_string_constraint')))->build();
+    }
+
+    /**
+     * @expectedException Workflux\Error\ConfigError
+     */
+    public function testNonExistantYamlFile()
+    {
+        new YamlStateMachineBuilder(__DIR__.'/foobar.yaml');
+    }
+
+    /**
+     * @expectedException Workflux\Error\ConfigError
+     */
+    public function testInvalidStateMachineSchema()
+    {
+        (new YamlStateMachineBuilder($this->fixture('invalid_schema')))->build();
+    }
+
+    /**
+     * @expectedException Workflux\Error\ConfigError
+     * @expectedExceptionMessage
+        Trying to provide custom state that isn't initial but marked as initial in config.
+     */
+    public function testInconsistentInitialState()
+    {
+        (new YamlStateMachineBuilder($this->fixture('inconsistent_initial')))->build();
+    }
+
+    /**
+     * @expectedException Workflux\Error\ConfigError
+     * @expectedExceptionMessage
+        Trying to provide custom state that isn't interactive but marked as interactive in config.
+     */
+    public function testInconsistentInteractiveState()
+    {
+        (new YamlStateMachineBuilder($this->fixture('inconsistent_interactive')))->build();
+    }
+
+    /**
+     * @expectedException Workflux\Error\ConfigError
+     * @expectedExceptionMessage
+        Trying to provide custom state that isn't final but marked as final in config.
+     */
+    public function testInconsistentFinalState()
+    {
+        (new YamlStateMachineBuilder($this->fixture('inconsistent_final')))->build();
+    }
+
+    /**
+     * @expectedException Workflux\Error\MissingImplementation
+     */
+    public function testNonImplementedState()
+    {
+        (new YamlStateMachineBuilder($this->fixture('non_implemented_state')))->build();
+    }
+
+    /**
+     * @expectedException Workflux\Error\MissingImplementation
+     */
+    public function testNonImplementedTransition()
+    {
+        (new YamlStateMachineBuilder($this->fixture('non_implemented_transition')))->build();
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    private function fixture(string $name): string
+    {
+        return __DIR__.'/Fixture/Yaml/'.$name.'.yaml';
     }
 }

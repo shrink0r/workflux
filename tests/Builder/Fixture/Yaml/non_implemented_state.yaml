@@ -1,0 +1,13 @@
+name: video-transcoding
+states:
+  initial:
+    initial: true
+    transitions:
+      state1: ~
+
+  state1:
+    class: Workflux\Tests\Builder\Fixture\EmptyClass
+    transitions:
+      done: ~
+
+  done: ~

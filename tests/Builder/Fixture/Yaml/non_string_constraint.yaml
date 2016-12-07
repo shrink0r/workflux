@@ -1,0 +1,16 @@
+name: non_string_constraint
+states:
+  initial:
+    initial: true
+    transitions:
+      state1:
+        when:
+          - []
+
+  state1:
+    transitions:
+      done:
+        when:
+          - ~
+
+  done: ~

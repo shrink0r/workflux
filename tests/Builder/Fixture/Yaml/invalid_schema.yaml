@@ -1,0 +1,8 @@
+name: video-transcoding
+state:
+  new:
+    initial: true
+    transition:
+      done: ~
+
+  done: ~

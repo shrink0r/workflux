@@ -160,7 +160,7 @@ final class YamlStateMachineBuilder implements StateMachineBuilderInterface
         $state_implementor = $state->class->get() ?? $state_implementor;
         if (!in_array(StateInterface::CLASS, class_implements($state_implementor))) {
             throw new MissingImplementation(
-                'Trying to build statemachine that does not implement required ' . StateInterface::CLASS
+                'Trying to use a custom-state that does not implement required ' . StateInterface::CLASS
             );
         }
         return $state_implementor;

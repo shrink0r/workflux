@@ -2,7 +2,7 @@
 
 namespace Workflux\Tests\Builder\Fixture;
 
-class NonImplementedStateMachine
+final class EmptyClass
 {
 
 }

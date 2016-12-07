@@ -10,11 +10,11 @@ use Workflux\State\FinalState;
 use Workflux\State\InitialState;
 use Workflux\State\InteractiveState;
 use Workflux\State\State;
-use Workflux\Tests\Builder\Fixture\NonImplementedStateMachine;
+use Workflux\Tests\Builder\Fixture\EmptyClass;
 use Workflux\Tests\TestCase;
 use Workflux\Transition\Transition;
 
-class StateMachineBuilderTest extends TestCase
+final class StateMachineBuilderTest extends TestCase
 {
     public function testBuild()
     {
@@ -26,13 +26,12 @@ class StateMachineBuilderTest extends TestCase
                 $this->createState('state2'),
                 $this->createState('final', FinalState::CLASS)
             ])
-            ->addTransition(new Transition('initial', 'state1', new Settings))
+            ->addTransition(new Transition('initial', 'state1'))
             ->addTransitions([
-                new Transition('state1', 'state2', new Settings),
-                new Transition('state2', 'final', new Settings)
+                new Transition('state1', 'state2'),
+                new Transition('state2', 'final')
             ])
             ->build();
-
         $this->assertInstanceOf(StateMachineInterface::CLASS, $state_machine);
         $this->assertEquals('video-transcoding', $state_machine->getName());
     }
@@ -42,7 +41,7 @@ class StateMachineBuilderTest extends TestCase
      */
     public function testMissingInterface()
     {
-        new StateMachineBuilder(NonImplementedStateMachine::CLASS);
+        new StateMachineBuilder(EmptyClass::CLASS);
     }
 
     /**

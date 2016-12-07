@@ -32,7 +32,7 @@ final class YamlStateMachineBuilderTest extends TestCase
     public function testNonExistantYamlFile()
     {
         new YamlStateMachineBuilder(__DIR__.'/foobar.yaml');
-    } //@codeCoverageIgnore
+    } // @codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\ConfigError
@@ -40,7 +40,7 @@ final class YamlStateMachineBuilderTest extends TestCase
     public function testInvalidStateMachineSchema()
     {
         (new YamlStateMachineBuilder($this->fixture('invalid_schema')))->build();
-    } //@codeCoverageIgnore
+    } // @codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\ConfigError
@@ -50,7 +50,7 @@ final class YamlStateMachineBuilderTest extends TestCase
     public function testInconsistentInitialState()
     {
         (new YamlStateMachineBuilder($this->fixture('inconsistent_initial')))->build();
-    } //@codeCoverageIgnore
+    } // @codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\ConfigError
@@ -60,7 +60,7 @@ final class YamlStateMachineBuilderTest extends TestCase
     public function testInconsistentInteractiveState()
     {
         (new YamlStateMachineBuilder($this->fixture('inconsistent_interactive')))->build();
-    } //@codeCoverageIgnore
+    } // @codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\ConfigError
@@ -70,7 +70,7 @@ final class YamlStateMachineBuilderTest extends TestCase
     public function testInconsistentFinalState()
     {
         (new YamlStateMachineBuilder($this->fixture('inconsistent_final')))->build();
-    } //@codeCoverageIgnore
+    } // @codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\MissingImplementation
@@ -78,7 +78,7 @@ final class YamlStateMachineBuilderTest extends TestCase
     public function testNonImplementedState()
     {
         (new YamlStateMachineBuilder($this->fixture('non_implemented_state')))->build();
-    } //@codeCoverageIgnore
+    } // @codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\MissingImplementation
@@ -86,7 +86,7 @@ final class YamlStateMachineBuilderTest extends TestCase
     public function testNonImplementedTransition()
     {
         (new YamlStateMachineBuilder($this->fixture('non_implemented_transition')))->build();
-    } //@codeCoverageIgnore
+    } // @codeCoverageIgnore
 
     /**
      * @param string $name

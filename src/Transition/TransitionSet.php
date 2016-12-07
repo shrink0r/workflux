@@ -47,7 +47,14 @@ final class TransitionSet implements IteratorAggregate, Countable
      */
     public function contains(TransitionInterface $transition): bool
     {
-        return $this->internal_set->contains($transition);
+        foreach ($this->internal_set as $cur_transition) {
+            if ($cur_transition->getFrom() === $transition->getFrom()
+                && $cur_transition->getTo() === $transition->getTo()
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -77,14 +84,6 @@ final class TransitionSet implements IteratorAggregate, Countable
     public function count(): int
     {
         return $this->internal_set->count();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function first()
-    {
-        return $this->internal_set->first();
     }
 
     /**

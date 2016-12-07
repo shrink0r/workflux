@@ -48,7 +48,7 @@ final class StateMachineBuilder implements StateMachineBuilderInterface
         }
         if (!in_array(StateMachineInterface::CLASS, class_implements($this->state_machine_class))) {
             throw new MissingImplementation(
-                'Trying to build statemachine that does not implement required ' . StateMachineInterface::CLASS
+                'Trying to build statemachine that does not implement required '.StateMachineInterface::CLASS
             );
         }
     }

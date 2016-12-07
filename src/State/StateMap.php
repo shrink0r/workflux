@@ -38,7 +38,6 @@ final class StateMap implements IteratorAggregate, Countable
     {
         $cloned_map = clone $this;
         $cloned_map->internal_map->put($state->getName(), $state);
-
         return $cloned_map;
     }
 

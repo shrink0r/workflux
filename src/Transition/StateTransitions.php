@@ -55,21 +55,6 @@ final class StateTransitions implements IteratorAggregate, Countable
     }
 
     /**
-     * @param TransitionInterface $transition
-     *
-     * @return self
-     */
-    public function put(TransitionInterface $transition): self
-    {
-        $cloned_self = clone $this;
-        $cloned_self->internal_map->put(
-            $transition->getFrom(),
-            $cloned_self->get($transition->getFrom())->add($transition)
-        );
-        return $cloned_self;
-    }
-
-    /**
      * @param string $state_name
      *
      * @return bool
@@ -113,12 +98,7 @@ final class StateTransitions implements IteratorAggregate, Countable
         return $this->internal_map->toArray();
     }
 
-    public function __clone()
-    {
-        $this->internal_map = clone $this->internal_map;
-    }
-
-     /**
+    /**
      * @param  StateMap $all_states
      * @param  StateTransitions $state_transitions
      * @param  StateInterface $state

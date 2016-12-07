@@ -4,34 +4,15 @@ namespace Workflux\Builder;
 
 use Shrink0r\Monatic\Maybe;
 use Shrink0r\PhpSchema\Error;
-use Shrink0r\PhpSchema\Factory;
-use Shrink0r\PhpSchema\Schema;
-use Shrink0r\PhpSchema\SchemaInterface;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Yaml\Parser;
+use Workflux\Builder\Factory;
 use Workflux\Builder\StateMachineBuilderInterface;
 use Workflux\Error\ConfigError;
-use Workflux\Error\MissingImplementation;
-use Workflux\Param\Settings;
 use Workflux\StateMachine;
 use Workflux\StateMachineInterface;
-use Workflux\State\FinalState;
-use Workflux\State\InitialState;
-use Workflux\State\InteractiveState;
-use Workflux\State\State;
-use Workflux\State\StateInterface;
-use Workflux\State\Validator;
-use Workflux\State\ValidatorInterface;
-use Workflux\Transition\ExpressionConstraint;
-use Workflux\Transition\Transition;
-use Workflux\Transition\TransitionInterface;
 
 final class YamlStateMachineBuilder implements StateMachineBuilderInterface
 {
-    const SUFFIX_IN = '-input_schema';
-
-    const SUFFIX_OUT = '-output_schema';
-
     /**
      * @var Parser $parser
      */
@@ -43,15 +24,15 @@ final class YamlStateMachineBuilder implements StateMachineBuilderInterface
     private $yaml_filepath;
 
     /**
-     * @var ExpressionLanguage $expression_engine
+     * @var FactoryInterface $factory
      */
-    private $expression_engine;
+    private $factory;
 
     /**
      * @param string $yaml_filepath
-     * @param ExpressionLanguage|null $expression_engine
+     * @param FactoryInterface|null $factory
      */
-    public function __construct(string $yaml_filepath, ExpressionLanguage $expression_engine = null)
+    public function __construct(string $yaml_filepath, FactoryInterface $factory = null)
     {
         $this->parser = new Parser;
         if (!is_readable($yaml_filepath)) {
@@ -59,7 +40,7 @@ final class YamlStateMachineBuilder implements StateMachineBuilderInterface
         }
         $this->yaml_filepath = $yaml_filepath;
         $this->schema = new StateMachineSchema;
-        $this->expression_engine = $expression_engine ?? new ExpressionLanguage;
+        $this->factory = $factory ?? new Factory;
     }
 
     /**
@@ -70,7 +51,7 @@ final class YamlStateMachineBuilder implements StateMachineBuilderInterface
         $data = $this->parser->parse(file_get_contents($this->yaml_filepath));
         $result = (new StateMachineSchema)->validate($data);
         if ($result instanceof Error) {
-            throw new ConfigError('Invalid statemachine configuration given: ' . print_r($result->unwrap(), true));
+            throw new ConfigError('Invalid statemachine configuration given: '.print_r($result->unwrap(), true));
         }
         list($states, $transitions) = $this->realizeConfig($data['states']);
         $state_machine_class = Maybe::unit($data)->class->get() ?? StateMachine::CLASS;
@@ -90,142 +71,18 @@ final class YamlStateMachineBuilder implements StateMachineBuilderInterface
     {
         $states = [];
         $transitions = [];
-        foreach ($config as $name => $state) {
-            $states[] = $this->createState($name, $state);
-            if (!is_array($state)) {
+        foreach ($config as $name => $state_config) {
+            $states[] = $this->factory->createState($name, $state_config);
+            if (!is_array($state_config)) {
                 continue;
             }
-            foreach ($state['transitions'] as $key => $transition) {
-                if (is_string($transition)) {
-                    $transition = [ 'when' => $transition ];
+            foreach ($state_config['transitions'] as $key => $transition_config) {
+                if (is_string($transition_config)) {
+                    $transition_config = [ 'when' => $transition_config ];
                 }
-                $transitions[] = $this->createTransition($name, $key, $transition);
+                $transitions[] = $this->factory->createTransition($name, $key, $transition_config);
             }
         }
         return [ $states, $transitions ];
-    }
-
-    /**
-     * @param string $name
-     * @param mixed[]|null $state
-     *
-     * @return StateInterface
-     */
-    private function createState(string $name, array $state = null): StateInterface
-    {
-        $state = Maybe::unit($state);
-        $state_implementor = $this->resolveStateImplementor($state);
-        $settings = $state->settings->get() ?? [];
-        $settings['output'] = array_merge($state->settings->output->get() ?? [], $state->output->get() ?? []);
-        $state_instance = new $state_implementor(
-            $name,
-            new Settings($settings),
-            $this->createValidator($name, $state),
-            $this->expression_engine
-        );
-        if ($state->final->get() && !$state_instance->isFinal()) {
-            throw new ConfigError("Trying to provide custom state that isn't final but marked as final in config.");
-        }
-        if ($state->initial->get() && !$state_instance->isInitial()) {
-            throw new ConfigError("Trying to provide custom state that isn't initial but marked as initial in config.");
-        }
-        if ($state->interactive->get() && !$state_instance->isInteractive()) {
-            throw new ConfigError(
-                "Trying to provide custom state that isn't interactive but marked as interactive in config."
-            );
-        }
-        return $state_instance;
-    }
-
-    /**
-     * @param Maybe $state
-     *
-     * @return string
-     */
-    private function resolveStateImplementor(Maybe $state): string
-    {
-        switch (true) {
-            case $state->initial->get():
-                $state_implementor = InitialState::CLASS;
-                break;
-            case $state->final->get() === true || $state->get() === null: // cast null to final-state by convention
-                $state_implementor = FinalState::CLASS;
-                break;
-            case $state->interactive->get():
-                $state_implementor = InteractiveState::CLASS;
-                break;
-            default:
-                $state_implementor = State::CLASS;
-        }
-        $state_implementor = $state->class->get() ?? $state_implementor;
-        if (!in_array(StateInterface::CLASS, class_implements($state_implementor))) {
-            throw new MissingImplementation(
-                'Trying to use a custom-state that does not implement required ' . StateInterface::CLASS
-            );
-        }
-        return $state_implementor;
-    }
-
-    /**
-     * @param string $from
-     * @param string $to
-     * @param  mixed[]|null $transition
-     *
-     * @return TransitionInterface
-     */
-    private function createTransition(string $from, string $to, array $config = null): TransitionInterface
-    {
-        $transition = Maybe::unit($config);
-        if (is_string($transition->when->get())) {
-            $config['when'] = [ $transition->when->get() ];
-        }
-        $implementor = $transition->class->get() ?? Transition::CLASS;
-        if (!in_array(TransitionInterface::CLASS, class_implements($implementor))) {
-            throw new MissingImplementation(
-                'Trying to create transition without implementing required ' . TransitionInterface::CLASS
-            );
-        }
-        $constraints = [];
-        foreach (Maybe::unit($config)->when->get() ?? [] as $expression) {
-            if (!is_string($expression)) {
-                continue;
-            }
-            $constraints[] = new ExpressionConstraint($expression, $this->expression_engine);
-        }
-        $settings = new Settings(Maybe::unit($config)->settings->get() ?? []);
-        return new $implementor($from, $to, $settings, $constraints);
-    }
-
-    /**
-     * @param string $name
-     * @param  Maybe $state
-     *
-     * @return ValidatorInterface
-     */
-    private function createValidator(string $name, Maybe $state): ValidatorInterface
-    {
-        return new Validator(
-            $this->createSchema(
-                $name.self::SUFFIX_IN,
-                $state->input_schema->get()
-                ?? [ ':any_name:' => [ 'type' => 'any' ] ]
-            ),
-            $this->createSchema(
-                $name.self::SUFFIX_OUT,
-                $state->output_schema->get()
-                ?? [ ':any_name:' => [ 'type' => 'any' ] ]
-            )
-        );
-    }
-
-    /**
-     * @param string $name
-     * @param array $schema_definition
-     *
-     * @return SchemaInterface
-     */
-    private function createSchema(string $name, array $schema_definition): SchemaInterface
-    {
-        return new Schema($name, [ 'type' => 'assoc', 'properties' => $schema_definition ], new Factory);
     }
 }

@@ -60,7 +60,7 @@ final class StateSetTest extends TestCase
         $states_array[] = $this->createState('snafu', InitialState::CLASS);
         $state_set = new StateSet($states_array);
         $state_set->splat();
-    } //@codeCoverageIgnore
+    } // @codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\InvalidStructure
@@ -72,7 +72,7 @@ final class StateSetTest extends TestCase
         $states_array[] = $this->createState('snafu', TwoFaceState::CLASS);
         $state_set = new StateSet($states_array);
         $state_set->splat();
-    } //@codeCoverageIgnore
+    } // @codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\InvalidStructure
@@ -84,7 +84,7 @@ final class StateSetTest extends TestCase
         array_shift($states_array);
         $state_set = new StateSet($states_array);
         $state_set->splat();
-    } //@codeCoverageIgnore
+    } // @codeCoverageIgnore
 
     /**
      * @expectedException Workflux\Error\InvalidStructure
@@ -96,7 +96,7 @@ final class StateSetTest extends TestCase
         array_pop($states_array);
         $state_set = new StateSet($states_array);
         $state_set->splat();
-    } //@codeCoverageIgnore
+    } // @codeCoverageIgnore
 
     private function buildStateArray()
     {

@@ -134,7 +134,11 @@ final class StateMachine implements StateMachineInterface
      */
     private function determineStartState(InputInterface $input, string $state_name = null): StateInterface
     {
-        $start_state = $state_name ? $this->states->get($state_name) : $this->getInitialState();
+        if ($state_name) {
+            $start_state = $this->states->has($state_name) ? $this->states->get($state_name) : null;
+        } else {
+            $start_state = $this->getInitialState();
+        }
         if (!$start_state) {
             throw new ExecutionError("Trying to start statemachine execution at unknown state: ".$state_name);
         }

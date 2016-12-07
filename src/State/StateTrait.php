@@ -151,7 +151,7 @@ trait StateTrait
     private function evaluateInputExports(InputInterface $input): array
     {
         $exports = [];
-        foreach ($this->getSetting('output', []) as $key => $value) {
+        foreach ($this->getSetting('_output', []) as $key => $value) {
             $exports[$key] = $this->expression_engine->evaluate($value, [ 'input' => $input ]);
         }
         return $exports;

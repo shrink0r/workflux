@@ -134,23 +134,22 @@ final class StateMachine implements StateMachineInterface
      */
     private function determineStartState(InputInterface $input, string $state_name = null): StateInterface
     {
-        $start_state = $this->getInitialState();
-        if ($state_name) {
-            $start_state = $this->states->has($state_name) ? $this->states->get($state_name) : null;
-            if (!$start_state) {
-                throw new ExecutionError("Trying to start statemachine execution at unknown state: ".$state_name);
-            }
-            if ($start_state->isFinal()) {
-                throw new ExecutionError("Trying to (re)execute statemachine at final state: ".$state_name);
-            }
+        if (!$state_name) {
+            return $this->getInitialState();
         }
-        if ($start_state->isInteractive()) {
-            if (!$input->hasEvent()) {
-                throw new ExecutionError("Trying to resume statemachine executing without providing an event/signal.");
-            }
-            return $this->activateTransition($input, Output::fromInput($start_state->getName(), $input));
+        if (!$this->states->has($state_name)) {
+            throw new ExecutionError("Trying to start statemachine execution at unknown state: ".$state_name);
         }
-        return $start_state;
+        $start_state = $this->states->get($state_name);
+        if ($start_state->isFinal()) {
+            throw new ExecutionError("Trying to (re)execute statemachine at final state: ".$state_name);
+        }
+        if ($start_state->isInteractive() && !$input->hasEvent()) {
+            throw new ExecutionError("Trying to resume statemachine executing without providing an event/signal.");
+        }
+        return $start_state->isInteractive()
+            ? $this->activateTransition($input, Output::fromInput($start_state->getName(), $input))
+            : $start_state;
     }
 
     /**
@@ -164,14 +163,15 @@ final class StateMachine implements StateMachineInterface
         $next_state = null;
         foreach ($this->state_transitions->get($output->getCurrentState()) as $transition) {
             if ($transition->isActivatedBy($input, $output)) {
-                if ($next_state !== null) {
+                if (is_null($next_state)) {
+                    $next_state = $this->states->get($transition->getTo());
+                } else {
                     throw new ExecutionError(
                         'Trying to activate more than one transition at a time. Transition: '.
                         $output->getCurrentState().' -> '.$next_state->getName().' was activated first. '.
                         'Now '.$transition->getFrom().' -> '.$transition->getTo().' is being activated too.'
                     );
                 }
-                $next_state = $this->states->get($transition->getTo());
             }
         }
         return $next_state;

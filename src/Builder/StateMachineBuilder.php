@@ -3,6 +3,7 @@
 namespace Workflux\Builder;
 
 use Ds\Map;
+use Workflux\Builder\StateMachineBuilderInterface;
 use Workflux\Error\InvalidStructure;
 use Workflux\Error\MissingImplementation;
 use Workflux\Error\UnknownState;
@@ -12,7 +13,7 @@ use Workflux\State\StateSet;
 use Workflux\Transition\TransitionInterface;
 use Workflux\Transition\TransitionSet;
 
-final class StateMachineBuilder
+final class StateMachineBuilder implements StateMachineBuilderInterface
 {
     /**
      * @var Map $states
@@ -29,10 +30,36 @@ final class StateMachineBuilder
      */
     private $state_machine_name;
 
-    public function __construct()
+    /**
+     * @var string $state_machine_class
+     */
+    private $state_machine_class;
+
+    /**
+     * @param string $state_machine_class
+     */
+    public function __construct(string $state_machine_class)
     {
         $this->states = new Map;
         $this->transitions = new Map;
+        $this->state_machine_class = $state_machine_class;
+        if (!in_array(StateMachineInterface::CLASS, class_implements($this->state_machine_class))) {
+            throw new MissingImplementation(
+                'Trying to build statemachine that does not implement required ' . StateMachineInterface::CLASS
+            );
+        }
+    }
+
+    /**
+     * @param string $class
+     *
+     * @return StateMachineInterface
+     */
+    public function build(): StateMachineInterface
+    {
+        $states = new StateSet($this->states->values()->toArray());
+        $transitions = new TransitionSet($this->transitions->values()->toArray());
+        return new $this->state_machine_class($this->state_machine_name, $states, $transitions);
     }
 
     /**
@@ -125,22 +152,5 @@ final class StateMachineBuilder
             $builder->transitions[$transition_key] = $transition;
         }
         return $builder;
-    }
-
-    /**
-     * @param string $class
-     *
-     * @return StateMachineInterface
-     */
-    public function build(string $class): StateMachineInterface
-    {
-        $states = new StateSet($this->states->values()->toArray());
-        $transitions = new TransitionSet($this->transitions->values()->toArray());
-        if (!in_array(StateMachineInterface::CLASS, class_implements($class))) {
-            throw new MissingImplementation(
-                'Trying to build statemachine that does not implement required ' . StateMachineInterface::CLASS
-            );
-        }
-        return new $class($this->state_machine_name, $states, $transitions);
     }
 }

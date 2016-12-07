@@ -9,6 +9,7 @@ use Shrink0r\PhpSchema\Schema;
 use Shrink0r\PhpSchema\SchemaInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Yaml\Parser;
+use Workflux\Builder\StateMachineBuilderInterface;
 use Workflux\Error\ConfigError;
 use Workflux\Error\MissingImplementation;
 use Workflux\Param\Settings;
@@ -25,7 +26,7 @@ use Workflux\Transition\ExpressionConstraint;
 use Workflux\Transition\Transition;
 use Workflux\Transition\TransitionInterface;
 
-final class YamlStateMachineBuilder
+final class YamlStateMachineBuilder implements StateMachineBuilderInterface
 {
     const SUFFIX_IN = '-input_schema';
 
@@ -40,16 +41,6 @@ final class YamlStateMachineBuilder
      * @var string $yaml_filepath
      */
     private $yaml_filepath;
-
-    /**
-     * @var StateMachineBuilder $internal_builder
-     */
-    private $internal_builder;
-
-    /**
-     * @var SchemaInterface $schema
-     */
-    private $schema;
 
     /**
      * @var ExpressionLanguage $expression_engine
@@ -76,15 +67,30 @@ final class YamlStateMachineBuilder
      */
     public function build(): StateMachineInterface
     {
-        $this->internal_builder = new StateMachineBuilder;
         $data = $this->parser->parse(file_get_contents($this->yaml_filepath));
-        $transitions = [];
-        $states = [];
-        $result = $this->schema->validate($data);
+        $result = (new StateMachineSchema)->validate($data);
         if ($result instanceof Error) {
             throw new ConfigError('Invalid statemachine configuration given: ' . print_r($result->unwrap(), true));
         }
-        foreach ($data['states'] as $name => $state) {
+        list($states, $transitions) = $this->realizeConfig($data['states']);
+        $state_machine_class = Maybe::unit($data)->class->get() ?? StateMachine::CLASS;
+        return (new StateMachineBuilder($state_machine_class))
+            ->addStateMachineName($data['name'])
+            ->addStates($states)
+            ->addTransitions($transitions)
+            ->build();
+    }
+
+    /**
+     * @param  mixed[] $config
+     *
+     * @return mixed[]
+     */
+    private function realizeConfig(array $config): array
+    {
+        $states = [];
+        $transitions = [];
+        foreach ($config as $name => $state) {
             $states[] = $this->createState($name, $state);
             if (!is_array($state)) {
                 continue;
@@ -96,11 +102,7 @@ final class YamlStateMachineBuilder
                 $transitions[] = $this->createTransition($name, $key, $transition);
             }
         }
-        return $this->internal_builder
-            ->addStateMachineName($data['name'])
-            ->addStates($states)
-            ->addTransitions($transitions)
-            ->build(Maybe::unit($data)->class->get() ?? StateMachine::CLASS);
+        return [ $states, $transitions ];
     }
 
     /**
@@ -171,26 +173,26 @@ final class YamlStateMachineBuilder
      *
      * @return TransitionInterface
      */
-    private function createTransition(string $from, string $to, array $transition = null): TransitionInterface
+    private function createTransition(string $from, string $to, array $config = null): TransitionInterface
     {
-        $t = Maybe::unit($transition);
-        if (is_string($t->when->get())) {
-            $transition['when'] = [ $t->when->get() ];
+        $transition = Maybe::unit($config);
+        if (is_string($transition->when->get())) {
+            $config['when'] = [ $transition->when->get() ];
         }
-        $implementor = $t->class->get() ?? Transition::CLASS;
+        $implementor = $transition->class->get() ?? Transition::CLASS;
         if (!in_array(TransitionInterface::CLASS, class_implements($implementor))) {
             throw new MissingImplementation(
                 'Trying to create transition without implementing required ' . TransitionInterface::CLASS
             );
         }
         $constraints = [];
-        foreach (Maybe::unit($transition)->when->get() ?? [] as $expression) {
+        foreach (Maybe::unit($config)->when->get() ?? [] as $expression) {
             if (!is_string($expression)) {
                 continue;
             }
             $constraints[] = new ExpressionConstraint($expression, $this->expression_engine);
         }
-        $settings = new Settings(Maybe::unit($transition)->settings->get() ?? []);
+        $settings = new Settings(Maybe::unit($config)->settings->get() ?? []);
         return new $implementor($from, $to, $settings, $constraints);
     }
 

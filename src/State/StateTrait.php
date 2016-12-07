@@ -142,10 +142,36 @@ trait StateTrait
      */
     private function generateOutput(InputInterface $input): OutputInterface
     {
-        $params = [];
+        return new Output(
+            $this->name,
+            array_merge(
+                $this->evaluateInputExports($input),
+                $this->generateOutputParams($input)
+            )
+        );
+    }
+
+    /**
+     * @param  InputInterface $input
+     *
+     * @return mixed[]
+     */
+    private function evaluateInputExports(InputInterface $input): array
+    {
+        $exports = [];
         foreach ($this->getSetting('output', []) as $key => $value) {
-            $params[$key] = $this->expression_engine->evaluate($value, [ 'input' => $input ]);
+            $exports[$key] = $this->expression_engine->evaluate($value, [ 'input' => $input ]);
         }
-        return new Output($this->name, $params);
+        return $exports;
+    }
+
+    /**
+     * @param  InputInterface $input
+     *
+     * @return mixed[]
+     */
+    private function generateOutputParams(InputInterface $input): array
+    {
+        return [];
     }
 }

@@ -17,7 +17,7 @@ class StateMachineBuilderTest extends TestCase
 {
     public function testBuild()
     {
-        $state_machine = (new StateMachineBuilder)
+        $state_machine = (new StateMachineBuilder(StateMachine::CLASS))
             ->addStateMachineName('video-transcoding')
             ->addState($this->createState('initial', InitialState::CLASS))
             ->addStates([
@@ -30,7 +30,7 @@ class StateMachineBuilderTest extends TestCase
                 new Transition('foobar', 'bar', new Settings),
                 new Transition('bar', 'final', new Settings)
             ])
-            ->build(StateMachine::CLASS);
+            ->build();
 
         $this->assertInstanceOf(StateMachineInterface::CLASS, $state_machine);
     }

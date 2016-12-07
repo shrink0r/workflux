@@ -43,6 +43,9 @@ final class StateMachineBuilder implements StateMachineBuilderInterface
         $this->states = new Map;
         $this->transitions = new Map;
         $this->state_machine_class = $state_machine_class;
+        if (!class_exists($this->state_machine_class)) {
+            throw new MissingImplementation('Trying to create statemachine from non-existant class.');
+        }
         if (!in_array(StateMachineInterface::CLASS, class_implements($this->state_machine_class))) {
             throw new MissingImplementation(
                 'Trying to build statemachine that does not implement required ' . StateMachineInterface::CLASS
@@ -133,23 +136,7 @@ final class StateMachineBuilder implements StateMachineBuilderInterface
     {
         $builder = clone $this;
         foreach ($transitions as $transition) {
-            if (!$this->states->hasKey($transition->getFrom())) {
-                throw new UnknownState('Trying to add transition from unknown state: ' . $transition->getFrom());
-            }
-            if (!$this->states->hasKey($transition->getTo())) {
-                throw new UnknownState('Trying to add transition to unknown state: ' . $transition->getTo());
-            }
-            $transition_key = $transition->getFrom().$transition->getTo();
-            if ($builder->transitions->hasKey($transition_key)) {
-                throw new InvalidStructure(
-                    sprintf(
-                        'Trying to add same transition twice: %s -> %s',
-                        $transition->getFrom(),
-                        $transition->getTo()
-                    )
-                );
-            }
-            $builder->transitions[$transition_key] = $transition;
+            $builder = $this->addTransition($transition);
         }
         return $builder;
     }

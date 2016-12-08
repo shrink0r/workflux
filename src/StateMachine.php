@@ -165,13 +165,13 @@ final class StateMachine implements StateMachineInterface
             if ($transition->isActivatedBy($input, $output)) {
                 if (is_null($next_state)) {
                     $next_state = $this->states->get($transition->getTo());
-                } else {
-                    throw new ExecutionError(
-                        'Trying to activate more than one transition at a time. Transition: '.
-                        $output->getCurrentState().' -> '.$next_state->getName().' was activated first. '.
-                        'Now '.$transition->getFrom().' -> '.$transition->getTo().' is being activated too.'
-                    );
+                    continue;
                 }
+                throw new ExecutionError(
+                    'Trying to activate more than one transition at a time. Transition: '.
+                    $output->getCurrentState().' -> '.$next_state->getName().' was activated first. '.
+                    'Now '.$transition->getFrom().' -> '.$transition->getTo().' is being activated too.'
+                );
             }
         }
         return $next_state;

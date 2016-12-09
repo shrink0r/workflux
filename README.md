@@ -12,7 +12,7 @@
 
 ## Purpose
 
-`Workflux` is a [Finite State Machine(FSM)](http://en.wikipedia.org/wiki/Finite-state_machine) for php.
+[Finite State Machine(FSM)](http://en.wikipedia.org/wiki/Finite-state_machine) for php.
 
 Good reads on the topic:
 

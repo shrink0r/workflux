@@ -2,7 +2,7 @@
 
 All new features, changes and fixes should be listed here. Please use tickets to reference changes.
 
-## 1.0.0 (xxxx/xx/xx)
+## 1.0.0 (2016/12/09)
 
 ### Complete rewrite
 

@@ -1,0 +1,41 @@
+name: video-transcoding
+states:
+  new:
+    initial: true
+    input_schema:
+      transcoding_required:
+        type: bool
+    transitions:
+      ready: not input.get("transcoding_required")
+      prepare: input.get("transcoding_required")
+
+  prepare:
+    output:
+      fake_success: true
+    transitions:
+      transcoding: ~
+
+  transcoding:
+    interactive: true
+    output:
+      transcode_success: input.get("fake_success")
+    transitions:
+      ready:
+        when:
+          - event == 'video_transcoded'
+          - output.get("transcode_success")
+      error:
+        when:
+          - event === 'video_transcoded'
+          - not output.get("transcode_success") and output.get("retry_limit_reached")
+      rejected:
+        when:
+          - event == 'video_transcoded'
+          - not output.get("transcode_success") and not output.get("retry_limit_reached")
+        settings:
+          label: yeah right
+          more_stuff: true
+
+  error: ~
+  rejected: ~
+  ready: ~

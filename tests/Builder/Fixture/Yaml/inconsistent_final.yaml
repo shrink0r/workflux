@@ -1,0 +1,11 @@
+name: video-transcoding
+states:
+  new:
+    initial: true
+    transitions:
+      done: ~
+
+  done:
+    final: true
+    class: Workflux\Tests\Builder\Fixture\InconsistentFinal
+    transitions: []

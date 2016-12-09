@@ -1,0 +1,34 @@
+# project related stuff
+/bin/phpunit
+/build/
+
+# composer related stuff
+/vendor/
+/composer.lock
+composer.phar
+
+# other dependency tools
+node_modules
+components
+bower_components
+
+# general os and editors related stuff
+*.sublime-project
+*.sublime-workspace
+.bundle/
+*~
+*.tmp
+*.bak
+*~.nib
+.class
+.classpath
+.settings/
+.loadpath
+.project
+*.launch
+.buildpath
+.cproject
+.externalToolBuilders/
+.plugins/
+*.pydevproject
+*.tmproj

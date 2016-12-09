@@ -1,0 +1,29 @@
+---
+engines:
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - php
+  fixme:
+    enabled: true
+  phpcodesniffer:
+    enabled: true
+    config:
+      standard: "PSR1,PSR2"
+  phpmd:
+    enabled: true
+    config:
+      file_extensions: "php"
+      rulesets: "unusedcode,codesize,naming,design,cleancode"
+    exclude_fingerprints:
+      - b282baf1988d989fb4f33e305f33092b
+      - 517fa2f08bf27aa1e831876236a5b34a
+
+ratings:
+  paths:
+  - "**.php"
+
+exclude_paths:
+  - "tests/**/*"
+  - "vendor/**/*"

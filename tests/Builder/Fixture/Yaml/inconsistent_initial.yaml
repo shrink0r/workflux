@@ -1,0 +1,9 @@
+name: video-transcoding
+states:
+  new:
+    initial: true
+    class: Workflux\Tests\Builder\Fixture\InconsistentInitial
+    transitions:
+      done: ~
+
+  done: ~

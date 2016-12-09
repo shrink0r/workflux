@@ -1,0 +1,10 @@
+digraph "test-machine" {
+    node1 [label="initial" fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b" style="bold"];
+    node2 [label="foobar" fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b"];
+    node3 [label="bar" fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b"];
+    node4 [label="final" fontname="Arial" fontsize="13" fontcolor="#000000" color="#607d8b" style="bold"];
+
+    node1 -> node2 [label="" fontname="Arial" fontsize="12" fontcolor="#7f8c8d" color="#2ecc71"];
+    node2 -> node3 [label="" fontname="Arial" fontsize="12" fontcolor="#7f8c8d" color="#2ecc71"];
+    node3 -> node4 [label="" fontname="Arial" fontsize="12" fontcolor="#7f8c8d" color="#2ecc71"];
+}

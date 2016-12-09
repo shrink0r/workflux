@@ -1,0 +1,92 @@
+{
+    "name": "shrink0r/workflux",
+    "type": "library",
+    "description": "Finite state machine for php.",
+    "keywords": ["workflux", "fsm", "workflow", "state machine"],
+    "homepage": "https://github.com/shrink0r/workflux",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/shrink0r/workflux/issues",
+        "wiki": "https://github.com/shrink0r/workflux/wiki",
+        "irc": "irc://irc.freenode.org/honeybee",
+        "source": "https://github.com/shrink0r/workflux"
+    },
+    "prefer-stable": true,
+    "config": {
+        "vendor-dir": "vendor"
+    },
+    "require": {
+        "php": "^7.0",
+        "php-ds/php-ds": "^1.1",
+        "shrink0r/suffix-tree": "^0.1",
+        "shrink0r/monatic": "^0.1",
+        "shrink0r/php-schema": "^0.3",
+        "symfony/expression-language": "^3.2"
+    },
+    "require-dev": {
+        "sami/sami": "^3.3.0",
+        "jakub-onderka/php-console-highlighter": "^0.3",
+        "jakub-onderka/php-parallel-lint": "^0.9",
+        "phploc/phploc": "^3.0",
+        "phpmd/phpmd": "^2.5",
+        "phpunit/phpunit": "^5.6",
+        "satooshi/php-coveralls": "master@dev",
+        "sebastian/phpcpd": "^2.0",
+        "squizlabs/php_codesniffer": "^2.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Workflux\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Workflux\\Tests\\": "tests/"
+        }
+    },
+    "archive": {
+        "exclude": [
+            "/tests",
+            "/build",
+            "/vendor"
+        ]
+    },
+    "scripts": {
+        "test": [
+            "@php-lint",
+            "@php-test",
+            "@code-sniffer",
+            "@validate-json"
+        ],
+        "sniff": [
+            "@php-lint",
+            "@code-sniffer-autofix",
+            "@code-sniffer",
+            "@copy-paste-detector",
+            "@mess-detector"
+        ],
+        "docs": [
+            "vendor/sami/sami/sami.php --ansi update sami.cfg.php"
+        ],
+        "code-sniffer": "phpcs -p -s --extensions=php --standard='PSR1,PSR2' src/ tests/",
+        "code-sniffer-autofix": "phpcbf --standard=PSR2 -d tabWidth=4 src/ tests/",
+        "copy-paste-detector": "phpcpd src/ tests/",
+        "mess-detector": "phpmd src,tests text codesize,unusedcode,naming,cleancode,design",
+        "php-lint": "parallel-lint --blame --exclude vendor src/ tests/",
+        "php-lint2": [
+            "find src/ -name '*.php' -print0 | xargs -0 -L 1 php -l",
+            "find tests/ -name '*.php' -print0 | xargs -0 -L 1 php -l"
+        ],
+        "php-loc": "phploc src",
+        "php-test": "phpunit",
+        "reports": [
+            "phploc --log-xml ./build/coverage/logs/phploc.xml --progress src || echo",
+            "phpcs -p -s --extensions=php --report=checkstyle --report-file=./build/coverage/logs/checkstyle.xml --standard='PSR1,PSR2' src/ tests/ || echo",
+            "phpcpd --log-pmd ./build/coverage/logs/phpcpd.xml --progress src/ tests/ || echo",
+            "phpmd src xml codesize,unusedcode,naming,cleancode,design --reportfile ./build/coverage/logs/phpmd.xml || echo",
+            "phpmd src html codesize,unusedcode,naming,cleancode,design --reportfile ./build/coverage/logs/phpmd.html || echo"
+        ],
+        "validate-json": "composer validate --no-check-all --no-check-lock",
+        "validate-deps": "composer validate --with-dependencies --strict"
+    }
+}

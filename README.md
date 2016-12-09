@@ -13,15 +13,11 @@
 ## Purpose
 
 `Workflux` is a [Finite State Machine(FSM)](http://en.wikipedia.org/wiki/Finite-state_machine) for php.
-It's supposed to be useful for implementing all kinds of FSM suiting scenarios like e.g. workflows or matching.
-Here are two reads on the topic, dealing with why/where you might want to use a FSM.
+
+Good reads on the topic:
 
 * [Why developers should be force-fed state machines](http://www.shopify.com/technology/3383012-why-developers-should-be-force-fed-state-machines)
 * [Why Developers Never Use State Machines](http://www.skorks.com/2011/09/why-developers-never-use-state-machines/)
-
-Below is an example of a state machine instance rendered by the library's DotGraphRenderer + [Graphviz](http://www.graphviz.org).
-
-![Screenshot of a rendered example state machine](https://raw.githubusercontent.com/shrink0r/workflux/master/docs/state_machine.png)
 
 ## Requirements and installation
 
@@ -49,7 +45,7 @@ tbd.
 
 ## Community
 
-None, but you may join the freenode IRC [`#honeybee`](irc://irc.freenode.org/honeybee) channel anytime. :-)
+None, but you may join the freenode IRC [`#honeybee`](irc://irc.freenode.org/honeybee) channel or https://gitter.im/honeybee/Lobby anytime. :-)
 
 ## Contributors
 

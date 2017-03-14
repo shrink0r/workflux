@@ -27,6 +27,13 @@ final class SettingsTest extends TestCase
         $this->assertNull($settings->get('bar'));
     }
 
+    public function testMagicGet()
+    {
+        $settings = new Settings([ 'foo' => 'bar' ]);
+        $this->assertEquals('bar', $settings->foo);
+        $this->assertNull($settings->bar);
+    }
+
     public function testWithParam()
     {
         $settings = (new Settings)->withParam('foo', 'bar');

@@ -13,6 +13,16 @@ trait ParamHolderTrait
 
     /**
      * @param string $param_name
+     *
+     * @return mixed
+     */
+    public function __get($param_name)
+    {
+        return $this->get($param_name);
+    }
+
+    /**
+     * @param string $param_name
      * @param bool $treat_name_as_path
      *
      * @return mixed

@@ -27,7 +27,7 @@ final class StateMachineSchema implements SchemaInterface
                     "properties" => [ ":any_name:" => $this->getStateSchema() ]
                 ]
             ],
-            "customTypes" => [ "transition" => $this->getTrantitionSchema() ]
+            "customTypes" => [ "transition" => $this->getTransitionSchema() ]
         ], new Factory);
     }
 
@@ -165,7 +165,7 @@ final class StateMachineSchema implements SchemaInterface
      *
      * @return mixed[]
      */
-    private function getTrantitionSchema(): array
+    private function getTransitionSchema(): array
     {
         return [
             "type" => "assoc",

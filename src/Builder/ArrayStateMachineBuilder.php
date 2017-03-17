@@ -23,18 +23,12 @@ final class ArrayStateMachineBuilder implements StateMachineBuilderInterface
     private $factory;
 
     /**
-     * @var StateMachineSchema $schema
-     */
-    private $schema;
-
-    /**
      * @param array $config
      * @param FactoryInterface|null $factory
      */
     public function __construct(array $config, FactoryInterface $factory = null)
     {
         $this->config = $config;
-        $this->schema = new StateMachineSchema;
         $this->factory = $factory ?? new Factory;
     }
 

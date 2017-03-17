@@ -39,7 +39,6 @@ final class YamlStateMachineBuilder implements StateMachineBuilderInterface
             throw new ConfigError("Trying to load non-existant statemachine definition at: $yaml_filepath");
         }
         $this->yaml_filepath = $yaml_filepath;
-        $this->schema = new StateMachineSchema;
         $this->factory = $factory ?? new Factory;
     }
 

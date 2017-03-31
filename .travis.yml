@@ -3,12 +3,11 @@ php:
   - 5.6
   - nightly
   - hhvm
-before_script: make install
-script:
-  - make tests
-  - make code-sniffer
-after_script:
-  - php vendor/bin/coveralls -v
+install:
+  - curl -s http://getcomposer.org/installer | php -d date.timezone="Europe/Berlin" -- --install-dir=./bin/
+  - ./bin/composer.phar install
+script: ./bin/composer.phar build
+after_script: php vendor/bin/coveralls -v
 notifications:
   irc:
     channels:

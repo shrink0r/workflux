@@ -3,6 +3,7 @@
 namespace Workflux\Guard;
 
 use Workflux\StatefulSubjectInterface;
+use Workflux\Error\Error;
 
 /**
  * The VariableGuard employs it's verfification based on the evaluation of a given (symfony) expression.
@@ -30,9 +31,22 @@ class VariableGuard extends ExpressionGuard
             throw new RuntimeError('Invalid return type given by execution context get parameters method.');
         }
 
-        return (bool)$this->expression_language->evaluate(
-            $this->getOption('expression'),
-            array_merge([ 'subject' => $subject ], $params)
-        );
+        $expression = $this->getOption('expression');
+        $params = array_merge([ 'subject' => $subject ], $params);
+
+        $result = null;
+        try {
+            $result = (bool)$this->expression_language->evaluate($expression, $params);
+        } catch (\Exception $exc) {
+            throw new Error(
+                "Expression evaluation failed. Reason: " . $exc->getMessage() .
+                "\nExpression used: " . $expression .
+                "\nAvailable params: " . implode(', ', array_keys($params)),
+                1,
+                $exc
+            );
+        }
+
+        return $result;
     }
 }

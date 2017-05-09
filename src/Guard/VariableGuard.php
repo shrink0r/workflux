@@ -38,10 +38,15 @@ class VariableGuard extends ExpressionGuard
         try {
             $result = (bool)$this->expression_language->evaluate($expression, $params);
         } catch (\Exception $exc) {
+            $vars = '';
+            foreach ($params as $var => $val) {
+                $vars .= $var . '('.gettype($val).') ';
+            }
+
             throw new Error(
                 "Expression evaluation failed. Reason: " . $exc->getMessage() .
                 "\nExpression used: " . $expression .
-                "\nAvailable params: " . implode(', ', array_keys($params)),
+                "\nExpression vars: " . $vars,
                 1,
                 $exc
             );

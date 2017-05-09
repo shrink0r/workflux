@@ -34,7 +34,7 @@ class VariableGuardTest extends BaseTestCase
         $this->expectExceptionMessage(
             'Expression evaluation failed. Reason: Variable "event" is not valid around position 1.' .
             "\nExpression used: " . $expression .
-            "\nAvailable params: subject, foo, asdf"
+            "\nExpression vars: subject(object) foo(string) asdf(string) "
         );
 
         $guard->accept($subject);
@@ -55,7 +55,7 @@ class VariableGuardTest extends BaseTestCase
         $this->expectExceptionMessage(
             'Expression evaluation failed. Reason: Unable to get a property on a non-object.' .
             "\nExpression used: " . $expression .
-            "\nAvailable params: subject, foo, asdf, event"
+            "\nExpression vars: subject(object) foo(string) asdf(string) event(NULL) "
         );
 
         $guard->accept($subject);

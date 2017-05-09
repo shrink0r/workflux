@@ -32,7 +32,7 @@ class VariableGuardTest extends BaseTestCase
         $this->expectException(Error::CLASS);
         $this->expectExceptionCode(1);
         $this->expectExceptionMessage(
-            'Expression evaluation failed. Reason: Variable "event" is not valid around position 1.' .
+            'Expression evaluation failed. Reason: Variable "event" is not valid around position 1 for expression `event.foo === "bar"`.' .
             "\nExpression used: " . $expression .
             "\nExpression vars: subject(object) foo(string) asdf(string) "
         );

@@ -47,7 +47,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testTooManyTransitions()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'Found transitions for both sequential and event based execution.' .
             ' State "approval" may  behave as an event-node or a sequential node, but not both at once.'
@@ -79,7 +79,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testFinalStateWithTransitions()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'State "published" is final and may not have any transitions.'
         );
@@ -110,7 +110,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testIncompleteSecondBuild()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'Required state machine name is missing. Make sure to call setStateMachineName.'
         );
@@ -134,7 +134,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testDuplicateState()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'A state with the name "editing" already has been added.' .
             ' State names must be unique within each StateMachine.'
@@ -152,7 +152,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testDuplicateTransition()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'Adding the same transition instance twice is not supported.'
         );
@@ -165,7 +165,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testInvalidOutgoingState()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'Unable to find outgoing state for transition "editing -> non_existant" and event "promote". Maybe a typo?'
         );
@@ -187,7 +187,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testInvalidIncomingState()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'Unable to find incoming state "non_existant" for given transitions. Maybe a typo?'
         );
@@ -209,7 +209,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testMissingInitialState()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'No state of type "initial" found, but exactly one initial state is required.'
         );
@@ -231,7 +231,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testMissingFinalState()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'No state of type "final" found, but at least one final state is required.'
         );
@@ -253,7 +253,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testTooManyInitialStates()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'Only one initial state is supported per state machine definition.' .
             'State "editing" has been previously registered as initial state, so state " cant be added.'
@@ -276,7 +276,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testMissingStateMachineName()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'Required state machine name is missing. Make sure to call setStateMachineName.'
         );
@@ -297,7 +297,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testMissingStateTransitions()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'State "transcoding" is expected to have at least one transition.' .
             ' Only "final" states are permitted to have no transitions.'
@@ -321,7 +321,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testInvalidStateMachineClass()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'The given state machine class "Workflux\Tests\StateMachine\Fixture\InvalidStateMachine"' .
             ' does not implement the required interface "Workflux\StateMachine\StateMachineInterface"'
@@ -345,7 +345,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testInvalidStateMachineName()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'Invalid statemachine name "Erpen Derp!" given. Only letters, digits and unserscore are permitted.'
         );
@@ -356,7 +356,7 @@ class StateMachineBuilderTest extends BaseTestCase
 
     public function testMissingStateMachineClass()
     {
-        $this->setExpectedException(
+        $this->expectException(
             VerificationError::CLASS,
             'Unable to load state machine class "HeisenStateMachine".'
         );

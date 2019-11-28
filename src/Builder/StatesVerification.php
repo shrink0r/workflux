@@ -100,7 +100,7 @@ class StatesVerification implements VerificationInterface
             throw new VerificationError(
                 sprintf(
                     'Only one initial state is supported per state machine definition.' .
-                    'State "%s" has been previously registered as initial state, so state "%" cant be added.',
+                    'State "%s" has been previously registered as initial state, so state "%s" cant be added.',
                     $this->initial_state->getName(),
                     $state->getName()
                 )

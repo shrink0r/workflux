@@ -81,7 +81,7 @@ class EventEmittingStateMachine extends StateMachine implements EventEmitterInte
      * in order to support/emit the ON_EXECUTION_SUSPENDED and ON_EXECUTION_FINISHED events.
      *
      * @param StatefulSubjectInterface $subject
-     * @param string $event_name
+     * @param string $transition_event
      *
      * @return StateInterface The state at which the execution was suspended or finished.
      */
@@ -143,7 +143,6 @@ class EventEmittingStateMachine extends StateMachine implements EventEmitterInte
      * Removes all listeners from all events or just the listeners for a given event.
      *
      * @param string $event If not given all listeners will removed from all events.
-     * @param callable $listener
      */
     public function removeAllListeners($event = null)
     {
@@ -153,9 +152,9 @@ class EventEmittingStateMachine extends StateMachine implements EventEmitterInte
     /**
      * Returns all the listeners for a specific event.
      *
-     * @param string $event
+     * @param string|null $event
      */
-    public function listeners($event)
+    public function listeners($event = null)
     {
         return $this->event_emitter->listeners($event);
     }
@@ -248,7 +247,7 @@ class EventEmittingStateMachine extends StateMachine implements EventEmitterInte
      * in order to support/emit the ON_STATE_ENTERED event.
      *
      * @param StatefulSubjectInterface $subject
-     * @param StateInterface $current_state
+     * @param StateInterface $next_state
      */
     protected function enterState(StatefulSubjectInterface $subject, StateInterface $next_state)
     {
@@ -263,7 +262,7 @@ class EventEmittingStateMachine extends StateMachine implements EventEmitterInte
      *
      * @param string $event Must be one of state machine's $supported_events, hence one of the ON_* constants.
      * @param StatefulSubjectInterface $subject
-     * @param StateInterface $current_state
+     * @param StateInterface $affected_state
      *
      * @throws Error If the given event is not supported.
      */

@@ -62,7 +62,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
 
     public function testInvalidGuard()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'Configured guard classes must implement Workflux\Guard\GuardInterface.'
         );
@@ -76,7 +76,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
 
     public function testNonExistantStateMachine()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'Unable to find configured state machine with name "not_there".'
         );
@@ -90,7 +90,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
 
     public function testNonExistantStateImplementor()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'Unable to load configured custom state implementor "Foo\BarState".'
         );
@@ -107,7 +107,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
 
     public function testInvalidStateImplementor()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'Configured custom implementor for state new does not implement "Workflux\State\StateInterface".'
         );
@@ -124,7 +124,7 @@ class XmlStateMachineBuilderTest extends BaseTestCase
 
     public function testMissingStateMachineName()
     {
-        $this->setExpectedException(Error::CLASS, 'Missing required state machine name.');
+        $this->expectException(Error::CLASS, 'Missing required state machine name.');
 
         $builder = new XmlStateMachineBuilder(
             [ 'state_machine_definition' => __DIR__ . '/Fixture/invalid_state_implementor.xml' ]

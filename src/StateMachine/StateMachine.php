@@ -67,7 +67,7 @@ class StateMachine implements StateMachineInterface
             $this->mapState($state);
         }
 
-        if ($this->initial_state !== null) {
+        if ($this->initial_state === null) {
             throw new Error('No initial state given in the array of states');
         }
     }

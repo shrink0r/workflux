@@ -22,9 +22,9 @@
         "vendor-dir": "vendor"
     },
     "require": {
-        "php": ">=7.0",
+        "php": ">=7.2",
         "graste/params": ">=2.1.0 <=4.0.0",
-        "symfony/expression-language": "^4.0",
+        "symfony/expression-language": "^4.0 || ^5.0",
         "evenement/evenement": "^3.0 || ^2.0"
     },
     "require-dev": {

@@ -27,7 +27,7 @@ class OptionsXpathParserTest extends BaseTestCase
 
     public function testInvalidContextElement()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'Invalid "options_context" argument passed to Workflux\Parser\Xml\OptionsXpathParser::parse.' .
             ' Only instances of DOMElement supported.'

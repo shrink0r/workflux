@@ -294,7 +294,7 @@ class EventEmittingStateMachineTest extends BaseTestCase
 
     public function testGuardInvalidEvent()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'Trying to register non supported event "on_erpen_derp".' .
             ' Supported are: workflux.state_machine.execution_started, workflux.state_machine.state_entered,' .

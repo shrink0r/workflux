@@ -60,12 +60,15 @@ class StateMachine implements StateMachineInterface
         $this->states = $states;
         $this->transitions = $transitions;
 
-        $this->initial_state = null;
         $this->final_states = [];
         $this->event_states = [];
 
         foreach ($this->states as $state) {
             $this->mapState($state);
+        }
+
+        if ($this->initial_state === null) {
+            throw new Error('No initial state given in the array of states');
         }
     }
 
@@ -113,7 +116,7 @@ class StateMachine implements StateMachineInterface
     /**
      * Tells whether a given state has event based or sequential transitions.
      *
-     * @param mixed $state_name Either an instance of StateInterface or string.
+     * @param mixed $state_or_state_name Either an instance of StateInterface or string.
      *
      * @return bool
      */
@@ -365,7 +368,7 @@ class StateMachine implements StateMachineInterface
      * Determine the correct transition to take while leaving the current state.
      *
      * @param StatefulSubjectInterface $subject
-     * @param StateInterface $current_state
+     * @param StateInterface $state
      * @param string $event_name
      *
      * @throws Error In cases where either more than one or no transition at all have accpeted the subject.
@@ -384,7 +387,11 @@ class StateMachine implements StateMachineInterface
 
             if ($accepted_transition) {
                 throw new Error(
-                    sprintf('Only one transition is allowed to be active at a time.', $event_name, $state->getName())
+                    sprintf(
+                        'Only one transition is allowed to be active at a time: event=%s state=%s',
+                        $event_name,
+                        $state->getName()
+                    )
                 );
             }
 
@@ -449,7 +456,7 @@ class StateMachine implements StateMachineInterface
      * Executes the onEnter handler for the current state before applying a transition.
      *
      * @param StatefulSubjectInterface $subject
-     * @param StateInterface $current_state
+     * @param StateInterface $next_state
      */
     protected function enterState(StatefulSubjectInterface $subject, StateInterface $next_state)
     {

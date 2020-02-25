@@ -28,7 +28,7 @@ class VariableGuard extends ExpressionGuard
         } elseif (is_array($parameters)) {
             $params = $parameters;
         } else {
-            throw new RuntimeError('Invalid return type given by execution context get parameters method.');
+            throw new Error('Invalid return type given by execution context get parameters method.');
         }
 
         $expression = $this->getOption('expression');

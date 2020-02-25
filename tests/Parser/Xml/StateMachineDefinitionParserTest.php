@@ -36,7 +36,7 @@ class StateMachineDefinitionParserTest extends BaseTestCase
     public function testNonReadableClass()
     {
         $state_machine_definition_file = dirname(__FILE__) . '/Fixture/unreadable_state_machine.xml';
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             sprintf('Unable to read fsm definition file at location: %s', $state_machine_definition_file)
         );
@@ -48,8 +48,8 @@ class StateMachineDefinitionParserTest extends BaseTestCase
     public function testInvalidXmlDefinition()
     {
         $state_machine_definition_file = dirname(__FILE__) . '/Fixture/invalid_state_machine.xml';
-        $this->setExpectedException(Error::CLASS);
-        $this->setExpectedException(DOMException::CLASS);
+        $this->expectException(Error::CLASS);
+        $this->expectException(DOMException::CLASS);
 
         $parser = new StateMachineDefinitionParser();
         $parser->parse($state_machine_definition_file);
@@ -57,7 +57,7 @@ class StateMachineDefinitionParserTest extends BaseTestCase
 
     public function testBrokenXmlDefinition()
     {
-        $this->setExpectedException(DOMException::CLASS);
+        $this->expectException(DOMException::CLASS);
 
         $state_machine_definition_file = dirname(__FILE__) . '/Fixture/broken_state_machine.xml';
 

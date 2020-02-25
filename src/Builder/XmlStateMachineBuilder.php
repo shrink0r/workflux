@@ -19,7 +19,7 @@ class XmlStateMachineBuilder extends StateMachineBuilder
     /**
      * Verifies the builder's current state and builds a state machine off of it.
      *
-     * @return Workflux\StateMachine\StateMachineInterface
+     * @return \Workflux\StateMachine\StateMachineInterface
      */
     public function build()
     {
@@ -169,7 +169,7 @@ class XmlStateMachineBuilder extends StateMachineBuilder
      * @param string $state_name
      * @param array $transition_definition
      *
-     * @return TransitionInterface
+     * @return \Workflux\Transition\TransitionInterface
      */
     protected function createTransition($state_name, array $transition_definition)
     {

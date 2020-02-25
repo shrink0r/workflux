@@ -28,7 +28,7 @@ class DotGraphRendererTest extends BaseTestCase
 
     public function testInvalidStylesOption()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'Encountered unexpected value type for "styles" option.' .
             ' Expected instance of Params\Immutable\ImmutableOptions'

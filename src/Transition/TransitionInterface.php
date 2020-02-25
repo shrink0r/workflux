@@ -28,7 +28,7 @@ interface TransitionInterface
     /**
      * Returns the transition's guard.
      *
-     * @return GuardInterface
+     * @return GuardInterface|null
      */
     public function getGuard();
 

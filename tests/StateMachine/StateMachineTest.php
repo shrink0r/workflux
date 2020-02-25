@@ -143,7 +143,7 @@ class StateMachineTest extends BaseTestCase
 
     public function testInvalidResumeState()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'Current execution is pointing to a final state "published".' .
             ' The state machine execution may not be resumed at a final state.'
@@ -170,7 +170,7 @@ class StateMachineTest extends BaseTestCase
 
     public function testInvalidSubject()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'Unable to resolve the given state-name "erpen_derp" to an existing state.'
         );
@@ -193,7 +193,7 @@ class StateMachineTest extends BaseTestCase
 
     public function testInvalidTransition()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'No transitions available for event "erpen_derp" at state "state1".'
         );
@@ -216,7 +216,7 @@ class StateMachineTest extends BaseTestCase
 
     public function testGetNonExistingTransitions()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'No transitions available at state "non_existant".'
         );
@@ -238,7 +238,7 @@ class StateMachineTest extends BaseTestCase
 
     public function testRejectedTransition()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'Transition for event "promote" at state "state1" was rejected.'
         );
@@ -267,7 +267,7 @@ class StateMachineTest extends BaseTestCase
 
     public function testTooManyAcceptedGuards()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'Only one transition is allowed to be active at a time.'
         );

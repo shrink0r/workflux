@@ -23,7 +23,7 @@ class StateTest extends BaseTestCase
 
     public function testInvalidType()
     {
-        $this->setExpectedException(
+        $this->expectException(
             Error::CLASS,
             'Invalid state type "shouldnt_work" given. Only the types initial, active, final are permitted.'
         );

@@ -20,7 +20,7 @@ class Transition implements TransitionInterface
     protected $outgoing_state_name;
 
     /**
-     * @var GuardInterface $guard
+     * @var GuardInterface|null $guard
      */
     protected $guard;
 
@@ -29,7 +29,7 @@ class Transition implements TransitionInterface
      *
      * @param mixed $incoming_state_name_or_names
      * @param string $outgoing_state_name
-     * @param GuardInterface $guard
+     * @param GuardInterface|null $guard
      */
     public function __construct($incoming_state_name_or_names, $outgoing_state_name, GuardInterface $guard = null)
     {
@@ -61,7 +61,7 @@ class Transition implements TransitionInterface
     /**
      * Returns the transition's guard.
      *
-     * @return GuardInterface
+     * @return GuardInterface|null
      */
     public function getGuard()
     {

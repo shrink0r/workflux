@@ -3,13 +3,13 @@
 namespace Workflux\Parser\Xml;
 
 use DOMDocument;
-use DOMXpath;
+use DOMXPath;
 use DOMNode;
 
 /**
  * The Xpath class is a conveniece wrapper around DOMXpath and simple adds a namespace prefix to queries.
  */
-class Xpath extends DOMXpath
+class Xpath extends DOMXPath
 {
     /**
      * @var string $namespace_prefix
@@ -42,7 +42,7 @@ class Xpath extends DOMXpath
      * @param string $expression Non namespaced xpath expression.
      * @param DOMNode $context Allows to pass a context node that is used for the actual xpath query.
      *
-     * @return DOMNodeList
+     * @return \DOMNodeList
      */
     public function query($expression, DOMNode $context = null, $register_ns = null)
     {

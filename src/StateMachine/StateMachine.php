@@ -387,7 +387,11 @@ class StateMachine implements StateMachineInterface
 
             if ($accepted_transition) {
                 throw new Error(
-                    sprintf('Only one transition is allowed to be active at a time: event=%s state=%s', $event_name, $state->getName())
+                    sprintf(
+                        'Only one transition is allowed to be active at a time: event=%s state=%s',
+                        $event_name,
+                        $state->getName()
+                    )
                 );
             }
 
